@@ -42,6 +42,10 @@ export const LoginPage = () => {
       const onLogin = () => {
         navigate('/profile', {replace: true});
       }
+
+      const onRegister = () => {
+        navigate('/register');
+      }
       
     
       return (
@@ -74,6 +78,9 @@ export const LoginPage = () => {
             </div>
             <button type="submit" className="btn btn-primary" onClick={onLogin}>Iniciar sesión</button>
           </form>
+          <div className="mt-3">
+          <span className="text-info">No tenes una cuenta? Create una <button className="btn btn-primary" onClick={onRegister}>aca</button></span>
+          </div>
         </div>
       );
 }
