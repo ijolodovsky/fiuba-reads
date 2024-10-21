@@ -11,6 +11,7 @@ export const ReadsRoutes = () => {
     <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="profile" element={<ProfilePage />} />
+        {/* TODO: Agregar el resto de rutas correspondientes (Friends, Books, etc) */}
     </Routes> 
     </div>
    </>
