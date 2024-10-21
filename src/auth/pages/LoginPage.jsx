@@ -79,7 +79,7 @@ export const LoginPage = () => {
             <button type="submit" className="btn btn-primary" onClick={onLogin}>Iniciar sesión</button>
           </form>
           <div className="mt-3">
-          <span className="text-info">No tenes una cuenta? Create una <button className="btn btn-primary" onClick={onRegister}>aca</button></span>
+          <span className="text-info">No tenes una cuenta? <button className="btn btn-primary" onClick={onRegister}>Registrate</button></span>
           </div>
         </div>
       );

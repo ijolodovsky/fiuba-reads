@@ -1,5 +1,6 @@
 import {useState} from 'react';
 import { supabase } from '../../utils/supabase-client';
+import { useNavigate } from 'react-router-dom';
 
 export const RegisterPage = () => {
     const [formData, setFormData] = useState({
@@ -44,6 +45,12 @@ export const RegisterPage = () => {
           console.log('User registered successfully', data);
         }
       };
+
+      const navigate = useNavigate();
+
+      const onLogin = () => {
+        navigate('/login', {replace: true});
+      }
     
       return (
         <div className="container mt-5">
@@ -129,6 +136,9 @@ export const RegisterPage = () => {
             </div>
             <button type="submit" className="btn btn-primary">Registrarse</button>
           </form>
+          <div className="mt-3">
+          <span className="text-info">Ya tenes una cuenta? <button className="btn btn-primary" onClick={onLogin}>Inicia sesion</button></span>
+          </div>
         </div>
       );
 }
