@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { supabase } from '../../utils/supabase-client';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context';
@@ -7,6 +7,7 @@ export const LoginPage = () => {
 
     const { login } = useContext(AuthContext);
 
+    const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
         email: '',
@@ -39,23 +40,14 @@ export const LoginPage = () => {
           setSuccessMessage('Inicio de sesión exitoso');
           setErrorMessage('');
           console.log('User logged in successfully', data);
+          login(data?.username);
+          navigate('/profile', {replace: true});
         }
       };
 
-      const navigate = useNavigate();
-
-      const onLogin = () => {
-
-        login('Julieta');
-
-
-        navigate('/profile', {replace: true});
-      }
-
       const onRegister = () => {
         navigate('/register');
-      }
-      
+      };
     
       return (
         <div className="container mt-5">
@@ -85,7 +77,7 @@ export const LoginPage = () => {
                 required
               />
             </div>
-            <button type="submit" className="btn btn-primary" onClick={onLogin}>Iniciar sesión</button>
+            <button type="submit" className="btn btn-primary">Iniciar sesión</button>
           </form>
           <div className="mt-3">
           <span className="text-info">No tenes una cuenta? <button className="btn btn-primary" onClick={onRegister}>Registrate</button></span>

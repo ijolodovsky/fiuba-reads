@@ -43,6 +43,7 @@ export const RegisterPage = () => {
           setErrorMessage(insertError.message);
         } else {
           console.log('User registered successfully', data);
+          navigate('/login', {replace: true});
         }
       };
 
