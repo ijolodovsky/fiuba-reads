@@ -34,12 +34,7 @@ export const Navbar = () => {
                         Home
                     </NavLink>
 
-                    <NavLink 
-                        className={({isActive}) => `nav-item nav-link ${isActive ? 'active':''}`} 
-                        to="/profile"
-                    >
-                        Profile
-                    </NavLink>
+                   {/* TODO: Agregar el resto de secciones */}
                 </div>
             </div>
 
