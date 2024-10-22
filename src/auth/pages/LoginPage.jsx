@@ -1,8 +1,13 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { supabase } from '../../utils/supabase-client';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context';
 
 export const LoginPage = () => {
+
+    const { login } = useContext(AuthContext);
+
+
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -40,6 +45,10 @@ export const LoginPage = () => {
       const navigate = useNavigate();
 
       const onLogin = () => {
+
+        login('Julieta');
+
+
         navigate('/profile', {replace: true});
       }
 
