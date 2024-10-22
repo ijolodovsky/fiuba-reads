@@ -4,11 +4,13 @@ import { AuthContext } from '../../auth';
 
 export const Navbar = () => {
 
-    const { authState } = useContext(AuthContext);
+    const { logout, authState } = useContext(AuthContext);
 
     const navigate = useNavigate();
 
     const onLogout = () => {
+        logout();
+
         navigate('/login');
     }
 
