@@ -1,5 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
-import { Navbar } from '../../ui/components/Navbar';
+import { Navbar } from '../../ui/components';
 import { HomePage, ProfilePage } from '../pages';
 
 export const ReadsRoutes = () => {
@@ -17,4 +17,5 @@ export const ReadsRoutes = () => {
    </>
   )
 }
+
 
