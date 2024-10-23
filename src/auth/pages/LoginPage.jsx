@@ -40,7 +40,7 @@ export const LoginPage = () => {
           setSuccessMessage('Inicio de sesión exitoso');
           setErrorMessage('');
           console.log('User logged in successfully', data);
-          login(data?.username);
+          login(data);
           navigate('/profile', {replace: true});
         }
       };
