@@ -42,7 +42,7 @@ export const Navbar = () => {
                 <ul className="navbar-nav ml-auto">
                 <NavLink 
                         className="nav-item nav-link text-info" 
-                        to="/profile"  // Cambia esto para que apunte a tu ProfilePage
+                        to="/profile"
                     >
                         {authState.user?.username}
                     </NavLink>
