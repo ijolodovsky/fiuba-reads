@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 import { AuthContext } from '../../auth/context/AuthContext';
+import image from '../../assets/profile.webp';
 
 export const ProfilePage = () => {
   const { authState: { user } } = useContext(AuthContext);
@@ -14,7 +15,7 @@ export const ProfilePage = () => {
           <div className="row">
             <div className="col-md-4 text-center">
               <img 
-                src={user?.profilePicture || 'https://via.placeholder.com/150'} // Imagen de perfil
+                src={user?.profilePicture || image} // Imagen de perfil
                 alt="Profile"
                 className="img-fluid rounded-circle mb-3"
                 style={{ width: '150px', height: '150px' }}
