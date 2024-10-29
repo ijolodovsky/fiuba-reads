@@ -1,4 +1,12 @@
-import '../styles/styles.css';
+import React from 'react';
+import { BookOpen, Search, User } from 'lucide-react';
+
+
+//aca deberian ir los components de shadcn ??
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent } from "@/components/ui/card"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 export const HomePage = () => {
   const books = [
@@ -6,44 +14,106 @@ export const HomePage = () => {
       id: 1,
       title: "Cien Años de Soledad",
       author: "Gabriel García Márquez",
-      review: "Una obra maestra de realismo mágico, que explora generaciones de la familia Buendía.",
+      coverUrl: "/placeholder.svg?height=240&width=160"
     },
     {
       id: 2,
-      title: "1984",
-      author: "George Orwell",
-      review: "Una crítica profunda sobre los peligros de un régimen totalitario y la vigilancia masiva.",
+      title: "La Sombra del Viento",
+      author: "Carlos Ruiz Zafón",
+      coverUrl: "/placeholder.svg?height=240&width=160"
     },
     {
       id: 3,
-      title: "El Aleph",
-      author: "Jorge Luis Borges",
-      review: "Un viaje por la mente de Borges, explorando lo infinito en lo finito.",
+      title: "El Laberinto de los Espíritus",
+      author: "Carlos Ruiz Zafón",
+      coverUrl: "/placeholder.svg?height=240&width=160"
     },
+    {
+      id: 4,
+      title: "Rayuela",
+      author: "Julio Cortázar",
+      coverUrl: "/placeholder.svg?height=240&width=160"
+    },
+    {
+      id: 5,
+      title: "La Casa de los Espíritus",
+      author: "Isabel Allende",
+      coverUrl: "/placeholder.svg?height=240&width=160"
+    },
+    {
+      id: 6,
+      title: "2666",
+      author: "Roberto Bolaño",
+      coverUrl: "/placeholder.svg?height=240&width=160"
+    },
+    {
+      id: 7,
+      title: "Ficciones",
+      author: "Jorge Luis Borges",
+      coverUrl: "/placeholder.svg?height=240&width=160"
+    },
+    {
+      id: 8,
+      title: "La Ciudad y los Perros",
+      author: "Mario Vargas Llosa",
+      coverUrl: "/placeholder.svg?height=240&width=160"
+    }
   ];
 
   return (
-    <div className="homepage-container">
-      <header>
-        <h1>FIUBA READS</h1>
-        <p>Comparte tus opiniones sobre tus libros favoritos con la comunidad de FIUBA.</p>
+    <div className="min-h-screen bg-gray-50 font-sans">
+      <header className="bg-white shadow-sm">
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="flex items-center space-x-2">
+            <BookOpen className="h-6 w-6 text-blue-600" />
+            <h1 className="text-xl font-semibold text-gray-900">FiubaReads</h1>
+          </div>
+          <div className="flex items-center space-x-4">
+            <div className="relative">
+              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+              <Input
+                type="search"
+                placeholder="Buscar libros..."
+                className="pl-9 w-64"
+              />
+            </div>
+            <Button variant="ghost" size="icon">
+              <User className="h-5 w-5" />
+              <span className="sr-only">Perfil</span>
+            </Button>
+          </div>
+        </div>
       </header>
 
-      <section className="reviews-section">
-        <h2>Reseñas de libros</h2>
-        <div className="reviews-list">
+      <main className="container mx-auto px-4 py-8">
+        <h2 className="text-2xl font-semibold mb-6 text-gray-800">Estantería de Libros</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
           {books.map((book) => (
-            <div key={book.id} className="review-card">
-              <h3>{book.title}</h3>
-              <h4>{book.author}</h4>
-              <p>{book.review}</p>
-            </div>
+            <TooltipProvider key={book.id}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Card className="hover:shadow-lg transition-shadow duration-300">
+                    <CardContent className="p-0">
+                      <img
+                        src={book.coverUrl}
+                        alt={book.title}
+                        className="w-full h-auto object-cover aspect-[2/3]"
+                      />
+                    </CardContent>
+                  </Card>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-xs">
+                  <p className="font-semibold">{book.title}</p>
+                  <p className="text-sm text-gray-600">{book.author}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           ))}
         </div>
-      </section>
+      </main>
 
-      <footer>
-        <p>FIUBA READS © 2024.</p>
+      <footer className="bg-white py-4 text-center text-sm text-gray-600">
+        <p>FiubaReads © 2024</p>
       </footer>
     </div>
   );
