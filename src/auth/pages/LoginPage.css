@@ -1,0 +1,83 @@
+/* Contenedor principal */
+.split-container {
+    display: flex;
+    height: 100vh;
+  }
+  
+  /* Lado de la imagen */
+  .image-side {
+    flex: 1;
+    background-image: url('../../assets/login.jpg'); /* Reemplaza con la ruta de tu imagen */
+    background-size: cover;
+    background-position: center;
+  }
+  
+  /* Lado del formulario */
+  .form-side {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .cont {
+    max-width: 400px;
+    width: 90%;
+    padding: 30px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+  }
+  
+  h2 {
+    text-align: center;
+    color: #333;
+  }
+  
+  .text-danger {
+    color: red;
+  }
+  
+  .text-success {
+    color: green;
+  }
+  
+  /* Ajusta los inputs y botones para que ocupen la mitad del ancho y se centren */
+  .form-control {
+    width: 50%;
+    padding: 12px;
+    border-radius: 5px;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+  }
+
+  button {
+    background-color: #4D426A !important;
+    color: whitesmoke !important;
+  }
+  
+  .btn-primary {
+    width: 100%;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px auto; /* Centra horizontalmente */
+    display: block;
+  }
+  
+  .btn-primary:hover {
+    background-color: #B6AAEC !important;
+  }
+  
+  .mt-3 {
+    text-align: center;
+  }
+  
+  .mt-5 {
+    margin-top: 3rem;
+  }
+  

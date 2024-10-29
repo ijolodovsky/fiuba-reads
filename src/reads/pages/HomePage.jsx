@@ -1,12 +1,13 @@
-import React from 'react';
 import { BookOpen, Search, User } from 'lucide-react';
-
 
 //aca deberian ir los components de shadcn ??
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import './homePage.css';
+import bookBlueImage from '../../assets/book_blue.svg';
+import bookRedImage from '../../assets/book_red.svg';
 
 export const HomePage = () => {
   const books = [
@@ -66,7 +67,8 @@ export const HomePage = () => {
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <BookOpen className="h-6 w-6 text-blue-600" />
-            <h1 className="text-xl font-semibold text-gray-900">FiubaReads</h1>
+            <img src={bookBlueImage} alt="Book Blue" className="book-image"/>
+            <img src={bookRedImage} alt="Book Red" className="book-image"/>
           </div>
           <div className="flex items-center space-x-4">
             <div className="relative">
