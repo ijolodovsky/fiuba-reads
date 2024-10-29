@@ -1,4 +1,7 @@
 import '../styles/styles.css';
+import './homePage.css';
+import bookBlueImage from '../../assets/book_blue.svg';
+import bookRedImage from '../../assets/book_red.svg';
 
 export const HomePage = () => {
   const books = [
@@ -24,9 +27,9 @@ export const HomePage = () => {
 
   return (
     <div className="homepage-container">
-      <header>
-        <h1>FIUBA READS</h1>
-        <p>Comparte tus opiniones sobre tus libros favoritos con la comunidad de FIUBA.</p>
+      <header className="header">
+        <img src={bookBlueImage} alt="Book Blue" className="book-image"/>
+        <img src={bookRedImage} alt="Book Red" className="book-image"/>
       </header>
 
       <section className="reviews-section">
