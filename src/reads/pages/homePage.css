@@ -1,0 +1,11 @@
+.header {
+    display: flex;
+    justify-content: center; /* Centra las imágenes horizontalmente */
+    align-items: center; /* Centra las imágenes verticalmente */
+  }
+  
+  .book-image {
+    width: 300px; /* Ajusta el tamaño de las imágenes */
+    height: auto; /* Mantiene la proporción de las imágenes */
+    margin: 0 10px; /* Añade un margen entre las imágenes */
+  }
