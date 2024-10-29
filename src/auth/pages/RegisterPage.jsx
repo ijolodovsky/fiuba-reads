@@ -162,7 +162,7 @@ export const RegisterPage = () => {
           </form>
           <div className="mt-3">
             <span className="text-danger">¿Ya tenés una cuenta? </span>
-            <button className="btn btn-primary" onClick={onLogin}>Iniciá sesión</button>
+            <button className="btn btn-primary" onClick={onLogin}>Iniciar sesión</button>
           </div>
         </div>
       </div>

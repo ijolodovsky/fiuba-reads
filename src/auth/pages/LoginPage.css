@@ -53,10 +53,14 @@
     margin-right: auto;
     display: block;
   }
+
+  button {
+    background-color: #4D426A !important;
+    color: whitesmoke !important;
+  }
   
   .btn-primary {
     width: 100%;
-    background-color: #007bff;
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
@@ -66,7 +70,7 @@
   }
   
   .btn-primary:hover {
-    background-color: #0056b3;
+    background-color: #B6AAEC !important;
   }
   
   .mt-3 {
