@@ -44,3 +44,24 @@
   width: 300px;
   text-align: center;
 }
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Limit to 2 lines */
+  line-clamp: 2; /* Standard property for compatibility */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Adds "..." at the end */
+}
+
+.line-clamp-full {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Optional: You can add additional styling for the full title when it appears */
+.group:hover .line-clamp-full {
+  display: block; /* Show full title on hover */
+}

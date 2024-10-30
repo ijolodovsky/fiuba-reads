@@ -7,6 +7,7 @@ import './profilePage.css';
 
 export const ProfilePage = () => {
   const { authState: { user } } = useContext(AuthContext);
+  
   const navigate = useNavigate();
 
   const handleAddBook = () => {
