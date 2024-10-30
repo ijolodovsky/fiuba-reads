@@ -7,7 +7,7 @@ export const ReadsRoutes = () => {
   return (
     <> 
       <Navbar />
-      <div className="container">
+      <div>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="profile" element={<ProfilePage />} />
