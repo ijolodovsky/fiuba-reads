@@ -1,60 +1,60 @@
 import React, { useContext } from 'react';
 import { AuthContext } from '../../auth/context/AuthContext';
-import { useNavigate } from 'react-router-dom'; // Asegúrate de importar useNavigate
+import { useNavigate } from 'react-router-dom';
+import { Card, CardHeader, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
 import image from '../../assets/profile.webp';
+import './profilePage.css';
 
 export const ProfilePage = () => {
   const { authState: { user } } = useContext(AuthContext);
-  const navigate = useNavigate(); // Usa useNavigate en lugar de history
+  const navigate = useNavigate();
 
   const handleAddBook = () => {
     navigate('/add-book');
   };
 
   return (
-    <div className="container mt-5">
-      <div className="card mb-4">
-        <div className="card-header text-center">
-          <h2>{user?.username}</h2>
-        </div>
-        <div className="card-body">
-          <div className="row">
-            <div className="col-md-4 text-center">
+    <div className="flex justify-center items-center">
+      <Card className="p-6">
+        <CardHeader className="text-center">
+          <CardTitle>{user?.username}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex profile-content">
+            <CardDescription className="w-1/2 text-center">
               <img 
                 src={user?.profilePicture || image}
                 alt="Profile"
-                className="img-fluid rounded-circle mb-3"
-                style={{ width: '150px', height: '150px' }}
+                className="w-40 h-40 object-cover rounded-full mb-3 mx-auto"
               />
-              <h3>{user?.name}</h3>
-              <p className="text-muted">{user?.role}</p>
+              <p className="text-gray-600">{user?.role}</p>
               {/* Botón para agregar un libro */}
               {user?.role === 'escritor' && (
                 <button 
-                  className="btn btn-primary mt-3"
+                  className="mt-3 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
                   onClick={handleAddBook}
                 >
                   Agregar Libro
                 </button>
               )}
-            </div>
-            <div className="col-md-8">
-              <h4>Información Personal</h4>
-              <ul className="list-group">
-                <li className="list-group-item">
+            </CardDescription>
+            <div className="p-10">
+              <h3 className="text-lg font-semibold">Información Personal</h3>
+              <ul className="list-inside space-y-2 mt-2">
+                <li>
                   <strong>Email:</strong> {user?.email}
                 </li>
-                <li className="list-group-item">
-                  <strong>Nombre:</strong> {user?.firstName} {user?.lastName}
+                <li>
+                  <strong>Nombre:</strong> {user?.first_name} {user?.last_name}
                 </li>
-                <li className="list-group-item">
+                <li>
                   <strong>Edad:</strong> {user?.age}
                 </li>
               </ul>
             </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
