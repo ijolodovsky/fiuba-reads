@@ -66,7 +66,7 @@ export const HomePage = () => {
                   <Card className="group relative overflow-hidden transition-all duration-300 ease-in-out hover:shadow-lg hover:-translate-y-1">
                     <CardContent className="p-0">
                       <img
-                        src={book.coverUrl}
+                        src={(book.cover_image_url) ? book.cover_image_url : placeholder}
                         alt={book.title}
                         className="w-full h-auto object-cover aspect-[2/3]"
                       />
