@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../auth/context/AuthContext'; // Asegúrate de tener el contexto de autenticación
+import { AuthContext } from '../../auth/context/AuthContext';
 import { supabase } from '../../utils/supabase-client';
 import './AddBookPage.css';
 
@@ -8,7 +8,7 @@ export const AddBookPage = () => {
   const { authState: { user } } = useContext(AuthContext);
   const [bookData, setBookData] = useState({
     title: '',
-    author: user?.firstName + " " + user?.lastName || '', // Nombre del usuario loggeado
+    author: user?.firstName + " " + user?.lastName || '',
     isbn: '',
     published_date: '',
     publisher: '',
