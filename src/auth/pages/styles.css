@@ -7,7 +7,7 @@
   /* Lado de la imagen */
   .image-side {
     flex: 1;
-    background-image: url('../../assets/login.jpg'); /* Reemplaza con la ruta de tu imagen */
+    background-image: url('../../assets/login.svg');
     background-size: cover;
     background-position: center;
   }
