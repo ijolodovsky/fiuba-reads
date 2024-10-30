@@ -50,7 +50,7 @@ export const Navbar = () => {
           onClick={onLogout} 
           className="text-white bg-red-600 hover:bg-red-700"
         >
-          Logout
+          Cerrar sesión
         </Button>
       </div>
     </nav>

@@ -17,7 +17,6 @@ export const HomePage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [books, setBooks] = useState([]);
   
-  // Función para obtener libros de Supabase
   const fetchBooks = async () => {
     const { data, error } = await supabase
       .from('books')
@@ -44,6 +43,10 @@ export const HomePage = () => {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <main className="flex-grow container mx-auto px-4 py-8">
+        <header className="header">
+          <img src={bookBlueImage} alt="Book Blue" className="book-image"/>
+          <img src={bookRedImage} alt="Book Red" className="book-image"/>
+        </header>
         <div className="relative w-full max-w-md mx-auto mb-8">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-amber-900" />
           <Input

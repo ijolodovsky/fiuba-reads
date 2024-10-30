@@ -6,9 +6,12 @@
 
 .header {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   padding: 20px 0;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
 .images-container {
@@ -19,7 +22,7 @@
 }
 
 .book-image {
-  width: 300px;
+  width: 100px;
   height: auto;
   margin: 0 10px;
 }
