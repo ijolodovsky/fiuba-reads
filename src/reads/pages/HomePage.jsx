@@ -1,8 +1,9 @@
-import React from "react";
+import React, {useState} from "react";
 import { Search} from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button"
 
 
 import './homePage.css';
@@ -10,6 +11,8 @@ import bookBlueImage from '../../assets/book_blue.svg';
 import bookRedImage from '../../assets/book_red.svg';
 
 export const HomePage = () => {
+
+  const [searchTerm, setSearchTerm] = useState("")
   const books = [
     {
       id: 1,
@@ -61,53 +64,45 @@ export const HomePage = () => {
     }
   ];
 
+  const filteredBooks = books.filter(book =>
+    book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    book.author.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
   return (
-    <div className="container">
-      <header className="header">
-        <div className="images-container">
-          <img src={bookBlueImage} alt="Book Blue" className="book-image"/>
-          <img src={bookRedImage} alt="Book Red" className="book-image"/>
-        </div>
-        <div className="search-bar">
-          <Search className="search-icon" />
-          <Input
+    <div className="min-h-screen flex flex-col bg-white">
+      <main className="flex-grow container mx-auto px-4 py-8">
+        <div className="relative w-full max-w-md mx-auto mb-8">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-amber-900" />
+          <input
             type="search"
             placeholder="Buscar libros..."
-            className="search-input"
+            className="w-full pl-10 py-2 bg-gray-100 text-amber-900 placeholder-amber-700 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-      </header>
-
-      <main className="container mx-auto px-4 py-8">
-        <h2 className="text-2xl font-semibold mb-6 text-gray-800">Estantería de Libros</h2>
+        <h2 className="text-2xl font-semibold mb-6 text-amber-900">Estantería de Libros</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
-          {books.map((book) => (
-            <TooltipProvider key={book.id}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Card className="hover:shadow-lg transition-shadow duration-300">
-                    <CardContent className="p-0">
-                      <img
-                        src={book.coverUrl}
-                        alt={book.title}
-                        className="w-full h-auto object-cover aspect-[2/3]"
-                      />
-                    </CardContent>
-                  </Card>
-                </TooltipTrigger>
-                <TooltipContent side="top" className="max-w-xs">
-                  <p className="font-semibold">{book.title}</p>
-                  <p className="text-sm text-gray-600">{book.author}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+          {filteredBooks.map((book) => (
+            <div key={book.id} className="group relative overflow-hidden transition-all duration-300 ease-in-out hover:shadow-lg hover:-translate-y-1">
+              <img
+                src={book.coverUrl}
+                alt={book.title}
+                className="w-full h-auto object-cover aspect-[2/3]"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-amber-900 to-transparent opacity-0 group-hover:opacity-70 transition-opacity duration-300"></div>
+              <button className="absolute bottom-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-amber-200 text-amber-900 px-2 py-1 text-sm rounded">
+                Ver detalles
+              </button>
+              <div className="absolute top-0 left-0 right-0 bg-gray-100 text-amber-900 border border-gray-300 p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <p className="font-semibold">{book.title}</p>
+                <p className="text-sm text-amber-700">{book.author}</p>
+              </div>
+            </div>
           ))}
         </div>
       </main>
-
-      <footer className="bg-white py-4 text-center text-sm text-gray-600">
-        <p>FiubaReads © 2024</p>
-      </footer>
     </div>
-  );
+  )
 };
