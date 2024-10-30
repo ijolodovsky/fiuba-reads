@@ -40,7 +40,7 @@ export const Navbar = () => {
         {authState.user && (
           <NavLink 
             to="/profile"
-            className="text-info text-white hover:text-gray-300"
+            className="text-info text-white hover:text-gray-300 text-decoration-none"
           >
             {authState.user?.username}
           </NavLink>
