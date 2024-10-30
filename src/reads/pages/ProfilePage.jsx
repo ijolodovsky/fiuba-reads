@@ -27,7 +27,7 @@ export const ProfilePage = () => {
                 alt="Profile"
                 className="w-40 h-40 object-cover rounded-full mb-3 mx-auto"
               />
-              <p className="text-gray-600">{user?.role}</p>
+              <span className="text-gray-600">{user?.role}</span>
               {/* Botón para agregar un libro */}
               {user?.role === 'escritor' && (
                 <button 
@@ -45,7 +45,7 @@ export const ProfilePage = () => {
                   <strong>Email:</strong> {user?.email}
                 </li>
                 <li>
-                  <strong>Nombre:</strong> {user?.first_name} {user?.last_name}
+                  <strong>Nombre:</strong> {user?.firstName} {user?.lastName}
                 </li>
                 <li>
                   <strong>Edad:</strong> {user?.age}
