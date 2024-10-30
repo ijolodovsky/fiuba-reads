@@ -1,4 +1,5 @@
-import React, {useState} from "react";
+import React, { useState, useEffect } from "react";
+import { supabase } from '../../utils/supabase-client';
 import { Search} from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,57 +14,27 @@ import placeholder from '../../assets/placeholder.svg';
 
 export const HomePage = () => {
 
-  const [searchTerm, setSearchTerm] = useState("")
-  const books = [
-    {
-      id: 1,
-      title: "Cien Años de Soledad",
-      author: "Gabriel García Márquez",
-      coverUrl: `${placeholder}?height=200&width=160`
-    },
-    {
-      id: 2,
-      title: "La Sombra del Viento",
-      author: "Carlos Ruiz Zafón",
-      coverUrl: `${placeholder}?height=200&width=160`
-    },
-    {
-      id: 3,
-      title: "El Laberinto de los Espíritus",
-      author: "Carlos Ruiz Zafón",
-      coverUrl: `${placeholder}?height=240&width=160`
-    },
-    {
-      id: 4,
-      title: "Rayuela",
-      author: "Julio Cortázar",
-      coverUrl: `${placeholder}?height=240&width=160`
-    },
-    {
-      id: 5,
-      title: "La Casa de los Espíritus",
-      author: "Isabel Allende",
-      coverUrl: `${placeholder}?height=240&width=160`
-    },
-    {
-      id: 6,
-      title: "2666",
-      author: "Roberto Bolaño",
-      coverUrl: `${placeholder}?height=240&width=160`
-    },
-    {
-      id: 7,
-      title: "Ficciones",
-      author: "Jorge Luis Borges",
-      coverUrl: `${placeholder}?height=240&width=160`
-    },
-    {
-      id: 8,
-      title: "La Ciudad y los Perros",
-      author: "Mario Vargas Llosa",
-      coverUrl: `${placeholder}?height=240&width=160`
+  const [searchTerm, setSearchTerm] = useState("");
+  const [books, setBooks] = useState([]);
+  
+  // Función para obtener libros de Supabase
+  const fetchBooks = async () => {
+    const { data, error } = await supabase
+      .from('books')
+      .select('*');
+
+    if (error) {
+      console.error("Error fetching books:", error);
+    } else {
+      console.log(data);
+      setBooks(data);
     }
-  ];
+  };
+
+  useEffect(() => {
+    fetchBooks();
+  }, []);
+
 
   const filteredBooks = books.filter(book =>
     book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
