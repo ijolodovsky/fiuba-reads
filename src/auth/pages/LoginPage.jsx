@@ -60,7 +60,7 @@ export const LoginPage = () => {
             <div className="mb-3">
               <input
                 type="email"
-                className="form-control w-full px-4 py-2 border rounded-md focus:outline-none focus:ring"
+                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring"
                 name="email"
                 placeholder="Email"
                 value={formData.email}
@@ -71,7 +71,7 @@ export const LoginPage = () => {
             <div className="mb-3">
               <input
                 type="password"
-                className="form-control w-full px-4 py-2 border rounded-md focus:outline-none focus:ring"
+                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring"
                 name="password"
                 placeholder="Contraseña"
                 value={formData.password}
