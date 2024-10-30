@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { supabase } from '../../utils/supabase-client';
 import { Search} from 'lucide-react';
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardDescription } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button"
 
@@ -23,6 +23,7 @@ export const HomePage = () => {
       .select('*');
 
     if (error) {
+      //TODO: Poner en pantalla que hubo un error buscando o si no hay libros que aparezca que no hay libros
       console.error("Error fetching books:", error);
     } else {
       console.log(data);
@@ -75,6 +76,9 @@ export const HomePage = () => {
                         Ver detalles
                       </Button>
                     </CardContent>
+                    <CardFooter className="flex justify-between">
+                      <CardDescription>{book.title}</CardDescription>
+                    </CardFooter>
                   </Card>
                 </TooltipTrigger>
                 <TooltipContent side="top">
