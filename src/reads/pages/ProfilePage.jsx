@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 import { AuthContext } from '../../auth/context/AuthContext';
 import image from '../../assets/profile.webp';
 

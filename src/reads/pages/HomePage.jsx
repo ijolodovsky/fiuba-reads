@@ -1,6 +1,9 @@
+import React from "react";
 import { Search} from 'lucide-react';
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-import { Input, Card, CardContent, Tooltip, Grid2,Typography, Box } from "@mui/material"
 
 import './homePage.css';
 import bookBlueImage from '../../assets/book_blue.svg';
@@ -75,31 +78,35 @@ export const HomePage = () => {
         </div>
       </header>
 
-      <main>
-        <Box py={4} px={4}>
-          <Typography variant="h5" mb={3}>Estantería de Libros</Typography>
-          <Grid2 container spacing={2}>
-            {books.map((book) => (
-              <Grid2 item key={book.id} xs={6} sm={4} md={3} lg={2}>
-                <Tooltip title={`${book.title} - ${book.author}`} arrow>
-                  <Card>
-                    <CardContent style={{ padding: 0 }}>
+      <main className="container mx-auto px-4 py-8">
+        <h2 className="text-2xl font-semibold mb-6 text-gray-800">Estantería de Libros</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
+          {books.map((book) => (
+            <TooltipProvider key={book.id}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Card className="hover:shadow-lg transition-shadow duration-300">
+                    <CardContent className="p-0">
                       <img
                         src={book.coverUrl}
                         alt={book.title}
-                        style={{ width: '100%', height: 'auto', objectFit: 'cover', aspectRatio: '2/3' }}
+                        className="w-full h-auto object-cover aspect-[2/3]"
                       />
                     </CardContent>
                   </Card>
-                </Tooltip>
-              </Grid2>
-            ))}
-          </Grid2>
-        </Box>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-xs">
+                  <p className="font-semibold">{book.title}</p>
+                  <p className="text-sm text-gray-600">{book.author}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ))}
+        </div>
       </main>
 
-      <footer className="footer">
-        <Typography variant="body2">FiubaReads © 2024</Typography>
+      <footer className="bg-white py-4 text-center text-sm text-gray-600">
+        <p>FiubaReads © 2024</p>
       </footer>
     </div>
   );
