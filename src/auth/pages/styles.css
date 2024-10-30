@@ -10,7 +10,10 @@
     background-image: url('../../assets/login.svg');
     background-size: cover;
     background-position: center;
-  }
+    transform: translateX(20%); /* Ajusta el valor para desplazar la imagen horizontalmente */
+}
+
+
   
   /* Lado del formulario */
   .form-side {
