@@ -15,7 +15,7 @@ export const ProfilePage = () => {
   };
 
   return (
-    <div className="flex justify-center items-center">
+    <div className="flex justify-center items-center container2">
       <Card className="p-6">
         <CardHeader className="text-center">
           <CardTitle>{user?.username}</CardTitle>
@@ -32,7 +32,7 @@ export const ProfilePage = () => {
               {/* Botón para agregar un libro */}
               {user?.role === 'escritor' && (
                 <button 
-                  className="mt-3 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                  className="btn btn-primary"
                   onClick={handleAddBook}
                 >
                   Agregar Libro

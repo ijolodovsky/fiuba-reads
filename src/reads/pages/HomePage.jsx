@@ -60,7 +60,7 @@ export const HomePage = () => {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Card 
-                    className="group relative overflow-hidden transition-all duration-300 ease-in-out hover:shadow-lg hover:-translate-y-1"
+                    className="group relative overflow-hidden transition-all duration-300 ease-in-out hover:shadow-lg hover:-translate-y-1 mb-3"
                   >
                     <CardContent className="p-0">
                       <img
@@ -68,18 +68,18 @@ export const HomePage = () => {
                         alt={book.title}
                         className="w-full h-auto object-cover aspect-[2/3]"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-amber-900 to-transparent opacity-0 group-hover:opacity-70 transition-opacity duration-300 d-flex justify-content-center"></div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-amber-900 to-transparent opacity-0 group-hover:opacity-70 transition-opacity duration-300 d-flex justify-content-center mt-3"></div>
                       <Button 
                         variant="secondary" 
                         size="sm" 
-                        className="absolute bottom-2 left-1/2 transform -translate-x-1/2 group-hover:opacity-100 transition-opacity duration-300"
+                        className="absolute bottom-2 left-1/2 transform -translate-x-1/2 group-hover:opacity-100 transition-opacity duration-300 mt-4"
                         onClick={() => navigate(`/book/${book.isbn}`)} // Navega usando el isbn
                       >
                         Ver detalles
                       </Button>
                     </CardContent>
-                    <CardFooter className="flex justify-center flex-col items-center">
-                      <div className="mt-2 pb-3 text-center">
+                    <CardFooter className="flex justify-center flex-col items-center mt-4">
+                      <div className="pb-3 text-center">
                         <p className="line-clamp-2 text-sm">{book.title}</p>
                       </div>
                     </CardFooter>

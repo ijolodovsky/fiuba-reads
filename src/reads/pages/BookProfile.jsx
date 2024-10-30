@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Star, Clock } from 'lucide-react';
-import { Button, Card, CardContent, Badge, Avatar, AvatarFallback, AvatarImage } from "../../ui/components";
+import { Card, CardContent, Badge, Avatar, AvatarFallback, AvatarImage } from "../../ui/components";
 import { supabase } from '../../utils/supabase-client';
 import { useParams } from 'react-router-dom';
 
@@ -39,6 +39,7 @@ export default function BookProfile() {
   };
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     fetchBookData();
   }, [isbn]);
 
@@ -58,7 +59,7 @@ export default function BookProfile() {
   } = bookData;
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container container2 mx-auto px-4 py-8 ">
       <div className="grid md:grid-cols-3 gap-8">
         <div className="md:col-span-1">
           <img src={cover_image_url} alt={`Portada de ${title}`} className="w-48 h-auto rounded-lg shadow-lg" />
@@ -78,7 +79,7 @@ export default function BookProfile() {
             </div>
           </div>
           <div>
-            <h2 className="text-2xl font-semibold mb-2">Sinopsis</h2>
+            <h2 className="text-2xl font-semibold mb-2 text-left">Sinopsis</h2>
             <p className="text-muted-foreground">{description}</p>
           </div>
         </div>
