@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Swal from 'sweetalert2';
 import { Star, Clock } from 'lucide-react';
 import { Card, CardContent, Badge, Avatar, AvatarFallback, AvatarImage } from "../../ui/components";
 import { supabase } from '../../utils/supabase-client';
@@ -44,8 +45,20 @@ export default function BookProfile() {
     fetchBookData();
   }, [isbn]);
 
-  if (loading) return <div className=" min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12 text-center">Loading...</div>;
-  if (error) return <div cSearchlassName="text-center text-red-500">{error}</div>;
+  const handleBuyBook = () => {
+    Swal.fire({
+      title: '¡Gracias por comprar el libro!',
+      text: 'Esperamos que disfrutes de tu lectura.',
+      icon: 'success',
+      confirmButtonText: 'Cerrar',
+      background: '#1f2937',
+      color: '#fff',
+      confirmButtonColor: '#4f46e5'
+    });
+  };
+
+  if (loading) return <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12 text-center">Loading...</div>;
+  if (error) return <div className="text-center text-red-500">{error}</div>;
   if (!bookData) return null;
 
   const {
@@ -88,6 +101,12 @@ export default function BookProfile() {
               <h2 className="text-2xl font-semibold mb-2 text-blue-400 text-left">Sinopsis</h2>
               <p className="text-blue-200">{description}</p>
             </div>
+            <button 
+              onClick={handleBuyBook}
+              className="mt-6 px-4 py-2 bg-purple-600 text-white rounded-lg shadow-md hover:bg-purple-700 transition-colors duration-300"
+            >
+              Comprar libro
+            </button>
           </div>
         </div>
         <div className="mt-12">
