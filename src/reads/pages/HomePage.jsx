@@ -49,11 +49,11 @@ export const HomePage = () => {
           </div>
         </header>
         <div className="relative w-full max-w-md mx-auto mb-12">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-amber-500" />
+          <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-amber-500 pointer-events-none" />
           <Input
             type="search"
             placeholder="Buscar libros..."
-            className="w-full pl-10 py-2 bg-white text-amber-900 placeholder-amber-400 border border-amber-200 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500 shadow-md"
+            className="w-full px-5 pl-16 pr-4 py-2 bg-white text-amber-900 placeholder-amber-400 border border-amber-200 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500 shadow-md"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
