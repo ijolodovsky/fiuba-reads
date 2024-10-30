@@ -30,6 +30,10 @@ export const RegisterPage = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleSelectChange = (value) => {
+    setFormData((prevFormData) => ({ ...prevFormData, role: value }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -169,21 +173,23 @@ export const RegisterPage = () => {
                 />
               </div>
               <div className="relative">
-                <Select name="role"
-                  className="w-full px-10 pl-10 bg-gray-700 border-blue-500 text-white"
-                  defaultValue={formData.role}
-                  onChange={handleChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecciona un rol" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Roles</SelectLabel>
-                      <SelectItem value="lector">Lector</SelectItem>
-                      <SelectItem value="escritor">Escritor</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+              <Select
+                name="role"
+                className="w-full px-10 pl-10 bg-gray-700 border-blue-500 text-white"
+                onValueChange={handleSelectChange}
+                value={formData.role}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecciona un rol" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Roles</SelectLabel>
+                    <SelectItem value="lector">Lector</SelectItem>
+                    <SelectItem value="escritor">Escritor</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
               </div>
               <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
                 Registrarse
