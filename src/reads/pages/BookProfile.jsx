@@ -81,6 +81,7 @@ export default function BookProfile() {
   };
 
   const fullName = `${user?.firstName} ${user?.lastName}`;
+  const isAuthor = user?.role === 'escritor' && fullName === author;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12">
@@ -118,7 +119,7 @@ export default function BookProfile() {
               >
                 Comprar libro
               </button>
-              {user?.role === 'escritor' && (
+              {isAuthor && (
                 <button
                   className="mt-6 px-4 py-2 bg-purple-600 text-white rounded-lg shadow-md hover:bg-purple-700 transition-colors duration-300"
                   onClick={handleModifyBook}
