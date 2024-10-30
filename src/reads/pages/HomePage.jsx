@@ -43,7 +43,6 @@ export const HomePage = () => {
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-amber-50 to-amber-100">
       <main className="flex-grow container mx-auto px-4 py-8">
         <header className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-amber-900 mb-4">Biblioteca Virtual</h1>
           <div className="flex justify-center space-x-4">
             <img src={bookBlueImage} alt="Book Blue" width={60} height={60} />
             <img src={bookRedImage} alt="Book Red" width={60} height={60} />
