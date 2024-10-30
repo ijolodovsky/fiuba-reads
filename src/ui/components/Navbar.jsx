@@ -1,57 +1,58 @@
 import React, { useContext } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../auth';
+import { Button } from '@/components/ui/button'; // example Shadcn button component
 
 export const Navbar = () => {
+  const { logout, authState } = useContext(AuthContext);
+  const navigate = useNavigate();
 
-    const { logout, authState } = useContext(AuthContext);
+  const onLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
-    const navigate = useNavigate();
+  return (
+    <nav className="bg-gray-800 p-4 flex items-center justify-between">
+      <div className="flex items-center">
+        <Link 
+          to="/" 
+          className="text-white text-xl font-semibold mr-4"
+        >
+          FIUBA READS
+        </Link>
 
-    const onLogout = () => {
-        logout();
+        <div className="space-x-4">
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              `text-white hover:text-gray-300 ${isActive ? 'underline' : ''}`
+            }
+          >
+            Home
+          </NavLink>
 
-        navigate('/login');
-    }
+          {/* TODO: Add other sections here */}
+        </div>
+      </div>
 
-    return (
-        <nav className="navbar navbar-expand-sm navbar-dark bg-dark p-2">
-            
-            <Link 
-                className="navbar-brand" 
-                to="/"
-            >
-                FIUBA READS
-            </Link>
-
-            <div className="navbar-collapse">
-                <div className="navbar-nav">
-
-                    <NavLink 
-                        className={({isActive}) => `nav-item nav-link ${isActive ? 'active':''}`} 
-                        to="/"
-                    >
-                        Home
-                    </NavLink>
-
-                   {/* TODO: Agregar el resto de secciones */}
-                </div>
-            </div>
-
-            <div className="navbar-collapse collapse w-100 order-3 dual-collapse2 d-flex justify-content-end">
-                <ul className="navbar-nav ml-auto">
-                <NavLink 
-                        className="nav-item nav-link text-info" 
-                        to="/profile"
-                    >
-                        {authState.user?.username}
-                    </NavLink>
-                    <button className="nav-item nav-link btn"
-                    onClick={onLogout}>
-                    Logout
-                    </button>
-                </ul>
-            </div>
-        </nav>
-    )
+      <div className="flex items-center space-x-4">
+        {authState.user && (
+          <NavLink 
+            to="/profile"
+            className="text-info text-white hover:text-gray-300"
+          >
+            {authState.user?.username}
+          </NavLink>
+        )}
+        
+        <Button 
+          onClick={onLogout} 
+          className="text-white bg-red-600 hover:bg-red-700"
+        >
+          Logout
+        </Button>
+      </div>
+    </nav>
+  );
 };
