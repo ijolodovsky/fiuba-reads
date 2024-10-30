@@ -44,7 +44,7 @@ export default function BookProfile() {
     fetchBookData();
   }, [isbn]);
 
-  if (loading) return <div className="text-center">Loading...</div>;
+  if (loading) return <div className=" min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12 text-center">Loading...</div>;
   if (error) return <div cSearchlassName="text-center text-red-500">{error}</div>;
   if (!bookData) return null;
 
