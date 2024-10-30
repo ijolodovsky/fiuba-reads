@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 import { AuthContext } from '../../auth/context/AuthContext';
 import { useNavigate } from 'react-router-dom'; // Asegúrate de importar useNavigate
 import image from '../../assets/profile.webp';
