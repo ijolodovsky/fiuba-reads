@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 import './homePage.css';
 import bookBlueImage from '../../assets/book_blue.svg';
@@ -13,6 +14,7 @@ import placeholder from '../../assets/placeholder.svg';
 export const HomePage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [books, setBooks] = useState([]);
+  const navigate = useNavigate(); // Para la navegación
 
   const fetchBooks = async () => {
     const { data, error } = await supabase
@@ -22,7 +24,6 @@ export const HomePage = () => {
     if (error) {
       console.error("Error fetching books:", error);
     } else {
-      console.log(data);
       setBooks(data);
     }
   };
@@ -58,7 +59,9 @@ export const HomePage = () => {
             <TooltipProvider key={book.id}>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Card className="group relative overflow-hidden transition-all duration-300 ease-in-out hover:shadow-lg hover:-translate-y-1">
+                  <Card 
+                    className="group relative overflow-hidden transition-all duration-300 ease-in-out hover:shadow-lg hover:-translate-y-1"
+                  >
                     <CardContent className="p-0">
                       <img
                         src={book.cover_image_url ? book.cover_image_url : placeholder}
@@ -66,7 +69,12 @@ export const HomePage = () => {
                         className="w-full h-auto object-cover aspect-[2/3]"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-amber-900 to-transparent opacity-0 group-hover:opacity-70 transition-opacity duration-300 d-flex justify-content-center"></div>
-                      <Button variant="secondary" size="sm" className="absolute bottom-2 left-1/2 transform -translate-x-1/2 group-hover:opacity-100 transition-opacity duration-300">
+                      <Button 
+                        variant="secondary" 
+                        size="sm" 
+                        className="absolute bottom-2 left-1/2 transform -translate-x-1/2 group-hover:opacity-100 transition-opacity duration-300"
+                        onClick={() => navigate(`/book/${book.isbn}`)} // Navega usando el isbn
+                      >
                         Ver detalles
                       </Button>
                     </CardContent>

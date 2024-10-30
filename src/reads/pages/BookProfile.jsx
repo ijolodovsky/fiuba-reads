@@ -1,43 +1,67 @@
-import React, { useState } from 'react'
-import { Star, Clock, BookOpen, User } from 'lucide-react'
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import React, { useState, useEffect } from 'react';
+import { Star, Clock } from 'lucide-react';
+import { Button, Card, CardContent, Badge, Avatar, AvatarFallback, AvatarImage } from "../../ui/components";
+import { supabase } from '../../utils/supabase-client';
+import { useParams } from 'react-router-dom';
 
 const defaultProps = {
-  title: "El nombre del viento",
-  author: "Patrick Rothfuss",
-  coverImage: "/placeholder.svg?height=400&width=300",
-  genre: "Fantasía",
-  publicationDate: "2007",
-  rating: 4.5,
-  synopsis: "El nombre del viento es una novela de fantasía épica, primera entrega de la trilogía Crónica del asesino de reyes. La historia sigue a Kvothe, un legendario mago, músico y ladrón, mientras narra su vida a un cronista.",
   reviews: [
-    { id: 1, user: "Ana García", avatar: "/placeholder.svg", rating: 5, comment: "Una obra maestra de la fantasía moderna. La narrativa es cautivadora y los personajes son inolvidables." },
-    { id: 2, user: "Carlos Rodríguez", avatar: "/placeholder.svg", rating: 4, comment: "Una historia fascinante con un sistema de magia único. Aunque a veces el ritmo es lento, vale la pena la lectura." }
+    { id: 1, user: "Ana García", avatar: "/placeholder.svg", rating: 5, comment: "Una obra maestra de la fantasía moderna." },
+    { id: 2, user: "Carlos Rodríguez", avatar: "/placeholder.svg", rating: 4, comment: "Una historia fascinante con un sistema de magia único." }
   ]
-}
+};
 
-export default function BookProfile(props) {
-  const { 
+export default function BookProfile() {
+  const { isbn } = useParams(); // Extrae el isbn de la URL
+  const [bookData, setBookData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { reviews } = defaultProps;
+
+  const fetchBookData = async () => {
+    console.log('ISBN:', isbn);
+
+    const { data, error } = await supabase
+      .from('books')
+      .select('title, author, published_date, description, genre, page_count, cover_image_url, rating')
+      .eq('isbn', isbn);
+
+    if (error) {
+      console.error("Error fetching book data:", error);
+      setError('Error fetching book data');
+    } else if (data.length > 0) {
+      setBookData(data[0]); // Toma el primer libro si hay varios resultados
+    } else {
+      setError('No book found');
+    }
+
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchBookData();
+  }, [isbn]);
+
+  if (loading) return <div className="text-center">Loading...</div>;
+  if (error) return <div className="text-center text-red-500">{error}</div>;
+  if (!bookData) return null;
+
+  const {
     title,
     author,
-    coverImage,
+    published_date,
+    description,
     genre,
-    publicationDate,
+    page_count,
+    cover_image_url,
     rating,
-    synopsis,
-    reviews
-  } = { ...defaultProps, ...props }
-
-  const [showFullSynopsis, setShowFullSynopsis] = useState(false)
+  } = bookData;
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid md:grid-cols-3 gap-8">
         <div className="md:col-span-1">
-          <img src={coverImage} alt={`Portada de ${title}`} className="w-full rounded-lg shadow-lg" />
+          <img src={cover_image_url} alt={`Portada de ${title}`} className="w-48 h-auto rounded-lg shadow-lg" />
         </div>
         <div className="md:col-span-2 space-y-6">
           <h1 className="text-4xl font-bold">{title}</h1>
@@ -46,7 +70,7 @@ export default function BookProfile(props) {
             <Badge variant="secondary">{genre}</Badge>
             <div className="flex items-center">
               <Clock className="w-4 h-4 mr-1" />
-              <span>{publicationDate}</span>
+              <span>{new Date(published_date).getFullYear()}</span>
             </div>
             <div className="flex items-center">
               <Star className="w-4 h-4 mr-1 text-yellow-400" />
@@ -55,14 +79,7 @@ export default function BookProfile(props) {
           </div>
           <div>
             <h2 className="text-2xl font-semibold mb-2">Sinopsis</h2>
-            <p className={`text-muted-foreground ${showFullSynopsis ? '' : 'line-clamp-3'}`}>
-              {synopsis}
-            </p>
-            {synopsis.length > 150 && (
-              <Button variant="link" onClick={() => setShowFullSynopsis(!showFullSynopsis)}>
-                {showFullSynopsis ? 'Leer menos' : 'Leer más'}
-              </Button>
-            )}
+            <p className="text-muted-foreground">{description}</p>
           </div>
         </div>
       </div>
@@ -70,7 +87,7 @@ export default function BookProfile(props) {
         <h2 className="text-2xl font-semibold mb-4">Reseñas de lectores</h2>
         <div className="space-y-6">
           {reviews.map((review) => (
-            <Card key={review.id}>
+            <Card key={review.id} className="border rounded-lg shadow-md">
               <CardContent className="p-6">
                 <div className="flex items-center space-x-4 mb-4">
                   <Avatar>
@@ -81,11 +98,7 @@ export default function BookProfile(props) {
                     <p className="font-semibold">{review.user}</p>
                     <div className="flex items-center">
                       {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`w-4 h-4 ${i < review.rating ? 'text-yellow-400' : 'text-gray-300'}`}
-                          fill="currentColor"
-                        />
+                        <Star key={i} className={`w-4 h-4 ${i < review.rating ? 'text-yellow-400' : 'text-gray-300'}`} fill="currentColor" />
                       ))}
                     </div>
                   </div>
@@ -97,5 +110,5 @@ export default function BookProfile(props) {
         </div>
       </div>
     </div>
-  )
+  );
 }
