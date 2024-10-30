@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { supabase } from '../../utils/supabase-client';
 import { useNavigate } from 'react-router-dom';
-import './LoginPage.css';
+import { Button } from "@/components/ui/button";
+import './styles.css';
 
 const capitalize = (str) => {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
@@ -85,13 +86,13 @@ export const RegisterPage = () => {
       <div className="image-side"></div>
       <div className="form-side">
         <div className="cont">
-          <h2 className="mb-4">Registro</h2>
-          {errorMessage && <p className="text-danger">{errorMessage}</p>}
+          <h2 className="mb-4 text-xl font-bold text-center">Registro</h2>
+          {errorMessage && <p className="text-red-500">{errorMessage}</p>}
           <form onSubmit={handleSubmit}>
-            <div className="mb-3">
+            <div className="mb-4">
               <input
                 type="email"
-                className="form-control"
+                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring"
                 name="email"
                 placeholder="Email"
                 value={formData.email}
@@ -99,10 +100,10 @@ export const RegisterPage = () => {
                 required
               />
             </div>
-            <div className="mb-3">
+            <div className="mb-4">
               <input
                 type="password"
-                className="form-control"
+                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring"
                 name="password"
                 placeholder="Contraseña"
                 value={formData.password}
@@ -110,10 +111,10 @@ export const RegisterPage = () => {
                 required
               />
             </div>
-            <div className="mb-3">
+            <div className="mb-4">
               <input
                 type="text"
-                className="form-control"
+                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring"
                 name="username"
                 placeholder="Nombre de usuario"
                 value={formData.username}
@@ -121,10 +122,10 @@ export const RegisterPage = () => {
                 required
               />
             </div>
-            <div className="mb-3">
+            <div className="mb-4">
               <input
                 type="text"
-                className="form-control"
+                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring"
                 name="firstName"
                 placeholder="Nombre"
                 value={formData.firstName}
@@ -132,10 +133,10 @@ export const RegisterPage = () => {
                 required
               />
             </div>
-            <div className="mb-3">
+            <div className="mb-4">
               <input
                 type="text"
-                className="form-control"
+                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring"
                 name="lastName"
                 placeholder="Apellido"
                 value={formData.lastName}
@@ -143,10 +144,10 @@ export const RegisterPage = () => {
                 required
               />
             </div>
-            <div className="mb-3">
+            <div className="mb-4">
               <input
                 type="number"
-                className="form-control"
+                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring"
                 name="age"
                 placeholder="Edad"
                 value={formData.age}
@@ -154,10 +155,10 @@ export const RegisterPage = () => {
                 required
               />
             </div>
-            <div className="mb-3">
+            <div className="mb-4">
               <select
                 name="role"
-                className="form-select form-control"
+                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring"
                 value={formData.role}
                 onChange={handleChange}
               >
@@ -165,11 +166,11 @@ export const RegisterPage = () => {
                 <option value="escritor">Escritor</option>
               </select>
             </div>
-            <button type="submit" className="btn btn-primary">Registrarse</button>
+            <Button type="submit" className="w-full btn btn-primary">Registrarse</Button>
           </form>
-          <div className="mt-3">
-            <span className="text-danger">¿Ya tenés una cuenta? </span>
-            <button className="btn btn-primary" onClick={onLogin}>Iniciar sesión</button>
+          <div className="mt-3 text-center">
+            <span className="text-red-500">¿Ya tenés una cuenta? </span>
+            <Button className="btn btn-primary" onClick={onLogin}>Iniciar sesión</Button>
           </div>
         </div>
       </div>

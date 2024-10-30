@@ -1,8 +1,9 @@
 import React, { useContext, useState } from 'react';
 import { supabase } from '../../utils/supabase-client';
 import { useNavigate } from 'react-router-dom';
+import { Button } from "@/components/ui/button";
 import { AuthContext } from '../context';
-import './LoginPage.css';
+import './styles.css';
 
 export const LoginPage = () => {
   const { login } = useContext(AuthContext);
@@ -53,13 +54,13 @@ export const LoginPage = () => {
       <div className="form-side">
         <div className="cont">
           <h2 className="mb-4">Iniciar sesión</h2>
-          {errorMessage && <p className="text-danger">{errorMessage}</p>}
-          {successMessage && <p className="text-success">{successMessage}</p>}
+          {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+          {successMessage && <p className="text-green-500">{successMessage}</p>}
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <input
                 type="email"
-                className="form-control"
+                className="form-control w-full px-4 py-2 border rounded-md focus:outline-none focus:ring"
                 name="email"
                 placeholder="Email"
                 value={formData.email}
@@ -70,7 +71,7 @@ export const LoginPage = () => {
             <div className="mb-3">
               <input
                 type="password"
-                className="form-control"
+                className="form-control w-full px-4 py-2 border rounded-md focus:outline-none focus:ring"
                 name="password"
                 placeholder="Contraseña"
                 value={formData.password}
@@ -78,11 +79,11 @@ export const LoginPage = () => {
                 required
               />
             </div>
-            <button type="submit" className="btn btn-primary">Iniciar sesión</button>
+            <Button type="submit" className="btn btn-primary"> Iniciar sesión </Button>
           </form>
           <div className="mt-3">
-            <span className="text-danger">¿No tenés una cuenta?</span>
-            <button className="btn btn-primary" onClick={onRegister}>Registrate</button>
+            <span className="text-red-500">¿No tenés una cuenta?</span>
+            <Button className="btn btn-primary" onClick={onRegister}>Registrate</Button>
           </div>
         </div>
       </div>

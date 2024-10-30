@@ -54,7 +54,7 @@
     display: block;
   }
 
-  button {
+  .button {
     background-color: #4D426A !important;
     color: whitesmoke !important;
   }
