@@ -3,3 +3,8 @@
     align-items: center;
     justify-content: space-between;
 }
+
+.btn {
+    background-color: #4D426A !important;
+    color: whitesmoke !important;
+}

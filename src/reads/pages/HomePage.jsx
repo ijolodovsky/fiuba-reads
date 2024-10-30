@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react"
-// import Image from "next/image"
 import { supabase } from '../../utils/supabase-client'
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
@@ -69,7 +68,7 @@ export const HomePage = () => {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Card 
-                    className="group relative overflow-hidden transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-2 bg-gray-800 border-2 border-blue-500 rounded-lg"
+                    className="group relative overflow-hidden transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-2 bg-gray-800 border-2 border-blue-500 rounded-lg mb-3"
                   >
                     <CardContent className="p-0">
                       <div className="relative aspect-[2/3] w-full">
@@ -78,11 +77,11 @@ export const HomePage = () => {
                           alt={book.title}
                           className="rounded-t-lg object-cover w-full h-full"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-blue-900 to-transparent opacity-0 group-hover:opacity-90 transition-opacity duration-300 flex items-end justify-center pb-4">
+                        <div className="absolute inset-0 bg-gradient-to-t from-blue-900 to-transparent opacity-0 group-hover:opacity-90 transition-opacity duration-300 flex items-end justify-center pb-4 mt-3">
                           <Button 
                             variant="secondary" 
                             size="sm" 
-                            className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-blue-600 hover:bg-blue-700 text-white"
+                            className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-blue-600 hover:bg-blue-700 text-white mt-4 btn"
                             onClick={() => navigate(`/book/${book.isbn}`)}
                           >
                             Explorar <ChevronRight className="ml-2 h-4 w-4" />
@@ -90,7 +89,7 @@ export const HomePage = () => {
                         </div>
                       </div>
                     </CardContent>
-                    <CardFooter className="flex justify-center flex-col items-center p-2 bg-gray-800">
+                    <CardFooter className="flex justify-center flex-col items-center p-2 bg-gray-800 mt-4">
                       <p className="line-clamp-2 text-sm text-center font-medium text-blue-300">{book.title}</p>
                     </CardFooter>
                   </Card>

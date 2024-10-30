@@ -36,7 +36,7 @@ export const ProfilePage = () => {
                 </div>
                 {user?.role === 'escritor' && (
                   <Button 
-                    className="mt-4 bg-blue-600 hover:bg-blue-700 text-white"
+                    className="mt-4 bg-blue-600 hover:bg-blue-700 text-white btn"
                     onClick={handleAddBook}
                   >
                     <BookPlus className="mr-2 h-4 w-4" />

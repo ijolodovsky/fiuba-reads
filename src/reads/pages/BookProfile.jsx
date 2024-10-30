@@ -40,6 +40,7 @@ export default function BookProfile() {
   };
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     fetchBookData();
   }, [isbn]);
 
@@ -84,7 +85,7 @@ export default function BookProfile() {
               </div>
             </div>
             <div className="bg-gray-800 p-6 rounded-lg border border-blue-500 shadow-lg">
-              <h2 className="text-2xl font-semibold mb-2 text-blue-400">Sinopsis</h2>
+              <h2 className="text-2xl font-semibold mb-2 text-blue-400 text-left">Sinopsis</h2>
               <p className="text-blue-200">{description}</p>
             </div>
           </div>
