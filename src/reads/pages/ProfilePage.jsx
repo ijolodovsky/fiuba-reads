@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
 import { AuthContext } from '../../auth/context/AuthContext';
-import { useNavigate } from 'react-router-dom'; // Asegúrate de importar useNavigate
+import { useNavigate } from 'react-router-dom'; 
 import image from '../../assets/profile.webp';
 
 export const ProfilePage = () => {
   const { authState: { user } } = useContext(AuthContext);
-  const navigate = useNavigate(); // Usa useNavigate en lugar de history
+  const navigate = useNavigate(); 
 
   const handleAddBook = () => {
     navigate('/add-book');
@@ -19,7 +19,7 @@ export const ProfilePage = () => {
         </div>
         <div className="card-body">
           <div className="row">
-            <div className="col-md-4 text-center">
+            <div className="col-md-4 d-flex flex-column align-items-center text-center">
               <img 
                 src={user?.profilePicture || image}
                 alt="Profile"

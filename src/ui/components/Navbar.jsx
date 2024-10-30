@@ -17,7 +17,7 @@ export const Navbar = () => {
       <div className="flex items-center">
         <Link 
           to="/" 
-          className="text-white text-xl font-semibold mr-4"
+          className="text-white text-xl font-semibold mr-4 text-decoration-none"
         >
           FIUBA READS
         </Link>
@@ -26,7 +26,7 @@ export const Navbar = () => {
           <NavLink
             to="/"
             className={({ isActive }) =>
-              `text-white hover:text-gray-300 ${isActive ? 'underline' : ''}`
+              `text-white hover:text-gray-300 text-decoration-none ${isActive ? 'underline' : ''}`
             }
           >
             Home

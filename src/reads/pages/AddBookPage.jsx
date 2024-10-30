@@ -1,8 +1,10 @@
-import { useState, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../auth/context/AuthContext'; // Asegúrate de tener el contexto de autenticación
 import { supabase } from '../../utils/supabase-client';
 import './AddBookPage.css';
+import bookBlueImage from '../../assets/book_blue.svg';
+import bookRedImage from '../../assets/book_red.svg';
 
 export const AddBookPage = () => {
   const { authState: { user } } = useContext(AuthContext);
@@ -33,7 +35,14 @@ export const AddBookPage = () => {
   };
 
   return (
-    <form className="add-book-form" onSubmit={handleSubmit}>
+    <div className="container mb-3">
+    <header className="header">
+          <img src={bookBlueImage} alt="Book Blue" className="book-image"/>
+          <img src={bookRedImage} alt="Book Red" className="book-image"/>
+        </header>
+    <h2 className='text-center'>Agregá tus libros a FIUBA Reads</h2>
+    <p className='text-center'>Completá el siguiente formulario para agregar un libro a la plataforma. <br />Solo podés subir libros de tu autoría :)</p>
+    <form className="add-book-form mb-4" onSubmit={handleSubmit}>
       <label>
         Título
         <input type="text" name="title" value={bookData.title} onChange={handleChange} required />
@@ -81,5 +90,6 @@ export const AddBookPage = () => {
 
       <button type="submit">Agregar Libro</button>
     </form>
+    </div>
   );
 };

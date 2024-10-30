@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from '../../utils/supabase-client';
-import { Search} from 'lucide-react';
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardFooter, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Button } from "@/components/ui/button"
-
+import { Button } from "@/components/ui/button";
 
 import './homePage.css';
 import bookBlueImage from '../../assets/book_blue.svg';
@@ -13,17 +11,15 @@ import bookRedImage from '../../assets/book_red.svg';
 import placeholder from '../../assets/placeholder.svg';
 
 export const HomePage = () => {
-
   const [searchTerm, setSearchTerm] = useState("");
   const [books, setBooks] = useState([]);
-  
+
   const fetchBooks = async () => {
     const { data, error } = await supabase
       .from('books')
       .select('*');
 
     if (error) {
-      //TODO: Poner en pantalla que hubo un error buscando o si no hay libros que aparezca que no hay libros
       console.error("Error fetching books:", error);
     } else {
       console.log(data);
@@ -35,11 +31,10 @@ export const HomePage = () => {
     fetchBooks();
   }, []);
 
-
   const filteredBooks = books.filter(book =>
     book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     book.author.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  );
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -49,7 +44,6 @@ export const HomePage = () => {
           <img src={bookRedImage} alt="Book Red" className="book-image"/>
         </header>
         <div className="relative w-full max-w-md mx-auto mb-8">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-amber-900" />
           <Input
             type="search"
             placeholder="Buscar libros..."
@@ -67,17 +61,19 @@ export const HomePage = () => {
                   <Card className="group relative overflow-hidden transition-all duration-300 ease-in-out hover:shadow-lg hover:-translate-y-1">
                     <CardContent className="p-0">
                       <img
-                        src={(book.cover_image_url) ? book.cover_image_url : placeholder}
+                        src={book.cover_image_url ? book.cover_image_url : placeholder}
                         alt={book.title}
                         className="w-full h-auto object-cover aspect-[2/3]"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-amber-900 to-transparent opacity-0 group-hover:opacity-70 transition-opacity duration-300"></div>
-                      <Button variant="secondary" size="sm" className="absolute bottom-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="absolute inset-0 bg-gradient-to-t from-amber-900 to-transparent opacity-0 group-hover:opacity-70 transition-opacity duration-300 d-flex justify-content-center"></div>
+                      <Button variant="secondary" size="sm" className="absolute bottom-2 left-1/2 transform -translate-x-1/2 group-hover:opacity-100 transition-opacity duration-300">
                         Ver detalles
                       </Button>
                     </CardContent>
-                    <CardFooter className="flex justify-between">
-                      <CardDescription>{book.title}</CardDescription>
+                    <CardFooter className="flex justify-center flex-col items-center">
+                      <div className="mt-2 pb-3 text-center">
+                        <p className="line-clamp-2 text-sm">{book.title}</p>
+                      </div>
                     </CardFooter>
                   </Card>
                 </TooltipTrigger>
@@ -91,5 +87,5 @@ export const HomePage = () => {
         </div>
       </main>
     </div>
-  )
+  );
 };
