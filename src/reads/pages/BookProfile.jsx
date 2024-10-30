@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Swal from 'sweetalert2';
 import { Star, Clock } from 'lucide-react';
 import { Card, CardContent, Badge, Avatar, AvatarFallback, AvatarImage } from "../../ui/components";
 import { supabase } from '../../utils/supabase-client';
 import { useParams } from 'react-router-dom';
-import { BookOpen, User } from "lucide-react";
+import { BookOpen, User, BookPlus } from "lucide-react";
+import { AuthContext } from '../../auth/context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const defaultProps = {
   reviews: [
@@ -19,6 +21,8 @@ export default function BookProfile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { reviews } = defaultProps;
+  const { authState: { user } } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const fetchBookData = async () => {
     console.log('ISBN:', isbn);
@@ -72,6 +76,12 @@ export default function BookProfile() {
     rating,
   } = bookData;
 
+  const handleModifyBook = () => {
+    navigate(`/modify-book/${isbn}`);
+  };
+
+  const fullName = `${user?.firstName} ${user?.lastName}`;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12">
       <div className="container mx-auto px-4">
@@ -101,12 +111,22 @@ export default function BookProfile() {
               <h2 className="text-2xl font-semibold mb-2 text-blue-400 text-left">Sinopsis</h2>
               <p className="text-blue-200">{description}</p>
             </div>
-            <button 
-              onClick={handleBuyBook}
-              className="mt-6 px-4 py-2 bg-purple-600 text-white rounded-lg shadow-md hover:bg-purple-700 transition-colors duration-300"
-            >
-              Comprar libro
-            </button>
+            <div className="mt-6 flex items-center space-x-4">
+              <button
+                onClick={handleBuyBook}
+                className="mt-6 px-4 py-2 bg-purple-600 text-white rounded-lg shadow-md hover:bg-purple-700 transition-colors duration-300"
+              >
+                Comprar libro
+              </button>
+              {user?.role === 'escritor' && (
+                <button
+                  className="mt-6 px-4 py-2 bg-purple-600 text-white rounded-lg shadow-md hover:bg-purple-700 transition-colors duration-300"
+                  onClick={handleModifyBook}
+                >
+                  Modificar Libro
+                </button>
+              )}
+            </div>
           </div>
         </div>
         <div className="mt-12">
