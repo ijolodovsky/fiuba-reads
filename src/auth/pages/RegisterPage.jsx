@@ -3,6 +3,10 @@ import { supabase } from '../../utils/supabase-client';
 import { useNavigate } from 'react-router-dom';
 import './LoginPage.css';
 
+const capitalize = (str) => {
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+};
+
 export const RegisterPage = () => {
   const [formData, setFormData] = useState({
     email: '',
@@ -23,6 +27,9 @@ export const RegisterPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const formattedFirstName = capitalize(formData.firstName);
+    const formattedLastName = capitalize(formData.lastName);
 
     const { data: existingUser, error: userCheckError } = await supabase
       .from('users')
@@ -47,8 +54,8 @@ export const RegisterPage = () => {
           email: formData.email,
           password: formData.password,
           username: formData.username,
-          first_name: formData.firstName,
-          last_name: formData.lastName,
+          first_name: formattedFirstName,
+          last_name: formattedLastName,
           age: formData.age,
           role: formData.role,
           profile_picture: '',
