@@ -40,15 +40,12 @@ export const Navbar = () => {
 
             <div className="navbar-collapse collapse w-100 order-3 dual-collapse2 d-flex justify-content-end">
                 <ul className="navbar-nav ml-auto">
-                <NavLink 
-                        className="nav-item nav-link text-info" 
-                        to="/profile"
-                    >
+                    <button className="nav-item nav-link btn mx-2" onClick={() => navigate('/profile')}>
                         {authState.user?.username}
-                    </NavLink>
-                    <button className="nav-item nav-link btn"
-                    onClick={onLogout}>
-                    Logout
+                    </button>
+                    <button className="nav-item nav-link btn mx-2"
+                        onClick={onLogout}>
+                        Cerrar sesión
                     </button>
                 </ul>
             </div>

@@ -5,7 +5,7 @@
   }
   
   .book-image {
-    width: 300px; /* Ajusta el tamaño de las imágenes */
+    width: 100px; /* Ajusta el tamaño de las imágenes */
     height: auto; /* Mantiene la proporción de las imágenes */
     margin: 0 10px; /* Añade un margen entre las imágenes */
   }
