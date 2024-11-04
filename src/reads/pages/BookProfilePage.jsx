@@ -4,9 +4,9 @@ import { Star, Clock } from 'lucide-react';
 import { Card, CardContent, Badge, Avatar, AvatarFallback, AvatarImage } from "../../ui/components";
 import { supabase } from '../../utils/supabase-client';
 import { useParams } from 'react-router-dom';
-import { BookOpen, User, BookPlus } from "lucide-react";
+import { BookOpen, User } from "lucide-react";
 import { AuthContext } from '../../auth/context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const defaultProps = {
   reviews: [
@@ -15,7 +15,7 @@ const defaultProps = {
   ]
 };
 
-export default function BookProfile() {
+export const BookProfile = () => {
   const { isbn } = useParams(); // Extrae el isbn de la URL
   const [bookData, setBookData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -62,7 +62,7 @@ export default function BookProfile() {
   };
 
   if (loading) return <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12 text-center">Loading...</div>;
-  if (error) return <div className="text-center text-red-500">{error}</div>;
+  if (error) return <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12 text-center text-center text-red-500">{error}</div>;
   if (!bookData) return null;
 
   const {
@@ -142,7 +142,10 @@ export default function BookProfile() {
                       <AvatarFallback className="bg-blue-600 text-white"><User /></AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="font-semibold text-blue-300">{review.user}</p>
+                    <Link 
+                      to={`/user/${review.user}`}
+                      className="text-white text-xl font-semibold mr-4 text-decoration-none"
+                    ><p className="font-semibold text-blue-300">{review.user}</p> </Link>
                       <div className="flex items-center">
                         {[...Array(5)].map((_, i) => (
                           <Star key={i} className={`w-4 h-4 ${i < review.rating ? 'text-yellow-400' : 'text-gray-600'}`} fill="currentColor" />
