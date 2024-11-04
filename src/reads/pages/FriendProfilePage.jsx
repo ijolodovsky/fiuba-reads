@@ -232,7 +232,7 @@ export const FriendProfilePage = () => {
             </div>
             <div className="mt-4 ml-4">
               <Button 
-                className={`bg-blue-600 hover:bg-blue-700 text-white ${isFollowing ? 'bg-blue-500' : ''}`}
+                className={`bg-blue-600 hover:bg-blue-700 text-white ${isFollowing ? 'bg-purple-500' : ''}`}
                 onClick={handleFollowToggle}
               >
                 {isFollowing ? 'Siguiendo' : 'Seguir usuario'}
