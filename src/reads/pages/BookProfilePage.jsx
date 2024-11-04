@@ -12,8 +12,8 @@ import { useNavigate, Link } from 'react-router-dom';
 
 const defaultProps = {
   reviews: [
-    { id: 1, user: "Ana García", avatar: "/placeholder.svg", rating: 5, comment: "Una obra maestra de la fantasía moderna." },
-    { id: 2, user: "Carlos Rodríguez", avatar: "/placeholder.svg", rating: 4, comment: "Una historia fascinante con un sistema de magia único." }
+    { id: 1, username: "jtaras", avatar: "/placeholder.svg", rating: 5, comment: "Una obra maestra de la fantasía moderna." },
+    { id: 2, username: "martoabra", avatar: "/placeholder.svg", rating: 4, comment: "Una historia fascinante con un sistema de magia único." }
   ]
 };
 
@@ -140,14 +140,14 @@ export const BookProfile = () => {
                 <CardContent className="p-6 bg-gray-800 p-6 rounded-lg border border-blue-500 shadow-lg">
                   <div className="flex items-center space-x-4 mb-4">
                     <Avatar className="border-2 border-blue-500">
-                      <AvatarImage src={review.avatar} alt={review.user} />
+                      <AvatarImage src={review.avatar} alt={review.username} />
                       <AvatarFallback className="bg-blue-600 text-white"><User /></AvatarFallback>
                     </Avatar>
                     <div>
                     <Link 
-                      to={`/user/${review.user}`}
+                      to={`/users/${review.username}`}
                       className="text-white text-xl font-semibold mr-4 text-decoration-none"
-                    ><p className="font-semibold text-blue-300">{review.user}</p> </Link>
+                    ><p className="font-semibold text-blue-300">{review.username}</p> </Link>
                       <div className="flex items-center">
                         {[...Array(5)].map((_, i) => (
                           <Star key={i} className={`w-4 h-4 ${i < review.rating ? 'text-yellow-400' : 'text-gray-600'}`} fill="currentColor" />

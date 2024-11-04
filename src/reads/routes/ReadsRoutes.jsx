@@ -14,7 +14,7 @@ export const ReadsRoutes = () => {
           <Route path="add-book" element={<AddBookPage />} />
           <Route path="modify-book/:isbn" element={<ModifyBookPage />} />
           <Route path="/book/:isbn" element={<BookProfile />} />
-          <Route path="/user/:id" element={<FriendProfilePage />} />
+          <Route path="/users/:userID" element={<FriendProfilePage />} />
         </Routes> 
       </div>
     </>
