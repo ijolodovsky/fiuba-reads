@@ -118,7 +118,7 @@ export const FriendProfilePage = () => {
 
 
   const handleViewBook = (bookId) => {
-    navigate(`/book/${bookId}`);
+    navigate(`/books/${bookId}`);
   };
 
   return (

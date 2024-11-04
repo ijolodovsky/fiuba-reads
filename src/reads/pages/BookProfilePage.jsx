@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import Swal from 'sweetalert2';
-import { Star, Clock } from 'lucide-react';
+import { Star, Clock, Trash, Pencil, CircleDollarSign } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -79,8 +79,54 @@ export const BookProfile = () => {
     rating,
   } = bookData;
 
-  const handleModifyBook = () => {
-    navigate(`/modify-book/${isbn}`);
+  const handleUpdateBook = () => {
+    navigate(`/update-book/${isbn}`);
+  };
+
+  const handleDeleteBook = async () => {
+    const result = await Swal.fire({
+      title: '¿Estás seguro?',
+      text: "¡No podrás revertir esta acción!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      background: '#1f2937',
+      color: '#fff',
+      confirmButtonColor: '#e11d48',
+      cancelButtonColor: '#6b7280',
+    });
+
+    if (result.isConfirmed) {
+      const { error } = await supabase
+        .from('books')
+        .delete()
+        .eq('isbn', isbn);
+
+      if (error) {
+        Swal.fire({
+          title: 'Error',
+          text: 'No se pudo eliminar el libro.',
+          icon: 'error',
+          confirmButtonText: 'Cerrar',
+          background: '#1f2937',
+          color: '#fff',
+          confirmButtonColor: '#4f46e5',
+        });
+        console.error("Error deleting book:", error);
+      } else {
+        Swal.fire({
+          title: '¡Eliminado!',
+          text: 'El libro ha sido eliminado.',
+          icon: 'success',
+          confirmButtonText: 'Cerrar',
+          background: '#1f2937',
+          color: '#fff',
+          confirmButtonColor: '#4f46e5',
+        });
+        navigate('/');
+      }
+    }
   };
 
   const fullName = `${user?.firstName} ${user?.lastName}`;
@@ -118,17 +164,28 @@ export const BookProfile = () => {
             <div className="mt-6 flex items-center space-x-4">
               <button
                 onClick={handleBuyBook}
-                className="mt-6 px-4 py-2 bg-purple-600 text-white rounded-lg shadow-md hover:bg-purple-700 transition-colors duration-300"
+                className="mt-6 px-4 py-2 bg-purple-600 text-white rounded-lg shadow-md hover:bg-purple-700 transition-colors duration-300 flex items-center"
               >
+                <CircleDollarSign className="w-4 h-4 mr-1" />
                 Comprar libro
               </button>
               {isAuthor && (
-                <button
-                  className="mt-6 px-4 py-2 bg-purple-600 text-white rounded-lg shadow-md hover:bg-purple-700 transition-colors duration-300"
-                  onClick={handleModifyBook}
+                <>
+                  <button
+                    className="mt-6 px-4 py-2 bg-purple-600 text-white rounded-lg shadow-md hover:bg-purple-700 transition-colors duration-300 flex items-center"
+                    onClick={handleUpdateBook}
+                  >
+                    <Pencil className="w-4 h-4 mr-1" />
+                    Modificar Libro
+                  </button>
+                  <button
+                  className="mt-6 px-4 py-2 text-white rounded-lg shadow-md bg-red-600 hover:bg-red-700 transition-colors duration-300 flex items-center"
+                  onClick={handleDeleteBook}
                 >
-                  Modificar Libro
+                  <Trash className="w-4 h-4 mr-1" />
+                  Eliminar Libro
                 </button>
+              </>
               )}
             </div>
           </div>
