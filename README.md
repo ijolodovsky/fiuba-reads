@@ -7,7 +7,24 @@ ya con eso vamos a poder correr la app con npm start
 ## Arq de la app
 
 Dividido en dos partes principales: Auth y Reads. Auth donde tendremos todo lo relacionado con el login y demas.
+Tenemos en la raiz del proyecto una carpeta de `components/ui` que menciono a continuacion.
 
+
+## Componentes UI
+
+Utilizamos la lib [shadcn](https://ui.shadcn.com/docs/components). Para agregar un componente estamos usando la version `0.8.0` ya que la ultima tiene un [bug](https://github.com/shadcn-ui/ui/discussions/4685) para utilizarla con CRA (create react app). Por lo tanto, para agregar un componente debemo ejecutar el siguiente comando en la raiz del proyecto `npx shadcn-ui@0.8.0 add <componente>`. Luego, vamos a ver que dentro de `src` nos creo una carpeta `components/ui` pero el componente que nos agrego debemos pasarlo a la carpeta `components/ui` que esta en la raiz del proyecto. Luego, debemos reemplazar el import `import { cn } from "src/utils"` por este `import { cn } from "../../lib/utils"`.
+
+### Como hacemos para utilizarlo dentro de nuestra page ? 
+Importamos los componentes de la siguiente manera:
+```js
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+```
+
+Seguimos la siguiente [guia](https://medium.com/@thomas.theiner/enhance-your-create-react-app-with-shadcn-ui-e4e968788124)
+
+Por otro lado, tenemos dentro de `src` la carpeta de `ui/components` que es para poner componentes mas "generales" como es el navbar pero no deben estar ahi aquellos que provienen de la lib.
 
 # Getting Started with Create React App
 
