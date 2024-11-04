@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../../auth/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -42,12 +43,14 @@ const friend = {
 };
 
 export const FriendProfilePage = () => {
+  const { authState: { user } } = useContext(AuthContext);
   const navigate = useNavigate();
   const { userID } = useParams();
   const [userData, setUserData] = useState(null);
   const [booksData, setBooksData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isFollowing, setIsFollowing] = useState(false);
 
   const fetchBookData = async (firstName, lastName) => {
     const { data, error } = await supabase
@@ -98,6 +101,58 @@ export const FriendProfilePage = () => {
     }
     }
   }, [userData]);
+
+  useEffect(() => {
+    const checkFollowingStatus = async () => {
+      const { data, error } = await supabase
+        .from('follows')
+        .select('*')
+        .eq('follower_id', user.username)
+        .eq('followed_id', userID);
+      
+      if (error) {
+        console.error("Error checking following status:", error);
+      } else {
+        setIsFollowing(data.length > 0);
+      }
+    };
+  
+    if (userData) {
+      checkFollowingStatus();
+    }
+  }, [userData]);  
+
+  const handleFollowToggle = async () => {
+    if (isFollowing) {
+      // Dejar de seguir al usuario
+      const { error } = await supabase
+        .from('follows')
+        .delete()
+        .eq('follower_id', user.username)
+        .eq('followed_id', userID);
+  
+      if (error) {
+        console.error("Error unfollowing user:", error);
+      } else {
+        setIsFollowing(false);
+      }
+    } else {
+      // Seguir al usuario
+      const { error } = await supabase
+        .from('follows')
+        .insert({
+          follower_id: user.username,
+          followed_id: userID,
+        });
+  
+      if (error) {
+        console.error("Error following user:", error);
+      } else {
+        setIsFollowing(true);
+      }
+    }
+  };
+  
 
   if (loading) return <LoadingSpinner />;
   if (error) return <NotFound />;
@@ -175,7 +230,14 @@ export const FriendProfilePage = () => {
                 </ul>
               </div>
             </div>
-
+            <div className="mt-4 ml-4">
+              <Button 
+                className={`bg-blue-600 hover:bg-blue-700 text-white ${isFollowing ? 'bg-blue-500' : ''}`}
+                onClick={handleFollowToggle}
+              >
+                {isFollowing ? 'Siguiendo' : 'Seguir usuario'}
+              </Button>
+            </div>
             <div className="mt-8">
               <h3 className="text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
                 Reseñas de Libros
