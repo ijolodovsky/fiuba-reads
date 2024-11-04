@@ -1,7 +1,7 @@
 import React from "react";
 import { Route, Routes } from 'react-router-dom';
 import { Navbar } from '../../ui/components';
-import { HomePage, ProfilePage, AddBookPage, BookProfile } from '../pages';
+import { HomePage, ProfilePage, AddBookPage, BookProfile, ModifyBookPage } from '../pages';
 
 export const ReadsRoutes = () => {
   return (
@@ -12,6 +12,7 @@ export const ReadsRoutes = () => {
           <Route path="/" element={<HomePage />} />
           <Route path="profile" element={<ProfilePage />} />
           <Route path="add-book" element={<AddBookPage />} />
+          <Route path="modify-book/:isbn" element={<ModifyBookPage />} />
           <Route path="/book/:isbn" element={<BookProfile />} />
         </Routes> 
       </div>

@@ -43,7 +43,7 @@ export const LoginPage = () => {
       setErrorMessage('');
       console.log('User logged in successfully', data);
       login(data);
-      navigate('/profile', { replace: true });
+      navigate('/', { replace: true });
     }
   };
 

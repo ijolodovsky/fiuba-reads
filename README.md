@@ -1,3 +1,14 @@
+## Primera instalacion
+
+Crear el .env en el root del projecto (/fiuba-reads) y poner la property REACT_APP_SUPABASE_KEY= con la api key de supabase
+hacer npm install
+ya con eso vamos a poder correr la app con npm start
+
+## Arq de la app
+
+Dividido en dos partes principales: Auth y Reads. Auth donde tendremos todo lo relacionado con el login y demas.
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
@@ -71,6 +82,3 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 
 
 
-## Arq de la app
-
-Dividido en dos partes principales: Auth y Reads. Auth donde tendremos todo lo relacionado con el login y demas.
