@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
 import Swal from 'sweetalert2';
 import { Star, Clock } from 'lucide-react';
-import { Card, CardContent, Badge, Avatar, AvatarFallback, AvatarImage } from "../../ui/components";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from '../../utils/supabase-client';
 import { useParams } from 'react-router-dom';
 import { BookOpen, User } from "lucide-react";
