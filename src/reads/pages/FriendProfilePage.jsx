@@ -46,8 +46,24 @@ export const FriendProfilePage = () => {
   const navigate = useNavigate();
   const { userID } = useParams();
   const [userData, setUserData] = useState(null);
+  const [booksData, setBooksData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const fetchBookData = async (firstName, lastName) => {
+    const { data, error } = await supabase
+      .from('books')
+      .select('title, author, published_date, isbn')
+      .eq('author', `${firstName} ${lastName}`);
+  
+    if (error) {
+      setError('Error fetching book data');
+    } else if (data.length > 0) {
+      setBooksData(data);
+    }
+  
+    setLoading(false);
+  };
 
 
   const fetchUserData = async () => {
@@ -55,17 +71,18 @@ export const FriendProfilePage = () => {
       .from('users')
       .select('*')
       .eq('username', userID);
-
+  
     if (error) {
-      console.error("Error fetching book data:", error);
-      setError('Error fetching book data');
+      console.error("Error fetching user data:", error);
+      setError('Error fetching user data');
     } else if (data.length > 0) {
-      console.log(data[0]);
-      setUserData(data[0]);
+      const user = data[0];
+      setUserData(user);
+      await fetchBookData(user.first_name, user.last_name);
     } else {
       setError('No user found');
     }
-
+  
     setLoading(false);
   };
 
@@ -73,6 +90,12 @@ export const FriendProfilePage = () => {
     window.scrollTo(0, 0);
     fetchUserData();
   }, [userID]);
+  
+  useEffect(() => {
+    if (userData) {
+      fetchBookData();
+    }
+  }, [userData]);
 
   if (loading) return <LoadingSpinner />;
   if (error) return <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12 text-center text-center text-red-500">{error}</div>;
@@ -87,6 +110,9 @@ export const FriendProfilePage = () => {
     email,
     profile_picture,
   } = userData;
+
+  const fullName = `${first_name} ${last_name}`;
+  const isAuthor = role === 'escritor';
 
 
   const handleViewBook = (bookId) => {
@@ -133,7 +159,7 @@ export const FriendProfilePage = () => {
                     <span>
                       <strong className="text-blue-300">Nombre:</strong>{" "}
                       <span className="text-gray-300">
-                        {first_name} {last_name}
+                        {fullName}
                       </span>
                     </span>
                   </li>
@@ -172,21 +198,21 @@ export const FriendProfilePage = () => {
               </div>
             </div>
 
-            {role === "escritor" && (
+            {isAuthor && (
               <div className="mt-8">
                 <h3 className="text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
                   Libros Escritos
                 </h3>
                 <div className="space-y-4">
-                  {friend.books.map((book) => (
-                    <Card key={book.id} className="bg-gray-700 border-blue-400">
+                  {booksData.map((book) => (
+                    <Card key={book.isbn} className="bg-gray-700 border-blue-400">
                       <CardContent className="p-4 flex justify-between items-center">
                         <div>
                           <h4 className="text-lg font-semibold text-blue-300">
                             {book.title}
                           </h4>
                           <p className="text-gray-400">
-                            Publicado en {book.publishYear}
+                            Publicado en {book.published_date}
                           </p>
                         </div>
                         <Button
