@@ -9,11 +9,11 @@ import { useParams } from 'react-router-dom';
 import { BookOpen, User } from "lucide-react";
 import { AuthContext } from '../../auth/context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
-import { LoadingSpinner } from '@/src/ui/components';
+import { LoadingSpinner, NotFound } from '@/src/ui/components';
 
 const defaultProps = {
   reviews: [
-    { id: 1, username: "jtaras", avatar: "/placeholder.svg", rating: 5, comment: "Una obra maestra de la fantasía moderna." },
+    { id: 1, username: "sarasa", avatar: "/placeholder.svg", rating: 5, comment: "Una obra maestra de la fantasía moderna." },
     { id: 2, username: "martoabra", avatar: "/placeholder.svg", rating: 4, comment: "Una historia fascinante con un sistema de magia único." }
   ]
 };
@@ -65,7 +65,7 @@ export const BookProfile = () => {
   };
 
   if (loading) return <LoadingSpinner />;
-  if (error) return <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12 text-center text-center text-red-500">{error}</div>;
+  if (error) return <NotFound />;
   if (!bookData) return null;
 
   const {
