@@ -9,6 +9,7 @@ import { useParams } from 'react-router-dom';
 import { BookOpen, User } from "lucide-react";
 import { AuthContext } from '../../auth/context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
+import { LoadingSpinner } from '@/src/ui/components';
 
 const defaultProps = {
   reviews: [
@@ -63,7 +64,7 @@ export const BookProfile = () => {
     });
   };
 
-  if (loading) return <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12 text-center">Loading...</div>;
+  if (loading) return <LoadingSpinner />;
   if (error) return <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12 text-center text-center text-red-500">{error}</div>;
   if (!bookData) return null;
 

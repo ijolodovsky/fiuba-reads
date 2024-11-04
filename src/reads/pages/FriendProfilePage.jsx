@@ -10,6 +10,7 @@ import {
 import { BookOpen, User, Mail, Calendar, Star } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../../utils/supabase-client';
+import { LoadingSpinner } from '@/src/ui/components';
 // import { AuthContext } from '../../auth/context/AuthContext';
 
 // This would typically come from your API or props
@@ -73,7 +74,7 @@ export const FriendProfilePage = () => {
     fetchUserData();
   }, [userID]);
 
-  if (loading) return <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12 text-center">Loading...</div>;
+  if (loading) return <LoadingSpinner />;
   if (error) return <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12 text-center text-center text-red-500">{error}</div>;
   if (!userData) return null;
 
