@@ -8,16 +8,17 @@ import { supabase } from '../../utils/supabase-client';
 import { useParams } from 'react-router-dom';
 import { BookOpen, User } from "lucide-react";
 import { AuthContext } from '../../auth/context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { LoadingSpinner, NotFound } from '@/src/ui/components';
 
 const defaultProps = {
   reviews: [
-    { id: 1, user: "Ana García", avatar: "/placeholder.svg", rating: 5, comment: "Una obra maestra de la fantasía moderna." },
-    { id: 2, user: "Carlos Rodríguez", avatar: "/placeholder.svg", rating: 4, comment: "Una historia fascinante con un sistema de magia único." }
+    { id: 1, username: "jtaras", avatar: "/placeholder.svg", rating: 5, comment: "Una obra maestra de la fantasía moderna." },
+    { id: 2, username: "martoabra", avatar: "/placeholder.svg", rating: 4, comment: "Una historia fascinante con un sistema de magia único." }
   ]
 };
 
-export default function BookProfile() {
+export const BookProfile = () => {
   const { isbn } = useParams(); // Extrae el isbn de la URL
   const [bookData, setBookData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -63,8 +64,8 @@ export default function BookProfile() {
     });
   };
 
-  if (loading) return <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12 text-center">Loading...</div>;
-  if (error) return <div className="text-center text-red-500">{error}</div>;
+  if (loading) return <LoadingSpinner />;
+  if (error) return <NotFound />;
   if (!bookData) return null;
 
   const {
@@ -140,11 +141,14 @@ export default function BookProfile() {
                 <CardContent className="p-6 bg-gray-800 p-6 rounded-lg border border-blue-500 shadow-lg">
                   <div className="flex items-center space-x-4 mb-4">
                     <Avatar className="border-2 border-blue-500">
-                      <AvatarImage src={review.avatar} alt={review.user} />
+                      <AvatarImage src={review.avatar} alt={review.username} />
                       <AvatarFallback className="bg-blue-600 text-white"><User /></AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="font-semibold text-blue-300">{review.user}</p>
+                    <Link 
+                      to={`/users/${review.username}`}
+                      className="text-white text-xl font-semibold mr-4 text-decoration-none"
+                    ><p className="font-semibold text-blue-300">{review.username}</p> </Link>
                       <div className="flex items-center">
                         {[...Array(5)].map((_, i) => (
                           <Star key={i} className={`w-4 h-4 ${i < review.rating ? 'text-yellow-400' : 'text-gray-600'}`} fill="currentColor" />
