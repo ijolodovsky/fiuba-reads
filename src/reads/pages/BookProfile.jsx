@@ -1,31 +1,25 @@
 import React, { useState, useEffect, useContext } from 'react';
 import Swal from 'sweetalert2';
-import { Star, Clock } from 'lucide-react';
-import { Card, CardContent, Badge, Avatar, AvatarFallback, AvatarImage } from "../../ui/components";
+import { Star, Clock, Edit, Trash2} from 'lucide-react'; // Iconos adicionales de lucide-react
+import { Card, CardContent, Badge, Avatar, AvatarFallback, AvatarImage, Button, Textarea } from "../../ui/components";
 import { supabase } from '../../utils/supabase-client';
 import { useParams } from 'react-router-dom';
 import { BookOpen, User, BookPlus } from "lucide-react";
 import { AuthContext } from '../../auth/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
-const defaultProps = {
-  reviews: [
-    { id: 1, user: "Ana García", avatar: "/placeholder.svg", rating: 5, comment: "Una obra maestra de la fantasía moderna." },
-    { id: 2, user: "Carlos Rodríguez", avatar: "/placeholder.svg", rating: 4, comment: "Una historia fascinante con un sistema de magia único." }
-  ]
-};
-
 export default function BookProfile() {
   const { isbn } = useParams(); // Extrae el isbn de la URL
   const [bookData, setBookData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { reviews } = defaultProps;
+  const [reviews, setReviews] = useState([]);
+  const [newReview, setNewReview] = useState({ content: '', rating: 0 });
+  const [editingReviewId, setEditingReviewId] = useState(null);
   const { authState: { user } } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const fetchBookData = async () => {
-    console.log('ISBN:', isbn);
 
     const { data, error } = await supabase
       .from('books')
@@ -44,10 +38,90 @@ export default function BookProfile() {
     setLoading(false);
   };
 
+  const fetchReviews = async () => {
+    const { data, error } = await supabase
+      .from('reviews')
+      .select('*')
+      .eq('book_id', isbn);
+
+    if (error) console.error("Error fetching reviews:", error);
+    else setReviews(data);
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchBookData();
+    fetchReviews();
   }, [isbn]);
+
+  const handleAddReview = async () => {
+    if (!user) {
+      Swal.fire('Debes iniciar sesión para agregar una reseña.');
+      return;
+    }
+  
+    const { data, error } = await supabase.from('reviews').insert({
+      user_id: user.id,
+      username: user.username,
+      book_id: isbn,
+      content: newReview.content,
+      rating: newReview.rating,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    });
+  
+    if (error) {
+      console.error('Error al agregar la reseña:', error);
+      return; // Salir si hay un error
+    }
+  
+    // Asegúrate de que 'data' no sea null y agrega la nueva reseña al estado
+    if (!data || data.length === 0) {
+      console.error('No se recibió ningún dato de la base de datos');
+      return; // Salir si no hay datos
+    }
+  
+    // Aquí puedes acceder al primer elemento de data y agregarlo a reviews
+    const newReviewData = data[0];
+    setReviews([...reviews, newReviewData]); // Actualiza el estado de reviews
+    setNewReview({ content: '', rating: 0 }); // Resetea el formulario
+    Swal.fire('Reseña agregada correctamente');
+  };
+  
+
+  const handleEditReview = async (review) => {
+    setEditingReviewId(review.id);
+    setNewReview({ content: review.content, rating: review.rating });
+  };
+
+  const handleUpdateReview = async () => {
+    const { data, error } = await supabase
+      .from('reviews')
+      .update({ content: newReview.content, rating: newReview.rating })
+      .eq('id', editingReviewId);
+
+    if (error) {
+      Swal.fire('Error al actualizar la reseña');
+      console.error("Error:", error);
+    } else {
+      setReviews(reviews.map(review => (review.id === editingReviewId ? data[0] : review)));
+      setEditingReviewId(null);
+      setNewReview({ content: '', rating: 0 });
+      Swal.fire('Reseña actualizada correctamente');
+    }
+  };
+
+  const handleDeleteReview = async (id) => {
+    const { error } = await supabase.from('reviews').delete().eq('id', id);
+
+    if (error) {
+      Swal.fire('Error al eliminar la reseña');
+      console.error("Error:", error);
+    } else {
+      setReviews(reviews.filter(review => review.id !== id));
+      Swal.fire('Reseña eliminada correctamente');
+    }
+  };
 
   const handleBuyBook = () => {
     Swal.fire({
@@ -133,30 +207,66 @@ export default function BookProfile() {
         <div className="mt-12">
           <h2 className="text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">Reseñas de lectores</h2>
           <div className="space-y-6">
-            {reviews.map((review) => (
-              <Card key={review.id} className="bg-gray-800 border border-blue-500 rounded-lg shadow-lg">
-                <CardContent className="p-6 bg-gray-800 p-6 rounded-lg border border-blue-500 shadow-lg">
-                  <div className="flex items-center space-x-4 mb-4">
-                    <Avatar className="border-2 border-blue-500">
-                      <AvatarImage src={review.avatar} alt={review.user} />
-                      <AvatarFallback className="bg-blue-600 text-white"><User /></AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="font-semibold text-blue-300">{review.user}</p>
-                      <div className="flex items-center">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className={`w-4 h-4 ${i < review.rating ? 'text-yellow-400' : 'text-gray-600'}`} fill="currentColor" />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-blue-200">{review.comment}</p>
-                </CardContent>
-              </Card>
+          {reviews.map((review) => (
+  <Card key={review.id} className="bg-gray-800 border border-blue-500 rounded-lg shadow-lg">
+    <CardContent className="p-6 bg-gray-800 rounded-lg border border-blue-500 shadow-lg">
+      <div className="flex items-center space-x-4 mb-4">
+        <Avatar>
+          <AvatarImage src="/placeholder.svg" alt={review.username} />
+          <AvatarFallback>{review.username[0]}</AvatarFallback>
+        </Avatar>
+        <div>
+          <p>{review.username}</p>
+          <div className="flex items-center">
+            {[...Array(5)].map((_, i) => (
+              <Star key={i} className={`w-4 h-4 ${i < review.rating ? 'text-yellow-400' : 'text-gray-600'}`} />
             ))}
           </div>
         </div>
       </div>
-    </div>
+      <p>{review.content}</p>
+      {review.user_id === user?.id && (
+        <div className="flex space-x-2 mt-4">
+          <Button onClick={() => handleEditReview(review)}>
+            <Edit className="mr-1" /> Editar
+          </Button>
+          <Button onClick={() => handleDeleteReview(review.id)} variant="danger">
+            <Trash2 className="mr-1" /> Eliminar
+          </Button>
+        </div>
+      )}
+    </CardContent>
+  </Card>
+))}
+
+          </div>
+
+          {user && (
+            <div className="mt-8">
+              <h3 className="text-xl mb-4">{editingReviewId ? 'Editar Reseña' : 'Agregar Reseña'}</h3>
+              <Textarea
+                placeholder="Escribe tu reseña aquí..."
+                value={newReview.content}
+                onChange={(e) => setNewReview({ ...newReview, content: e.target.value })}
+              />
+              <input
+                type="number"
+                max={5}
+                min={0}
+                value={newReview.rating}
+                onChange={(e) => setNewReview({ ...newReview, rating: Number(e.target.value) })}
+                className="w-full bg-gray-800 mt-2 p-2 text-blue-200 rounded"
+              />
+              <Button
+                onClick={editingReviewId ? handleUpdateReview : handleAddReview}
+                className="mt-4"
+              >
+                {editingReviewId ? 'Actualizar Reseña' : 'Agregar Reseña'}
+              </Button>
+            </div>
+          )}
+          </div>
+        </div>
+      </div>
   );
 }
