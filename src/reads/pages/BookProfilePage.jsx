@@ -13,7 +13,7 @@ import { LoadingSpinner, NotFound } from '@/src/ui/components';
 
 const defaultProps = {
   reviews: [
-    { id: 1, username: "sarasa", avatar: "/placeholder.svg", rating: 5, comment: "Una obra maestra de la fantasía moderna." },
+    { id: 1, username: "jtaras", avatar: "/placeholder.svg", rating: 5, comment: "Una obra maestra de la fantasía moderna." },
     { id: 2, username: "martoabra", avatar: "/placeholder.svg", rating: 4, comment: "Una historia fascinante con un sistema de magia único." }
   ]
 };

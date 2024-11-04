@@ -93,7 +93,9 @@ export const FriendProfilePage = () => {
   useEffect(() => {
     if (userData) {
       //TODO: Hacer el request cuando se trata de rol escritor sino es al pedo
-      fetchBookData();
+      if (userData.role === 'escritor') {
+        fetchBookData();
+    }
     }
   }, [userData]);
 
