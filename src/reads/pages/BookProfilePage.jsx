@@ -1,24 +1,18 @@
 import React, { useState, useEffect, useContext } from "react";
 import Swal from "sweetalert2";
-import { Star, Clock, Edit, Trash2 } from "lucide-react"; // Iconos adicionales de lucide-react
-import {
-  Card,
-  CardContent,
-  Badge,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Button,
-  Textarea,
-} from "../../ui/components";
+import { Star, Clock, Edit, Trash2, BookOpen, User, CircleDollarSign } from "lucide-react";
 import { supabase } from "../../utils/supabase-client";
-import { useParams } from "react-router-dom";
-import { BookOpen, User, BookPlus } from "lucide-react";
-import { AuthContext } from "../../auth/context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { AuthContext } from '../../auth/context/AuthContext';
+import { LoadingSpinner, NotFound } from '@/src/ui/components';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
 
-export default function BookProfile() {
-  const { isbn } = useParams(); // Extrae el isbn de la URL
+export const BookProfile = () => {
+  const { isbn } = useParams(); 
   const [bookData, setBookData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -110,7 +104,6 @@ export default function BookProfile() {
       Swal.fire("Error al actualizar la reseña");
       console.error("Error:", error);
     } else if (data && data.length > 0) {
-      // Solo actualiza si data contiene elementos
       setReviews(
         reviews.map((review) =>
           review.id === editingReviewId ? data[0] : review
@@ -148,13 +141,8 @@ export default function BookProfile() {
     });
   };
 
-  if (loading)
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12 text-center">
-        Loading...
-      </div>
-    );
-  if (error) return <div className="text-center text-red-500">{error}</div>;
+  if (loading) return <LoadingSpinner />;
+  if (error) return <NotFound />;
   if (!bookData) return null;
 
   const {
@@ -168,8 +156,54 @@ export default function BookProfile() {
     rating,
   } = bookData;
 
-  const handleModifyBook = () => {
-    navigate(`/modify-book/${isbn}`);
+  const handleUpdateBook = () => {
+    navigate(`/update-book/${isbn}`);
+  };
+
+  const handleDeleteBook = async () => {
+    const result = await Swal.fire({
+      title: '¿Estás seguro?',
+      text: "¡No podrás revertir esta acción!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      background: '#1f2937',
+      color: '#fff',
+      confirmButtonColor: '#e11d48',
+      cancelButtonColor: '#6b7280',
+    });
+
+    if (result.isConfirmed) {
+      const { error } = await supabase
+        .from('books')
+        .delete()
+        .eq('isbn', isbn);
+
+      if (error) {
+        Swal.fire({
+          title: 'Error',
+          text: 'No se pudo eliminar el libro.',
+          icon: 'error',
+          confirmButtonText: 'Cerrar',
+          background: '#1f2937',
+          color: '#fff',
+          confirmButtonColor: '#4f46e5',
+        });
+        console.error("Error deleting book:", error);
+      } else {
+        Swal.fire({
+          title: '¡Eliminado!',
+          text: 'El libro ha sido eliminado.',
+          icon: 'success',
+          confirmButtonText: 'Cerrar',
+          background: '#1f2937',
+          color: '#fff',
+          confirmButtonColor: '#4f46e5',
+        });
+        navigate('/');
+      }
+    }
   };
 
   const fullName = `${user?.firstName} ${user?.lastName}`;
@@ -217,17 +251,28 @@ export default function BookProfile() {
             <div className="mt-6 flex items-center space-x-4">
               <button
                 onClick={handleBuyBook}
-                className="mt-6 px-4 py-2 bg-purple-600 text-white rounded-lg shadow-md hover:bg-purple-700 transition-colors duration-300"
+                className="mt-6 px-4 py-2 bg-purple-600 text-white rounded-lg shadow-md hover:bg-purple-700 transition-colors duration-300 flex items-center"
               >
+                <CircleDollarSign className="w-4 h-4 mr-1" />
                 Comprar libro
               </button>
               {isAuthor && (
-                <button
-                  className="mt-6 px-4 py-2 bg-purple-600 text-white rounded-lg shadow-md hover:bg-purple-700 transition-colors duration-300"
-                  onClick={handleModifyBook}
+                <>
+                  <button
+                    className="mt-6 px-4 py-2 bg-purple-600 text-white rounded-lg shadow-md hover:bg-purple-700 transition-colors duration-300 flex items-center"
+                    onClick={handleUpdateBook}
+                  >
+                    <Edit className="w-4 h-4 mr-1" />
+                    Modificar Libro
+                  </button>
+                  <button
+                  className="mt-6 px-4 py-2 text-white rounded-lg shadow-md bg-red-600 hover:bg-red-700 transition-colors duration-300 flex items-center"
+                  onClick={handleDeleteBook}
                 >
-                  Modificar Libro
+                  <Trash2 className="w-4 h-4 mr-1" />
+                  Eliminar Libro
                 </button>
+              </>
               )}
             </div>
           </div>
@@ -238,23 +283,18 @@ export default function BookProfile() {
           </h2>
           <div className="space-y-6">
             {reviews.map((review) => (
-              <Card
-                key={review.id}
-                className="bg-gray-800 border border-blue-500 rounded-lg shadow-lg"
-              >
-                <CardContent className="p-6 bg-gray-800 rounded-lg border border-blue-500 shadow-lg">
-                  <div className="flex items-center mb-4">
-                    <Avatar className="mr-4">
-                      <AvatarImage
-                        src="/placeholder.svg"
-                        alt={review.username}
-                      />
-                      <AvatarFallback>{review.username?.[0]}</AvatarFallback>
+              <Card key={review.id} className="bg-gray-800 border border-blue-500 rounded-lg shadow-lg">
+                <CardContent className="p-6 bg-gray-800 p-6 rounded-lg border border-blue-500 shadow-lg">
+                  <div className="flex items-center space-x-4 mb-4">
+                    <Avatar className="border-2 border-blue-500">
+                      <AvatarImage src={review.avatar} alt={review.username} />
+                      <AvatarFallback className="bg-blue-600 text-white"><User /></AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="text-lg font-semibold text-blue-200 mb-1">
-                        {review.username}
-                      </p>
+                    <Link 
+                      to={`/users/${review.username}`}
+                      className="text-white text-xl font-semibold mr-4 text-decoration-none"
+                    ><p className="font-semibold text-blue-300">{review.username}</p> </Link>
                       <div className="flex items-center">
                         {[...Array(5)].map((_, i) => (
                           <Star

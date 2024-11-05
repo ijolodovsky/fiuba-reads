@@ -82,7 +82,7 @@ export const HomePage = () => {
                             variant="secondary" 
                             size="sm" 
                             className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-blue-600 hover:bg-blue-700 text-white mt-4 btn"
-                            onClick={() => navigate(`/book/${book.isbn}`)}
+                            onClick={() => navigate(`/books/${book.isbn}`)}
                           >
                             Explorar <ChevronRight className="ml-2 h-4 w-4" />
                           </Button>

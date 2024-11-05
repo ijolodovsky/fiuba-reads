@@ -1,20 +1,50 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../../auth/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import {Button} from '@/components/ui/button';
 import { Card, CardHeader, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
-import { BookPlus, User, Mail, Calendar } from "lucide-react";
+import { BookPlus, User, Mail, Calendar, Contact } from "lucide-react";
 import image from '../../assets/profile.webp';
+import { supabase } from '../../utils/supabase-client';
 import './profilePage.css';
 
 export const ProfilePage = () => {
   const { authState: { user } } = useContext(AuthContext);
+
+  const [followingCount, setFollowingCount] = useState(0);
+  const [followersCount, setFollowersCount] = useState(0);
   
   const navigate = useNavigate();
 
   const handleAddBook = () => {
     navigate('/add-book');
   };
+
+  useEffect(() => {
+    const fetchFollowCounts = async () => {
+      const { data: followingData, error: followingError } = await supabase
+        .from('follows')
+        .select('followed_id', { count: 'exact' })
+        .eq('follower_id', user?.username);
+  
+      const { data: followersData, error: followersError } = await supabase
+        .from('follows')
+        .select('follower_id', { count: 'exact' })
+        .eq('followed_id', user?.username);
+      
+      if (followingError || followersError) {
+        console.error("Error fetching follow counts:", followingError || followersError);
+      } else {
+        setFollowingCount(followingData.length);
+        setFollowersCount(followersData.length);
+      }
+    };
+  
+    if (user) {
+      fetchFollowCounts();
+    }
+  }, [user]);
+  
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12">
@@ -58,6 +88,20 @@ export const ProfilePage = () => {
                   <li className="flex items-center space-x-3">
                     <Calendar className="text-blue-400" />
                     <span><strong className="text-blue-300">Edad:</strong> <span className="text-gray-300">{user?.age}</span></span>
+                  </li>
+                  <li className="flex items-center space-x-3">
+                    <Contact className="text-blue-400" />
+                    <span>
+                      <strong className="text-blue-300">Usuarios seguidos:</strong>{" "}
+                      <span className="text-gray-300">{followingCount}</span>
+                    </span>
+                  </li>
+                  <li className="flex items-center space-x-3">
+                    <Contact className="text-blue-400" />
+                    <span>
+                      <strong className="text-blue-300">Seguidores:</strong>{" "}
+                      <span className="text-gray-300">{followersCount}</span>
+                    </span>
                   </li>
                 </ul>
               </div>
