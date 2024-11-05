@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../../auth/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -7,10 +8,11 @@ import {
   CardDescription,
   CardTitle,
 } from '@/components/ui/card';
-import { BookOpen, User, Mail, Calendar, Star } from 'lucide-react';
+import { BookOpen, User, Mail, Calendar, Star, UserPlus, UserCheck } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../../utils/supabase-client';
 import { LoadingSpinner, NotFound } from '@/src/ui/components';
+import Swal from 'sweetalert2';
 
 // This would typically come from your API or props
 const friend = {
@@ -42,12 +44,14 @@ const friend = {
 };
 
 export const FriendProfilePage = () => {
+  const { authState: { user } } = useContext(AuthContext);
   const navigate = useNavigate();
   const { userID } = useParams();
   const [userData, setUserData] = useState(null);
   const [booksData, setBooksData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isFollowing, setIsFollowing] = useState(false);
 
   const fetchBookData = async (firstName, lastName) => {
     const { data, error } = await supabase
@@ -98,6 +102,72 @@ export const FriendProfilePage = () => {
     }
     }
   }, [userData]);
+
+  useEffect(() => {
+    const checkFollowingStatus = async () => {
+      const { data, error } = await supabase
+        .from('follows')
+        .select('*')
+        .eq('follower_id', user.username)
+        .eq('followed_id', userID);
+      
+      if (error) {
+        console.error("Error checking following status:", error);
+      } else {
+        setIsFollowing(data.length > 0);
+      }
+    };
+  
+    if (userData) {
+      checkFollowingStatus();
+    }
+  }, [userData]);  
+
+  const handleFollowToggle = async () => {
+    if (isFollowing) {
+      // Mostrar la alerta de confirmación
+      const result = await Swal.fire({
+        title: '¿Estás seguro?',
+        text: '¿Estás seguro que quieres dejar de seguir a este usuario?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, dejar de seguir',
+        cancelButtonText: 'Cancelar',
+      });
+  
+      // Si el usuario confirma, procede con la acción de dejar de seguir
+      if (result.isConfirmed) {
+        const { error } = await supabase
+          .from('follows')
+          .delete()
+          .eq('follower_id', user.username)
+          .eq('followed_id', userID);
+  
+        if (error) {
+          console.error("Error unfollowing user:", error);
+        } else {
+          setIsFollowing(false);
+        }
+      }
+    } else {
+      // Seguir al usuario
+      const { error } = await supabase
+        .from('follows')
+        .insert({
+          follower_id: user.username,
+          followed_id: userID,
+        });
+  
+      if (error) {
+        console.error("Error following user:", error);
+      } else {
+        setIsFollowing(true);
+      }
+    }
+  };  
+  
 
   if (loading) return <LoadingSpinner />;
   if (error) return <NotFound />;
@@ -175,7 +245,14 @@ export const FriendProfilePage = () => {
                 </ul>
               </div>
             </div>
-
+            <div className="mt-4 ml-4">
+              <Button 
+                className={`bg-blue-600 hover:bg-blue-700 text-white ${isFollowing ? 'bg-purple-500' : ''}`}
+                onClick={handleFollowToggle}
+              >
+                {isFollowing ? <><UserCheck className="inline-block mr-2"/> Siguiendo</> : <><UserPlus className="inline-block mr-2" /> Seguir usuario</>}
+              </Button>
+            </div>
             <div className="mt-8">
               <h3 className="text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
                 Reseñas de Libros
