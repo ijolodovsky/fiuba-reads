@@ -37,7 +37,7 @@ export const Navbar = () => {
               `text-white hover:text-gray-300 text-decoration-none ${isActive ? 'underline' : ''}`
             }
           >
-            Users
+            Amigos
           </NavLink>
 
           {/* TODO: Add other sections here */}
