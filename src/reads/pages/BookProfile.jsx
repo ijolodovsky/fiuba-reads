@@ -259,11 +259,10 @@ export default function BookProfile() {
                         {[...Array(5)].map((_, i) => (
                           <Star
                             key={i}
-                            className={`w-4 h-4 ${
-                              i < review.rating
+                            className={`w-4 h-4 ${i < review.rating
                                 ? "text-yellow-400"
                                 : "text-gray-500"
-                            }`}
+                              }`}
                           />
                         ))}
                       </div>
@@ -274,7 +273,7 @@ export default function BookProfile() {
                       {review.content}
                     </p>
                     {/* Mostrar botones solo si el usuario es el autor de la reseña */}
-                    {user && user.id === review.user_id && (
+                    {user.username === review.username && (
                       <div className="flex space-x-2">
                         <Button
                           variant="ghost"
@@ -290,7 +289,7 @@ export default function BookProfile() {
                         </Button>
                       </div>
                     )}
-                    
+
                   </div>
                 </CardContent>
               </Card>
