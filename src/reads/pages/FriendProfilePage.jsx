@@ -19,20 +19,46 @@ export const FriendProfilePage = () => {
   const navigate = useNavigate();
   const { userID } = useParams();
   const [userData, setUserData] = useState(null);
-  const [booksData, setBooksData] = useState(null);
+  const [booksData, setBooksData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const [reviews, setReviews] = useState([]);
 
-  const fetchReviews = async () => {
+  const fetchBookTitle = async (bookId) => {
     const { data, error } = await supabase
+      .from('books')
+      .select('title')
+      .eq('isbn', bookId)
+      .single();
+  
+    if (error) {
+      console.error(`Error fetching title for book ID ${bookId}:`, error);
+      return 'Título desconocido';
+    }
+    return data?.title || 'Título desconocido';
+  };
+
+  const fetchReviews = async () => {
+    const { data: reviewsData, error } = await supabase
       .from("reviews")
       .select("*")
       .eq("username", userID);
-
-    if (error) console.error("Error fetching reviews:", error);
-    else setReviews(data);
+  
+    if (error) {
+      console.error("Error fetching reviews:", error);
+      setReviews([]);
+    } else {
+      // Usa Promise.all para obtener los títulos de todos los `book_id`
+      const titles = await Promise.all(
+        reviewsData.map(async (review) => {
+          const title = await fetchBookTitle(review.book_id);
+          console.log(title)
+          return { ...review, title };
+        })
+      );
+      setReviews(titles);
+    }
   };
 
   const fetchBookData = async (firstName, lastName) => {
@@ -177,20 +203,74 @@ export const FriendProfilePage = () => {
     navigate(`/books/${bookId}`);
   };
 
+  const UserReviews = ({reviews}) => {
+  return <div className="space-y-4">
+    {reviews.map((review) => (
+      <Card key={review.id} className="bg-gray-700 border-blue-400">
+        <CardContent className="p-4">
+          <h4 className="text-lg font-semibold text-blue-300">
+            {review.title}
+          </h4>
+          <div className="flex items-center mt-2">
+            <Star className="text-yellow-400 mr-1" />
+            <span className="text-yellow-400">
+              {review.rating}/5
+            </span>
+          </div>
+          <p className="mt-2 text-gray-300">{review.content}</p>
+        </CardContent>
+      </Card>
+    ))}
+  </div>;
+}
+
+const UserBooks = ({booksData}) => {
+  return <div className="mt-8">
+    <h3 className="text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
+      Libros Escritos
+    </h3>
+    <div className="space-y-4">
+      {booksData.map((book) => (
+        <Card key={book.isbn} className="bg-gray-700 border-blue-400">
+          <CardContent className="p-4 flex justify-between items-center">
+            <div>
+              <h4 className="text-lg font-semibold text-blue-300">
+                {book.title}
+              </h4>
+              <p className="text-gray-400">
+                Publicado en {book.published_date}
+              </p>
+            </div>
+            <Button
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+              onClick={() => handleViewBook(book.isbn)}
+            >
+              <BookOpen className="mr-2 h-4 w-4" />
+              Ver Libro
+            </Button>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  </div>;
+}
+
+const FollowStatus = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12">
-      <div className="container mx-auto px-4">
-        <Card className="bg-gray-800 border-2 border-blue-500 rounded-lg shadow-2xl overflow-hidden">
-          <CardHeader className="text-center bg-gradient-to-r from-blue-600 to-purple-600 py-6">
-            <CardTitle className="text-3xl font-bold text-white">
-              {username}
-            </CardTitle>
-            <CardDescription className="text-xl text-blue-200">
-              {role}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div className="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-10">
+    <div className="mt-4 ml-4">
+              <Button 
+                className={`bg-blue-600 hover:bg-blue-700 text-white ${isFollowing ? 'bg-purple-500' : ''}`}
+                onClick={handleFollowToggle}
+              >
+                {isFollowing ? <><UserCheck className="inline-block mr-2"/> Siguiendo</> : <><UserPlus className="inline-block mr-2" /> Seguir usuario</>}
+              </Button>
+            </div>
+  );
+}
+
+const UserInformation = ({fullName, age, email, profile_picture}) => {
+  return (
+    <div className="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-10">
               <div className="w-full md:w-1/3 flex flex-col items-center">
                 <div className="w-40 h-40 rounded-full border-4 border-blue-500 overflow-hidden mb-4">
                   <img
@@ -231,68 +311,32 @@ export const FriendProfilePage = () => {
                 </ul>
               </div>
             </div>
-            <div className="mt-4 ml-4">
-              <Button 
-                className={`bg-blue-600 hover:bg-blue-700 text-white ${isFollowing ? 'bg-purple-500' : ''}`}
-                onClick={handleFollowToggle}
-              >
-                {isFollowing ? <><UserCheck className="inline-block mr-2"/> Siguiendo</> : <><UserPlus className="inline-block mr-2" /> Seguir usuario</>}
-              </Button>
-            </div>
+  );
+}
+
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12">
+      <div className="container mx-auto px-4">
+        <Card className="bg-gray-800 border-2 border-blue-500 rounded-lg shadow-2xl overflow-hidden">
+          <CardHeader className="text-center bg-gradient-to-r from-blue-600 to-purple-600 py-6">
+            <CardTitle className="text-3xl font-bold text-white">
+              {username}
+            </CardTitle>
+            <CardDescription className="text-xl text-blue-200">
+              {role}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-6">
+            <UserInformation fullName={fullName} age={age} email={email} profile_picture={profile_picture} />
+            <FollowStatus />
             <div className="mt-8">
               <h3 className="text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
                 Reseñas de Libros
               </h3>
-              <div className="space-y-4">
-                {reviews.map((review) => (
-                  <Card key={review.id} className="bg-gray-700 border-blue-400">
-                    <CardContent className="p-4">
-                      <h4 className="text-lg font-semibold text-blue-300">
-                        {review.book_id}
-                      </h4>
-                      <div className="flex items-center mt-2">
-                        <Star className="text-yellow-400 mr-1" />
-                        <span className="text-yellow-400">
-                          {review.rating}/5
-                        </span>
-                      </div>
-                      <p className="mt-2 text-gray-300">{review.content}</p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+              <UserReviews reviews={reviews} />
             </div>
-
-            {isAuthor && (
-              <div className="mt-8">
-                <h3 className="text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
-                  Libros Escritos
-                </h3>
-                <div className="space-y-4">
-                  {booksData.map((book) => (
-                    <Card key={book.isbn} className="bg-gray-700 border-blue-400">
-                      <CardContent className="p-4 flex justify-between items-center">
-                        <div>
-                          <h4 className="text-lg font-semibold text-blue-300">
-                            {book.title}
-                          </h4>
-                          <p className="text-gray-400">
-                            Publicado en {book.published_date}
-                          </p>
-                        </div>
-                        <Button
-                          className="bg-blue-600 hover:bg-blue-700 text-white"
-                          onClick={() => handleViewBook(book.isbn)}
-                        >
-                          <BookOpen className="mr-2 h-4 w-4" />
-                          Ver Libro
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-            )}
+            {isAuthor && <UserBooks booksData={booksData} />}
           </CardContent>
         </Card>
       </div>
