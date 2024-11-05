@@ -33,24 +33,29 @@ export const BookProfile = () => {
   const navigate = useNavigate();
 
   const fetchBookData = async () => {
-    const { data, error } = await supabase
-      .from("books")
-      .select(
-        "title, author, published_date, description, genre, page_count, cover_image_url, rating"
-      )
-      .eq("isbn", isbn);
-
-    if (error) {
+    try {
+      const { data, error } = await supabase
+        .from("books")
+        .select("title, author, published_date, description, genre, page_count, cover_image_url, rating")
+        .eq("isbn", isbn);
+  
+      if (error) {
+        throw new Error(error.message);
+      }
+  
+      if (data.length > 0) {
+        setBookData(data[0]);
+      } else {
+        setError("No book found");
+      }
+    } catch (error) {
       console.error("Error fetching book data:", error);
       setError("Error fetching book data");
-    } else if (data.length > 0) {
-      setBookData(data[0]); // Toma el primer libro si hay varios resultados
-    } else {
-      setError("No book found");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
+  
 
   const fetchReviews = async () => {
     const { data, error } = await supabase
@@ -67,13 +72,12 @@ export const BookProfile = () => {
     fetchBookData();
     fetchReviews();
   }, [isbn]);
-
   const handleAddReview = async () => {
     if (!user) {
       Swal.fire("Debes iniciar sesión para agregar una reseña.");
       return;
     }
-
+  
     const { data, error } = await supabase.from("reviews").insert({
       user_id: user.id,
       username: user.username,
@@ -83,18 +87,59 @@ export const BookProfile = () => {
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     });
-
+  
     if (error) {
       console.error("Error al agregar la reseña:", error);
+      Swal.fire("Error al agregar la reseña");
       return;
     }
-
-    setNewReview({ content: "", rating: 0 }); // Resetea el formulario
-    Swal.fire("Reseña agregada correctamente");
-
-    // Vuelve a cargar las reseñas después de agregar una nueva
-    fetchReviews();
+  
+    // Check if `data` is null or empty
+    if (data && data.length > 0) {
+      // Add the newly added review to the state
+      setReviews([...reviews, data[0]]);
+      setNewReview({ content: "", rating: 0 });
+  
+      Swal.fire("Reseña agregada correctamente");
+      await updateBookRating();
+    } else {
+      console.error("No data returned from the insert operation");
+      Swal.fire("No se pudo agregar la reseña. Intenta de nuevo.");
+    }
   };
+  
+  
+  
+  
+  const updateBookRating = async () => {
+    // Obtener todas las reseñas del libro
+    const { data: reviewsData, error } = await supabase
+      .from("reviews")
+      .select("rating")
+      .eq("book_id", isbn);
+  
+    if (error) {
+      console.error("Error al obtener las reseñas:", error);
+      return;
+    }
+  
+    // Calcular el promedio de las calificaciones
+    const totalRating = reviewsData.reduce((acc, review) => acc + review.rating, 0);
+    const averageRating = totalRating / reviewsData.length;
+  
+    // Actualizar el promedio en la tabla de libros
+    const { error: updateError } = await supabase
+      .from("books")
+      .update({ rating: averageRating })
+      .eq("isbn", isbn);
+  
+    if (updateError) {
+      console.error("Error al actualizar el promedio de calificación del libro:", updateError);
+    } else {
+      console.log("Promedio de calificación actualizado correctamente.");
+    }
+  };
+  
 
   const handleEditReview = async (review) => {
     setEditingReviewId(review.id);
@@ -107,11 +152,12 @@ export const BookProfile = () => {
       .update({ content: newReview.content, rating: newReview.rating })
       .eq("id", editingReviewId)
       .select(); // Asegúrate de seleccionar los datos actualizados
-
+  
     if (error) {
       Swal.fire("Error al actualizar la reseña");
       console.error("Error:", error);
     } else if (data && data.length > 0) {
+      // Si la reseña se actualizó correctamente, actualizamos la lista de reseñas
       setReviews(
         reviews.map((review) =>
           review.id === editingReviewId ? data[0] : review
@@ -120,10 +166,14 @@ export const BookProfile = () => {
       setEditingReviewId(null);
       setNewReview({ content: "", rating: 0 });
       Swal.fire("Reseña actualizada correctamente");
+  
+      // Recalcular el promedio de las reseñas después de la actualización
+      await updateBookRating();
     } else {
       console.error("No se recibió ningún dato de la base de datos");
     }
   };
+  
 
   const handleDeleteReview = async (id) => {
     const { error } = await supabase.from("reviews").delete().eq("id", id);
