@@ -8,10 +8,11 @@ import {
   CardDescription,
   CardTitle,
 } from '@/components/ui/card';
-import { BookOpen, User, Mail, Calendar, Star } from 'lucide-react';
+import { BookOpen, User, Mail, Calendar, Star, UserPlus, UserCheck } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../../utils/supabase-client';
 import { LoadingSpinner, NotFound } from '@/src/ui/components';
+import Swal from 'sweetalert2';
 
 // This would typically come from your API or props
 const friend = {
@@ -124,17 +125,31 @@ export const FriendProfilePage = () => {
 
   const handleFollowToggle = async () => {
     if (isFollowing) {
-      // Dejar de seguir al usuario
-      const { error } = await supabase
-        .from('follows')
-        .delete()
-        .eq('follower_id', user.username)
-        .eq('followed_id', userID);
+      // Mostrar la alerta de confirmación
+      const result = await Swal.fire({
+        title: '¿Estás seguro?',
+        text: '¿Estás seguro que quieres dejar de seguir a este usuario?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, dejar de seguir',
+        cancelButtonText: 'Cancelar',
+      });
   
-      if (error) {
-        console.error("Error unfollowing user:", error);
-      } else {
-        setIsFollowing(false);
+      // Si el usuario confirma, procede con la acción de dejar de seguir
+      if (result.isConfirmed) {
+        const { error } = await supabase
+          .from('follows')
+          .delete()
+          .eq('follower_id', user.username)
+          .eq('followed_id', userID);
+  
+        if (error) {
+          console.error("Error unfollowing user:", error);
+        } else {
+          setIsFollowing(false);
+        }
       }
     } else {
       // Seguir al usuario
@@ -151,7 +166,7 @@ export const FriendProfilePage = () => {
         setIsFollowing(true);
       }
     }
-  };
+  };  
   
 
   if (loading) return <LoadingSpinner />;
@@ -235,7 +250,7 @@ export const FriendProfilePage = () => {
                 className={`bg-blue-600 hover:bg-blue-700 text-white ${isFollowing ? 'bg-purple-500' : ''}`}
                 onClick={handleFollowToggle}
               >
-                {isFollowing ? 'Siguiendo' : 'Seguir usuario'}
+                {isFollowing ? <><UserCheck className="inline-block mr-2"/> Siguiendo</> : <><UserPlus className="inline-block mr-2" /> Seguir usuario</>}
               </Button>
             </div>
             <div className="mt-8">
