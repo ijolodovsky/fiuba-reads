@@ -14,35 +14,6 @@ import { supabase } from '../../utils/supabase-client';
 import { LoadingSpinner, NotFound } from '@/src/ui/components';
 import Swal from 'sweetalert2';
 
-// This would typically come from your API or props
-const friend = {
-  username: 'JohnDoe',
-  role: 'escritor',
-  profilePicture: '/placeholder.svg?height=160&width=160',
-  email: 'johndoe@example.com',
-  firstName: 'John',
-  lastName: 'Doe',
-  age: 30,
-  reviews: [
-    {
-      id: 1,
-      bookTitle: 'The Great Gatsby',
-      rating: 4,
-      comment: 'A classic masterpiece!',
-    },
-    {
-      id: 2,
-      bookTitle: 'To Kill a Mockingbird',
-      rating: 5,
-      comment: 'Powerful and moving.',
-    },
-  ],
-  books: [
-    { isbn: 1, title: 'The Mystery of the Blue Lake', publishYear: 2020 },
-    { isbn: 2, title: 'Echoes of Tomorrow', publishYear: 2022 },
-  ],
-};
-
 export const FriendProfilePage = () => {
   const { authState: { user } } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -52,6 +23,17 @@ export const FriendProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [reviews, setReviews] = useState([]);
+
+  const fetchReviews = async () => {
+    const { data, error } = await supabase
+      .from("reviews")
+      .select("*")
+      .eq("username", userID);
+
+    if (error) console.error("Error fetching reviews:", error);
+    else setReviews(data);
+  };
 
   const fetchBookData = async (firstName, lastName) => {
     const { data, error } = await supabase
@@ -95,13 +77,17 @@ export const FriendProfilePage = () => {
   }, [userID]);
   
   useEffect(() => {
+      fetchReviews();
+  }, [userID]);
+
+  useEffect(() => {
     if (userData) {
-      //TODO: Hacer el request cuando se trata de rol escritor sino es al pedo
       if (userData.role === 'escritor') {
         fetchBookData();
     }
     }
   }, [userData]);
+
 
   useEffect(() => {
     const checkFollowingStatus = async () => {
@@ -258,11 +244,11 @@ export const FriendProfilePage = () => {
                 Reseñas de Libros
               </h3>
               <div className="space-y-4">
-                {friend.reviews.map((review) => (
+                {reviews.map((review) => (
                   <Card key={review.id} className="bg-gray-700 border-blue-400">
                     <CardContent className="p-4">
                       <h4 className="text-lg font-semibold text-blue-300">
-                        {review.bookTitle}
+                        {review.book_id}
                       </h4>
                       <div className="flex items-center mt-2">
                         <Star className="text-yellow-400 mr-1" />
@@ -270,7 +256,7 @@ export const FriendProfilePage = () => {
                           {review.rating}/5
                         </span>
                       </div>
-                      <p className="mt-2 text-gray-300">{review.comment}</p>
+                      <p className="mt-2 text-gray-300">{review.content}</p>
                     </CardContent>
                   </Card>
                 ))}
