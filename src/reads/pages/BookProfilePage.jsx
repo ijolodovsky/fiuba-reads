@@ -343,6 +343,7 @@ export const BookProfile = () => {
           <Textarea
             placeholder='Escribe tu reseña aquí...'
             value={newReview.content}
+            className="bg-gray-800 text-blue-200 border border-blue-500 rounded p-2"
             onChange={(e) =>
               setNewReview({ ...newReview, content: e.target.value })
             }
