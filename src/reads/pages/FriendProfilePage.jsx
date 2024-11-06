@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../auth/context/AuthContext';
 import { Button } from '@/components/ui/button';
+
 import {
   Card,
   CardHeader,
@@ -8,7 +9,7 @@ import {
   CardDescription,
   CardTitle,
 } from '@/components/ui/card';
-import { BookOpen, User, Mail, Calendar, Star, UserPlus, UserCheck } from 'lucide-react';
+import { BookOpen, User, Mail, Calendar, Star, UserPlus, UserCheck, MessageCircle } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../../utils/supabase-client';
 import { LoadingSpinner, NotFound } from '@/src/ui/components';
@@ -60,6 +61,8 @@ export const FriendProfilePage = () => {
       setReviews(titles);
     }
   };
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [message, setMessage] = useState('');
 
   const fetchBookData = async (firstName, lastName) => {
     const { data, error } = await supabase
@@ -75,7 +78,6 @@ export const FriendProfilePage = () => {
   
     setLoading(false);
   };
-
 
   const fetchUserData = async () => {
     const { data, error } = await supabase
@@ -110,10 +112,9 @@ export const FriendProfilePage = () => {
     if (userData) {
       if (userData.role === 'escritor') {
         fetchBookData();
-    }
+      }
     }
   }, [userData]);
-
 
   useEffect(() => {
     const checkFollowingStatus = async () => {
@@ -137,7 +138,6 @@ export const FriendProfilePage = () => {
 
   const handleFollowToggle = async () => {
     if (isFollowing) {
-      // Mostrar la alerta de confirmación
       const result = await Swal.fire({
         title: '¿Estás seguro?',
         text: '¿Estás seguro que quieres dejar de seguir a este usuario?',
@@ -149,7 +149,6 @@ export const FriendProfilePage = () => {
         cancelButtonText: 'Cancelar',
       });
   
-      // Si el usuario confirma, procede con la acción de dejar de seguir
       if (result.isConfirmed) {
         const { error } = await supabase
           .from('follows')
@@ -164,7 +163,6 @@ export const FriendProfilePage = () => {
         }
       }
     } else {
-      // Seguir al usuario
       const { error } = await supabase
         .from('follows')
         .insert({
@@ -179,22 +177,29 @@ export const FriendProfilePage = () => {
       }
     }
   };  
-  
+
+  const handleSendMessageClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleSendEmail = () => {
+    const mailtoLink = `https://mail.google.com/mail/?view=cm&fs=1&to=${userData.email}&su=Mensaje desde la aplicación&body=${encodeURIComponent(message)}`;
+    window.open(mailtoLink, '_blank');
+    setIsModalOpen(false); // Cerrar el modal después de enviar el mensaje
+  };
+
+  const handleCancelMessage = () => {
+    setIsModalOpen(false);
+    setMessage(''); // Limpiar el mensaje cuando se cancele
+  };
 
   if (loading) return <LoadingSpinner />;
   if (error) return <NotFound />;
   if (!userData) return null;
 
-  const {
-    username,
-    role,
-    age,
-    first_name,
-    last_name,
-    email,
-    profile_picture,
-  } = userData;
+  const { username, role, age, first_name, last_name, email, profile_picture } = userData;
 
+  
   const fullName = `${first_name} ${last_name}`;
   const isAuthor = role === 'escritor';
 
@@ -257,6 +262,7 @@ const UserBooks = ({booksData}) => {
 
 const FollowStatus = () => {
   return (
+    <>
     <div className="mt-4 ml-4">
               <Button 
                 className={`bg-blue-600 hover:bg-blue-700 text-white ${isFollowing ? 'bg-purple-500' : ''}`}
@@ -264,13 +270,51 @@ const FollowStatus = () => {
               >
                 {isFollowing ? <><UserCheck className="inline-block mr-2"/> Siguiendo</> : <><UserPlus className="inline-block mr-2" /> Seguir usuario</>}
               </Button>
+              <Button 
+                className="ml-4 bg-green-600 hover:bg-green-700 text-white" 
+                onClick={handleSendMessageClick}
+              >
+                <MessageCircle className="inline-block mr-2" />
+                Mandar Mensaje
+              </Button>
             </div>
+            {isModalOpen && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="bg-gray-800 border border-blue-500 rounded-lg p-6 max-w-md mx-auto">
+                  <h3 className="text-2xl font-semibold text-white mb-4">Enviar Mensaje</h3>
+                  <textarea
+                    className="w-full p-2 text-black rounded-md"
+                    rows="4"
+                    placeholder="Escribe tu mensaje aquí..."
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                  />
+                  <div className="mt-4 flex justify-end space-x-2">
+                    <Button
+                      className="bg-green-600 hover:bg-green-700 text-white"
+                      onClick={handleSendEmail}
+                    >
+                      Enviar Mensaje
+                    </Button>
+                    <Button
+                      className="bg-red-600 hover:bg-red-700 text-white"
+                      onClick={handleCancelMessage}
+                    >
+                      Cancelar
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+            </>
   );
 }
 
 const UserInformation = ({fullName, age, email, profile_picture}) => {
   return (
-    <div className="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-10">
+    <>
+
+            <div className="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-10">
               <div className="w-full md:w-1/3 flex flex-col items-center">
                 <div className="w-40 h-40 rounded-full border-4 border-blue-500 overflow-hidden mb-4">
                   <img
@@ -296,9 +340,7 @@ const UserInformation = ({fullName, age, email, profile_picture}) => {
                     <User className="text-blue-400" />
                     <span>
                       <strong className="text-blue-300">Nombre:</strong>{" "}
-                      <span className="text-gray-300">
-                        {fullName}
-                      </span>
+                      <span className="text-gray-300">{fullName}</span>
                     </span>
                   </li>
                   <li className="flex items-center space-x-3">
@@ -311,8 +353,9 @@ const UserInformation = ({fullName, age, email, profile_picture}) => {
                 </ul>
               </div>
             </div>
+            </>
   );
-}
+};
 
 
   return (
