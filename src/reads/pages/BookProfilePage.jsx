@@ -81,7 +81,7 @@ export const BookProfile = () => {
     try {
       const { data, error } = await supabase.from("reviews").insert({
         user_id: user.id,
-        username: user.username || "Anónimo", // Asegúrate de tener un valor en `username`
+        username: user.username || "Anónimo",
         book_id: isbn,
         content: newReview.content,
         rating: newReview.rating,
@@ -96,7 +96,7 @@ export const BookProfile = () => {
       }
   
       if (data) {
-        setReviews([...reviews, data[0]]); // Agrega la nueva reseña al estado
+        setReviews((prevReviews) => [...prevReviews, data[0]]); // Actualizamos el estado con la nueva reseña
         setNewReview({ content: "", rating: 0 });
         Swal.fire("Reseña agregada correctamente");
         await updateBookRating();
@@ -106,7 +106,6 @@ export const BookProfile = () => {
       Swal.fire("Ocurrió un error al agregar la reseña. Inténtalo de nuevo.");
     }
   };
-  
   
   
   
@@ -410,6 +409,7 @@ export const BookProfile = () => {
                 onChange={(e) =>
                   setNewReview({ ...newReview, content: e.target.value })
                 }
+                className='bg-gray-700 border-blue-500 text-white placeholder-blue-300'
               />
               <input
                 type='number'
