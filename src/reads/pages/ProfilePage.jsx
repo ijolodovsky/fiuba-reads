@@ -15,15 +15,21 @@ export const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [booksData, setBooksData] = useState([]);
   const [error, setError] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
+  const [isModalFollowedOpen, setIsModalFollowedOpen] = useState(false);
+  const [isModalFollowingOpen, setModalFollowingopen] = useState(false);
 
   const [reviews, setReviews] = useState([]);
 
-  const { followingCount, followersCount, followedUsers } = useFollowCounts(user.username);
+  const { followingCount, followersCount, followedUsers, followingUsers } = useFollowCounts(user.username);
   const navigate = useNavigate();
 
-  const handleToggleModal = () => {
-    setIsModalOpen((prev) => !prev);
+
+  const handleToggleModalFollowed = () => {
+    setIsModalFollowedOpen((prev) => !prev);
+  };
+
+  const handleToggleModalFollowing = () => {
+    setModalFollowingopen((prev) => !prev);
   };
 
   const handleAddBook = () => {
@@ -104,26 +110,50 @@ export const ProfilePage = () => {
   const fullName = `${firstName} ${lastName}`;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12">
-      <div className="container mx-auto px-4">
-        <Card className="bg-gray-800 border-2 border-blue-500 rounded-lg shadow-2xl overflow-hidden">
-          <CardHeader className="text-center bg-gradient-to-r from-blue-600 to-purple-600 py-6">
-            <CardTitle className="text-3xl font-bold text-white">{username}</CardTitle>
-            <CardDescription className="text-xl text-blue-200">{role}</CardDescription>
+    <div className='min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12'>
+      <div className='container mx-auto px-4'>
+        <Card className='bg-gray-800 border-2 border-blue-500 rounded-lg shadow-2xl overflow-hidden'>
+          <CardHeader className='text-center bg-gradient-to-r from-blue-600 to-purple-600 py-6'>
+            <CardTitle className='text-3xl font-bold text-white'>
+              {username}
+            </CardTitle>
+            <CardDescription className='text-xl text-blue-200'>
+              {role}
+            </CardDescription>
           </CardHeader>
-          <CardContent className="p-6">
-            <UserInformation fullName={fullName} age={age} email={email} profile_picture={profilePicture} handleToggleModal={handleToggleModal} followingCount={followingCount} followersCount={followersCount} />
-            <div className="mt-8">
-              <h3 className="text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
+          <CardContent className='p-6'>
+            <UserInformation
+              fullName={fullName}
+              age={age}
+              email={email}
+              profile_picture={profilePicture}
+              handleToggleModalFollowed={handleToggleModalFollowed}
+              handleToggleModalFollowing={handleToggleModalFollowing}
+              followingCount={followingCount}
+              followersCount={followersCount}
+            />
+            <div className='mt-8'>
+              <h3 className='text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600'>
                 Reseñas de Libros
               </h3>
               <UserReviews reviews={reviews} />
             </div>
-            {isAuthor && <UserBooks booksData={booksData} handleAddBook={handleAddBook}/>}
+            {isAuthor && (
+              <UserBooks booksData={booksData} handleAddBook={handleAddBook} />
+            )}
           </CardContent>
         </Card>
       </div>
-      <FollowedUsersModal isOpen={isModalOpen} onClose={handleToggleModal} users={followedUsers} />
+      <FollowedUsersModal
+        isOpen={isModalFollowedOpen}
+        onClose={handleToggleModalFollowed}
+        users={followedUsers}
+      />
+      <FollowedUsersModal
+        isOpen={isModalFollowingOpen}
+        onClose={handleToggleModalFollowing}
+        users={followingUsers}
+      />
     </div>
   );
 };

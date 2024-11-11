@@ -7,7 +7,8 @@ export const UserInformation = ({
   age,
   email,
   profile_picture,
-  handleToggleModal,
+  handleToggleModalFollowed,
+  handleToggleModalFollowing,
   followingCount,
   followersCount
 }) => {
@@ -55,7 +56,7 @@ export const UserInformation = ({
                 <strong className='text-blue-300'>Seguidos:</strong>{" "}
                 <span className='text-gray-300'>{followingCount}</span>
                 <Button
-                  onClick={handleToggleModal}
+                  onClick={handleToggleModalFollowed}
                   className='ml-2 bg-blue-600 text-white px-2 py-1 rounded btn'
                 >
                   Ver
@@ -67,6 +68,10 @@ export const UserInformation = ({
               <span>
                 <strong className='text-blue-300'>Seguidores:</strong>{" "}
                 <span className='text-gray-300'>{followersCount}</span>
+                <Button
+                  onClick={handleToggleModalFollowing}
+                  className='ml-2 bg-blue-600 text-white px-2 py-1 rounded btn'
+                >Ver</Button>
               </span>
             </li>
           </ul>
