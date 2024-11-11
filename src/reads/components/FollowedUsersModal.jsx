@@ -22,39 +22,42 @@ export const FollowedUsersModal = ({ users, followersCount, title }) => {
           </DialogTitle>
         </DialogHeader>
         <ScrollArea className='h-[60vh] pr-4'>
-          <ul className='space-y-4'>
-            {users.map((user) => (
-              <Link
-                to={`/users/${user.username}`}
-                className='flex items-center space-x-4 p-4 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors'
-              >
-                <li
+        {users.length > 0 ? (
+            <ul className='space-y-4'>
+              {users.map((user) => (
+                <Link
+                  to={`/users/${user.username}`}
+                  className='flex items-center space-x-4 p-4 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors'
                   key={user.username}
-                  className='flex items-center space-x-4 p-4'
                 >
-                  <Avatar className='w-12 h-12 border-2 border-blue-500'>
-                    <AvatarImage
-                      src={user.profile_picture}
-                      alt={user.username}
-                    />
-                    <AvatarFallback className='bg-blue-600 text-white'>
-                      {user.first_name}
-                      {user.last_name}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <h3 className='text-lg font-semibold text-blue-300'>
-                      {user.username}
-                    </h3>
-
-                    <p className='text-gray-300'>
-                      {user.first_name} {user.last_name}
-                    </p>
-                  </div>
-                </li>
-              </Link>
-            ))}
-          </ul>
+                  <li className='flex items-center space-x-4 p-4'>
+                    <Avatar className='w-12 h-12 border-2 border-blue-500'>
+                      <AvatarImage
+                        src={user.profile_picture}
+                        alt={user.username}
+                      />
+                      <AvatarFallback className='bg-blue-600 text-white'>
+                        {user.first_name}
+                        {user.last_name}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <h3 className='text-lg font-semibold text-blue-300'>
+                        {user.username}
+                      </h3>
+                      <p className='text-gray-300'>
+                        {user.first_name} {user.last_name}
+                      </p>
+                    </div>
+                  </li>
+                </Link>
+              ))}
+            </ul>
+          ) : (
+            <p className='text-center text-gray-400'>
+              No hay usuarios en esta lista.
+            </p>
+          )}
         </ScrollArea>
       </DialogContent>
     </Dialog>
