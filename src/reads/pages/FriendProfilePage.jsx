@@ -31,8 +31,6 @@ export const FriendProfilePage = () => {
   const [message, setMessage] = useState('');
   const { followingCount, followersCount, followedUsers } = useFollowCounts(userID);
 
-
-
   const handleToggleModal = () => {
     setIsModalOpen((prev) => !prev);
   };
