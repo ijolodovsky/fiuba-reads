@@ -4,7 +4,7 @@ import { supabase } from '../../utils/supabase-client';
 export const useFollowCounts = (userID) => {
   const [followingCount, setFollowingCount] = useState(0);
   const [followersCount, setFollowersCount] = useState(0);
-  const [followedUsers, setFollowedUsers] = useState([]);
+  const [followersUsers, setFollowersUsers] = useState([]);
   const [followingUsers, setFollowingUsers] = useState([]);
 
   useEffect(() => {
@@ -25,23 +25,22 @@ export const useFollowCounts = (userID) => {
         setFollowingCount(followingData.length);
         setFollowersCount(followersData.length);
 
-        // Fetching followed users' details
         const followedUserIds = followingData.map((follow) => follow.followed_id);
         const { data: followedUserDetails } = await supabase
           .from('users')
           .select('username, first_name, last_name, profile_picture')
           .in('username', followedUserIds);
 
-        setFollowedUsers(followedUserDetails);
+        setFollowingUsers(followedUserDetails);
 
-        // Fetching following users' details
+
         const followerUserIds = followersData.map((follow) => follow.follower_id);
         const { data: followingUserDetails } = await supabase
           .from('users')
           .select('username, first_name, last_name, profile_picture')
           .in('username', followerUserIds);
 
-        setFollowingUsers(followingUserDetails);
+          setFollowersUsers(followingUserDetails);
       } catch (error) {
         console.error("Error fetching follow data:", error);
       }
@@ -50,5 +49,5 @@ export const useFollowCounts = (userID) => {
     fetchFollowCountsAndUsers();
   }, [userID]);
 
-  return { followingCount, followersCount, followedUsers, followingUsers };
+  return { followingCount, followersCount, followersUsers, followingUsers };
 };

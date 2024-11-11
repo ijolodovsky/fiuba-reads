@@ -9,28 +9,23 @@ import './profilePage.css';
 import { UserInformation } from '../components/UserInformation';
 import { useFollowCounts } from '../hooks/useFollowCounts';
 
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
+import { Button } from '@/components/ui/button';
+import { Users } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
 export const ProfilePage = () => {
   const { authState: { user } } = useContext(AuthContext);
 
   const [loading, setLoading] = useState(true);
   const [booksData, setBooksData] = useState([]);
   const [error, setError] = useState(null);
-  const [isModalFollowedOpen, setIsModalFollowedOpen] = useState(false);
-  const [isModalFollowingOpen, setModalFollowingopen] = useState(false);
 
   const [reviews, setReviews] = useState([]);
 
-  const { followingCount, followersCount, followedUsers, followingUsers } = useFollowCounts(user.username);
+  const { followingCount, followersCount, followersUsers, followingUsers } = useFollowCounts(user.username);
   const navigate = useNavigate();
 
-
-  const handleToggleModalFollowed = () => {
-    setIsModalFollowedOpen((prev) => !prev);
-  };
-
-  const handleToggleModalFollowing = () => {
-    setModalFollowingopen((prev) => !prev);
-  };
 
   const handleAddBook = () => {
     navigate('/add-book');
@@ -127,11 +122,12 @@ export const ProfilePage = () => {
               age={age}
               email={email}
               profile_picture={profilePicture}
-              handleToggleModalFollowed={handleToggleModalFollowed}
-              handleToggleModalFollowing={handleToggleModalFollowing}
               followingCount={followingCount}
               followersCount={followersCount}
+              followersUsers={followersUsers}
+              followingUsers={followingUsers}
             />
+            
             <div className='mt-8'>
               <h3 className='text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600'>
                 Reseñas de Libros
@@ -144,16 +140,6 @@ export const ProfilePage = () => {
           </CardContent>
         </Card>
       </div>
-      <FollowedUsersModal
-        isOpen={isModalFollowedOpen}
-        onClose={handleToggleModalFollowed}
-        users={followedUsers}
-      />
-      <FollowedUsersModal
-        isOpen={isModalFollowingOpen}
-        onClose={handleToggleModalFollowing}
-        users={followingUsers}
-      />
     </div>
   );
 };

@@ -33,7 +33,7 @@ export const FriendProfilePage = () => {
   const [isModalFollowingOpen, setModalFollowingopen] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
   const [message, setMessage] = useState("");
-  const { followingCount, followersCount, followedUsers, followingUsers } =
+  const { followingCount, followersCount, followersUsers, followingUsers } =
     useFollowCounts(userID);
 
   const handleToggleModalFollowed = () => {
@@ -291,10 +291,10 @@ export const FriendProfilePage = () => {
               age={age}
               email={email}
               profile_picture={profile_picture}
-              handleToggleModalFollowed={handleToggleModalFollowed}
-              handleToggleModalFollowing={handleToggleModalFollowing}
               followingCount={followingCount}
               followersCount={followersCount}
+              followersUsers={followersUsers}
+              followingUsers={followingUsers}
             />
             <FollowStatus />
             <div className='mt-8'>
@@ -307,16 +307,6 @@ export const FriendProfilePage = () => {
           </CardContent>
         </Card>
       </div>
-      <FollowedUsersModal
-        isOpen={isModalFollowedOpen}
-        onClose={handleToggleModalFollowed}
-        users={followedUsers}
-      />
-      <FollowedUsersModal
-        isOpen={isModalFollowingOpen}
-        onClose={handleToggleModalFollowing}
-        users={followingUsers}
-      />
     </div>
   );
 };

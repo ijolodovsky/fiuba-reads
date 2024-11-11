@@ -1,16 +1,20 @@
 import React from "react";
 import { Mail, User, Calendar, Contact } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
+import { Users } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { FollowedUsersModal } from "./FollowedUsersModal";
 
 export const UserInformation = ({
   fullName,
   age,
   email,
   profile_picture,
-  handleToggleModalFollowed,
-  handleToggleModalFollowing,
   followingCount,
-  followersCount
+  followersCount,
+  followersUsers,
+  followingUsers
 }) => {
   return (
     <>
@@ -23,6 +27,10 @@ export const UserInformation = ({
               className='w-full h-full object-cover'
             />
           </div>
+        </div>
+        <div className="text-right">
+          <FollowedUsersModal users={followersUsers} followersCount={followersCount} title={"Seguidores"}/>
+          <FollowedUsersModal users={followingUsers} followersCount={followingCount} title={"Seguidos"}/>
         </div>
         <div className='w-full md:w-2/3'>
           <h3 className='text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600'>
@@ -48,30 +56,6 @@ export const UserInformation = ({
               <span>
                 <strong className='text-blue-300'>Edad:</strong>{" "}
                 <span className='text-gray-300'>{age}</span>
-              </span>
-            </li>
-            <li className='flex items-center space-x-3'>
-              <Contact className='text-blue-400' />
-              <span>
-                <strong className='text-blue-300'>Seguidos:</strong>{" "}
-                <span className='text-gray-300'>{followingCount}</span>
-                <Button
-                  onClick={handleToggleModalFollowed}
-                  className='ml-2 bg-blue-600 text-white px-2 py-1 rounded btn'
-                >
-                  Ver
-                </Button>
-              </span>
-            </li>
-            <li className='flex items-center space-x-3'>
-              <Contact className='text-blue-400' />
-              <span>
-                <strong className='text-blue-300'>Seguidores:</strong>{" "}
-                <span className='text-gray-300'>{followersCount}</span>
-                <Button
-                  onClick={handleToggleModalFollowing}
-                  className='ml-2 bg-blue-600 text-white px-2 py-1 rounded btn'
-                >Ver</Button>
               </span>
             </li>
           </ul>
