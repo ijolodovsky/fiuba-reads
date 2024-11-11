@@ -32,6 +32,10 @@ export const BookProfile = () => {
   } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  const isSameUser = (review, user) => {
+    return user.username === review.username;
+  }
+
   const fetchBookData = async () => {
     try {
       const { data, error } = await supabase
@@ -349,10 +353,10 @@ export const BookProfile = () => {
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <Link
-                        to={`/users/${review.username}`}
-                        className='text-white text-xl font-semibold mr-4 text-decoration-none'
-                      >
+                    <Link
+                      to={(isSameUser(review, user)) ? `/profile` : `/users/${review.username}`}
+                      className='text-white text-xl font-semibold mr-4 text-decoration-none'
+                    >
                         <p className='font-semibold text-blue-300'>
                           {review.username}
                         </p>{" "}
