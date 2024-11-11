@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../../auth/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
-import { UserBooks, FollowedUsersModal } from '../components';
+import { UserBooks, FollowedUsersModal, UserReviews } from '../components';
 import { supabase } from '../../utils/supabase-client';
 import { LoadingSpinner, NotFound } from '@/src/ui/components';
 import './profilePage.css';
@@ -16,6 +16,8 @@ export const ProfilePage = () => {
   const [booksData, setBooksData] = useState([]);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
+
+  const [reviews, setReviews] = useState([]);
 
   const { followingCount, followersCount, followedUsers } = useFollowCounts(user.username);
   const navigate = useNavigate();
@@ -45,6 +47,42 @@ export const ProfilePage = () => {
     setLoading(false);
   };
 
+  const fetchBookTitle = async (bookId) => {
+    const { data, error } = await supabase
+      .from('books')
+      .select('title')
+      .eq('isbn', bookId)
+      .single();
+  
+    if (error) {
+      console.error(`Error fetching title for book ID ${bookId}:`, error);
+      return 'Título desconocido';
+    }
+    return data?.title || 'Título desconocido';
+  };
+
+  const fetchReviews = async () => {
+    const { data: reviewsData, error } = await supabase
+      .from("reviews")
+      .select("*")
+      .eq("username", user.username);
+  
+    if (error) {
+      console.error("Error fetching reviews:", error);
+      setReviews([]);
+    } else {
+      // Usa Promise.all para obtener los títulos de todos los `book_id`
+      const titles = await Promise.all(
+        reviewsData.map(async (review) => {
+          const title = await fetchBookTitle(review.book_id);
+          console.log(title)
+          return { ...review, title };
+        })
+      );
+      setReviews(titles);
+    }
+  };
+
   useEffect(() => {
     if (user) {
       if (isAuthor) {
@@ -54,6 +92,10 @@ export const ProfilePage = () => {
       }
     }
   }, [user]);
+
+  useEffect(() => {
+    fetchReviews();
+}, [user]);
 
   if (loading) return <LoadingSpinner />;
   if (error) return <NotFound />;
@@ -71,6 +113,12 @@ export const ProfilePage = () => {
           </CardHeader>
           <CardContent className="p-6">
             <UserInformation fullName={fullName} age={age} email={email} profile_picture={profilePicture} handleToggleModal={handleToggleModal} followingCount={followingCount} followersCount={followersCount} />
+            <div className="mt-8">
+              <h3 className="text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
+                Reseñas de Libros
+              </h3>
+              <UserReviews reviews={reviews} />
+            </div>
             {isAuthor && <UserBooks booksData={booksData} handleAddBook={handleAddBook}/>}
           </CardContent>
         </Card>
