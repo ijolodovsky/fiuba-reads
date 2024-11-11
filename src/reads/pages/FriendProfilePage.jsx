@@ -9,13 +9,13 @@ import {
   CardDescription,
   CardTitle,
 } from '@/components/ui/card';
-import { User, Mail, Calendar, Star, UserPlus, UserCheck, MessageCircle } from 'lucide-react';
+import { User, Mail, Calendar, Star, UserPlus, UserCheck, MessageCircle, Contact } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '../../utils/supabase-client';
 import { LoadingSpinner, NotFound } from '@/src/ui/components';
 import Swal from 'sweetalert2';
 
-import { UserBooks } from '../components/UserBooks';
+import { UserBooks, FollowedUsersModal } from '../components';
 
 export const FriendProfilePage = () => {
   const { authState: { user } } = useContext(AuthContext);
@@ -26,6 +26,54 @@ export const FriendProfilePage = () => {
   const [error, setError] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const [reviews, setReviews] = useState([]);
+  const [followingCount, setFollowingCount] = useState(0);
+  const [followersCount, setFollowersCount] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
+  const [followedUsers, setFollowedUsers] = useState([]); // 
+  const [message, setMessage] = useState('');
+
+
+  const handleToggleModal = () => {
+    setIsModalOpen((prev) => !prev);
+  };
+
+  const fetchFollowCountsAndUsers = async () => {
+    try {
+      // Fetch count of following users
+      const { data: followingData, error: followingError } = await supabase
+        .from('follows')
+        .select('followed_id')
+        .eq('follower_id', userID);
+
+      // Get followers count
+      const { data: followersData, error: followersError } = await supabase
+        .from('follows')
+        .select('follower_id')
+        .eq('followed_id', userID);
+
+      if (followingError || followersError) {
+        console.error("Error fetching follow counts:", followingError || followersError);
+      } else {
+        setFollowingCount(followingData.length);
+        setFollowersCount(followersData.length);
+
+        // Info detallada de usuario seguido
+        const followedUserIds = followingData.map(follow => follow.followed_id);
+        const { data: followedUserDetails, error: userDetailsError } = await supabase
+          .from('users')
+          .select('username, first_name, last_name, profile_picture')
+          .in('username', followedUserIds);
+
+        if (userDetailsError) {
+          console.error("Error fetching followed users:", userDetailsError);
+        } else {
+          setFollowedUsers(followedUserDetails);
+        }
+      }
+    } catch (error) {
+      console.error("Error in fetching follow data:", error);
+    }
+  };
 
   const fetchBookTitle = async (bookId) => {
     const { data, error } = await supabase
@@ -62,8 +110,6 @@ export const FriendProfilePage = () => {
       setReviews(titles);
     }
   };
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [message, setMessage] = useState('');
 
   const fetchBookData = async (firstName, lastName) => {
     const { data, error } = await supabase
@@ -111,6 +157,12 @@ export const FriendProfilePage = () => {
   useEffect(() => {
       fetchReviews();
   }, [userID]);
+
+  useEffect(() => {
+    if (user) {
+      fetchFollowCountsAndUsers();
+    }
+  }, [user]);
 
   useEffect(() => {
     const checkFollowingStatus = async () => {
@@ -238,7 +290,7 @@ const FollowStatus = () => {
                 Mandar Mensaje
               </Button>
             </div>
-            {isModalOpen && (
+            {/* {isModalOpen && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                 <div className="bg-gray-800 border border-blue-500 rounded-lg p-6 max-w-md mx-auto">
                   <h3 className="text-2xl font-semibold text-white mb-4">Enviar Mensaje</h3>
@@ -265,7 +317,7 @@ const FollowStatus = () => {
                   </div>
                 </div>
               </div>
-            )}
+            )} */}
             </>
   );
 }
@@ -310,6 +362,22 @@ const UserInformation = ({fullName, age, email, profile_picture}) => {
                       <span className="text-gray-300">{age}</span>
                     </span>
                   </li>
+                  <li className="flex items-center space-x-3">
+                    <Contact className="text-blue-400" />
+                    <span>
+                      <strong className="text-blue-300">Seguidos:</strong>{" "}
+                      <span className="text-gray-300">{followingCount}</span>
+                      <Button onClick={handleToggleModal} className="ml-2 bg-blue-600 text-white px-2 py-1 rounded">Ver</Button>
+                    </span>
+                    
+                  </li>
+                  <li className="flex items-center space-x-3">
+                    <Contact className="text-blue-400" />
+                    <span>
+                      <strong className="text-blue-300">Seguidores:</strong>{" "}
+                      <span className="text-gray-300">{followersCount}</span>
+                    </span>
+                  </li>
                 </ul>
               </div>
             </div>
@@ -343,6 +411,7 @@ const UserInformation = ({fullName, age, email, profile_picture}) => {
           </CardContent>
         </Card>
       </div>
+      <FollowedUsersModal isOpen={isModalOpen} onClose={handleToggleModal} users={followedUsers} />
     </div>
   );
 };
