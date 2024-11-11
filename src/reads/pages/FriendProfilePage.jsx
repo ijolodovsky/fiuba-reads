@@ -9,13 +9,13 @@ import {
   CardDescription,
   CardTitle,
 } from '@/components/ui/card';
-import { User, Mail, Calendar, Star, UserPlus, UserCheck, MessageCircle, Contact } from 'lucide-react';
+import { UserPlus, UserCheck, MessageCircle } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '../../utils/supabase-client';
 import { LoadingSpinner, NotFound } from '@/src/ui/components';
 import Swal from 'sweetalert2';
 
-import { UserBooks, FollowedUsersModal } from '../components';
+import { UserBooks, FollowedUsersModal, UserInformation, UserReviews } from '../components';
 
 export const FriendProfilePage = () => {
   const { authState: { user } } = useContext(AuthContext);
@@ -251,27 +251,6 @@ export const FriendProfilePage = () => {
   const fullName = `${first_name} ${last_name}`;
   const isAuthor = role === 'escritor';
 
-  const UserReviews = ({reviews}) => {
-  return <div className="space-y-4">
-    {reviews.map((review) => (
-      <Card key={review.id} className="bg-gray-700 border-blue-400">
-        <CardContent className="p-4">
-          <h4 className="text-lg font-semibold text-blue-300">
-            {review.title}
-          </h4>
-          <div className="flex items-center mt-2">
-            <Star className="text-yellow-400 mr-1" />
-            <span className="text-yellow-400">
-              {review.rating}/5
-            </span>
-          </div>
-          <p className="mt-2 text-gray-300">{review.content}</p>
-        </CardContent>
-      </Card>
-    ))}
-  </div>;
-}
-
 const FollowStatus = () => {
   return (
     <>
@@ -322,70 +301,6 @@ const FollowStatus = () => {
   );
 }
 
-const UserInformation = ({fullName, age, email, profile_picture}) => {
-  return (
-    <>
-
-            <div className="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-10">
-              <div className="w-full md:w-1/3 flex flex-col items-center">
-                <div className="w-40 h-40 rounded-full border-4 border-blue-500 overflow-hidden mb-4">
-                  <img
-                    src={profile_picture}
-                    alt="Profile"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              </div>
-              <div className="w-full md:w-2/3">
-                <h3 className="text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
-                  Información Personal
-                </h3>
-                <ul className="space-y-4">
-                  <li className="flex items-center space-x-3">
-                    <Mail className="text-blue-400" />
-                    <span>
-                      <strong className="text-blue-300">Email:</strong>{" "}
-                      <span className="text-gray-300">{email}</span>
-                    </span>
-                  </li>
-                  <li className="flex items-center space-x-3">
-                    <User className="text-blue-400" />
-                    <span>
-                      <strong className="text-blue-300">Nombre:</strong>{" "}
-                      <span className="text-gray-300">{fullName}</span>
-                    </span>
-                  </li>
-                  <li className="flex items-center space-x-3">
-                    <Calendar className="text-blue-400" />
-                    <span>
-                      <strong className="text-blue-300">Edad:</strong>{" "}
-                      <span className="text-gray-300">{age}</span>
-                    </span>
-                  </li>
-                  <li className="flex items-center space-x-3">
-                    <Contact className="text-blue-400" />
-                    <span>
-                      <strong className="text-blue-300">Seguidos:</strong>{" "}
-                      <span className="text-gray-300">{followingCount}</span>
-                      <Button onClick={handleToggleModal} className="ml-2 bg-blue-600 text-white px-2 py-1 rounded">Ver</Button>
-                    </span>
-                    
-                  </li>
-                  <li className="flex items-center space-x-3">
-                    <Contact className="text-blue-400" />
-                    <span>
-                      <strong className="text-blue-300">Seguidores:</strong>{" "}
-                      <span className="text-gray-300">{followersCount}</span>
-                    </span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            </>
-  );
-};
-
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12">
       <div className="container mx-auto px-4">
@@ -399,7 +314,7 @@ const UserInformation = ({fullName, age, email, profile_picture}) => {
             </CardDescription>
           </CardHeader>
           <CardContent className="p-6">
-            <UserInformation fullName={fullName} age={age} email={email} profile_picture={profile_picture} />
+            <UserInformation fullName={fullName} age={age} email={email} profile_picture={profile_picture} handleToggleModal={handleToggleModal} followingCount={followingCount} followersCount={followersCount} />
             <FollowStatus />
             <div className="mt-8">
               <h3 className="text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
