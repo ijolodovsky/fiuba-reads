@@ -30,7 +30,7 @@ export const FriendProfilePage = () => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [isModalFollowedOpen, setIsModalFollowedOpen] = useState(false);
-  const [isModalFollowingopen, setModalFollowingopen] = useState(false);
+  const [isModalFollowingOpen, setModalFollowingopen] = useState(false);
   const [message, setMessage] = useState("");
   const { followingCount, followersCount, followedUsers, followingUsers } =
     useFollowCounts(userID);
@@ -312,7 +312,7 @@ export const FriendProfilePage = () => {
         users={followedUsers}
       />
       <FollowedUsersModal
-        isOpen={isModalFollowingopen}
+        isOpen={isModalFollowingOpen}
         onClose={handleToggleModalFollowing}
         users={followingUsers}
       />
