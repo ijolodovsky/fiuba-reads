@@ -5,7 +5,7 @@ import _ from 'lodash';
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Search, User } from "lucide-react";
+import { Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 
@@ -18,6 +18,10 @@ export const UserSearch = () => {
   const [suggestedUsers, setSuggestedUsers] = useState([]);
   const navigate = useNavigate();
   const { authState: { user } } = useContext(AuthContext);
+
+  const isSameUser = (suggestedUser, user) => {
+    return user.username === suggestedUser.username;
+  }
 
   const fetchFollowed = async () => {
     if (!user) return;
@@ -88,26 +92,26 @@ export const UserSearch = () => {
           <Card className="relative w-full max-w-md mx-auto mt-8 w-full mt-3 bg-gray-800 rounded-lg shadow-2xl shadow-blue-500/30">
             <CardContent className="p-2 max-h-64 overflow-y-auto">
               <ul className="space-y-2">
-                {suggestedUsers.map((user) => (
+                {suggestedUsers.map((currentUser) => (
                   <li
-                    key={user.username}
+                    key={currentUser.username}
                     className="flex items-center p-3 bg-gray-800 hover:bg-blue-900 rounded-lg cursor-pointer transition-all duration-300"
-                    onClick={() => navigate(`/users/${user.username}`)}
+                    onClick={() => navigate((isSameUser(currentUser, user)) ? `/profile` : `/users/${currentUser.username}`)}
                   >
                     <img
-                      src={user.profile_picture || placeholder}
-                      alt={user.username}
+                      src={currentUser.profile_picture || placeholder}
+                      alt={currentUser.username}
                       className="w-10 h-10 rounded-full mr-3"
                     />
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
                           <span className="text-sm font-semibold text-blue-300">
-                            {user.first_name} {user.last_name}
+                            {currentUser.first_name} {currentUser.last_name}
                           </span>
                         </TooltipTrigger>
                         <TooltipContent side="top" className="bg-gray-900 border border-blue-500 text-blue-300">
-                          <p>Username: {user.username}</p>
+                          <p>Username: {currentUser.username}</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
