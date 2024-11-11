@@ -76,6 +76,7 @@ export const BookProfile = () => {
     fetchBookData();
     fetchReviews();
   }, [isbn]);
+
   const handleAddReview = async () => {
     if (!user) {
       Swal.fire("Debes iniciar sesión para agregar una reseña.");
@@ -83,34 +84,38 @@ export const BookProfile = () => {
     }
   
     try {
-      const { data, error } = await supabase.from("reviews").insert({
-        user_id: user.id,
-        username: user.username || "Anónimo",
-        book_id: isbn,
-        content: newReview.content,
-        rating: newReview.rating,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      });
+      const { data, error } = await supabase
+        .from("reviews")
+        .insert({
+          user_id: user.id,
+          username: user.username || "Anónimo",
+          book_id: isbn,
+          content: newReview.content,
+          rating: newReview.rating,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .select(); // Asegúrate de seleccionar los datos insertados
   
       if (error) {
         console.error("Error al agregar la reseña:", error);
         Swal.fire("Error al agregar la reseña");
         return;
-      }
-  
-      if (data) {
-        setReviews((prevReviews) => [...prevReviews, data[0]]); // Actualizamos el estado con la nueva reseña
+      } else if (data && data.length > 0) {
+        setReviews((prevReviews) => [...prevReviews, data[0]]);
         setNewReview({ content: "", rating: 0 });
         Swal.fire("Reseña agregada correctamente");
+  
+        // Recalcular el promedio de las reseñas después de agregar una nueva reseña
         await updateBookRating();
+      } else {
+        console.error("No se recibió ningún dato de la base de datos");
       }
     } catch (error) {
       console.error("Error en handleAddReview:", error);
       Swal.fire("Ocurrió un error al agregar la reseña. Inténtalo de nuevo.");
     }
   };
-  
   
   
   const updateBookRating = async () => {
