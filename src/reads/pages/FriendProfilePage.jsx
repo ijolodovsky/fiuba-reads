@@ -16,6 +16,7 @@ import { LoadingSpinner, NotFound } from '@/src/ui/components';
 import Swal from 'sweetalert2';
 
 import { UserBooks, FollowedUsersModal, UserInformation, UserReviews } from '../components';
+import { useFollowCounts } from '../hooks/useFollowCounts';
 
 export const FriendProfilePage = () => {
   const { authState: { user } } = useContext(AuthContext);
@@ -26,54 +27,16 @@ export const FriendProfilePage = () => {
   const [error, setError] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const [reviews, setReviews] = useState([]);
-  const [followingCount, setFollowingCount] = useState(0);
-  const [followersCount, setFollowersCount] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
-  const [followedUsers, setFollowedUsers] = useState([]); // 
   const [message, setMessage] = useState('');
+  const { followingCount, followersCount, followedUsers } = useFollowCounts(userID);
+
 
 
   const handleToggleModal = () => {
     setIsModalOpen((prev) => !prev);
   };
 
-  const fetchFollowCountsAndUsers = async () => {
-    try {
-      // Fetch count of following users
-      const { data: followingData, error: followingError } = await supabase
-        .from('follows')
-        .select('followed_id')
-        .eq('follower_id', userID);
-
-      // Get followers count
-      const { data: followersData, error: followersError } = await supabase
-        .from('follows')
-        .select('follower_id')
-        .eq('followed_id', userID);
-
-      if (followingError || followersError) {
-        console.error("Error fetching follow counts:", followingError || followersError);
-      } else {
-        setFollowingCount(followingData.length);
-        setFollowersCount(followersData.length);
-
-        // Info detallada de usuario seguido
-        const followedUserIds = followingData.map(follow => follow.followed_id);
-        const { data: followedUserDetails, error: userDetailsError } = await supabase
-          .from('users')
-          .select('username, first_name, last_name, profile_picture')
-          .in('username', followedUserIds);
-
-        if (userDetailsError) {
-          console.error("Error fetching followed users:", userDetailsError);
-        } else {
-          setFollowedUsers(followedUserDetails);
-        }
-      }
-    } catch (error) {
-      console.error("Error in fetching follow data:", error);
-    }
-  };
 
   const fetchBookTitle = async (bookId) => {
     const { data, error } = await supabase
@@ -157,12 +120,6 @@ export const FriendProfilePage = () => {
   useEffect(() => {
       fetchReviews();
   }, [userID]);
-
-  useEffect(() => {
-    if (user) {
-      fetchFollowCountsAndUsers();
-    }
-  }, [user]);
 
   useEffect(() => {
     const checkFollowingStatus = async () => {

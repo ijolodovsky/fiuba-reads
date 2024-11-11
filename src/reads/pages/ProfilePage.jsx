@@ -1,26 +1,23 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../../auth/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import {Button} from '@/components/ui/button';
 import { Card, CardHeader, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
-import { BookPlus, User, Mail, Calendar, Contact } from "lucide-react";
 import { UserBooks, FollowedUsersModal } from '../components';
-import image from '../../assets/profile.webp';
 import { supabase } from '../../utils/supabase-client';
 import { LoadingSpinner, NotFound } from '@/src/ui/components';
 import './profilePage.css';
 import { UserInformation } from '../components/UserInformation';
+import { useFollowCounts } from '../hooks/useFollowCounts';
 
 export const ProfilePage = () => {
   const { authState: { user } } = useContext(AuthContext);
 
-  const [followingCount, setFollowingCount] = useState(0);
-  const [followersCount, setFollowersCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [booksData, setBooksData] = useState([]);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
-  const [followedUsers, setFollowedUsers] = useState([]); // 
+
+  const { followingCount, followersCount, followedUsers } = useFollowCounts(user.username);
   const navigate = useNavigate();
 
   const handleToggleModal = () => {
@@ -47,50 +44,6 @@ export const ProfilePage = () => {
   
     setLoading(false);
   };
-
-  const fetchFollowCountsAndUsers = async () => {
-    try {
-      // Fetch count of following users
-      const { data: followingData, error: followingError } = await supabase
-        .from('follows')
-        .select('followed_id')
-        .eq('follower_id', user?.username);
-
-      // Get followers count
-      const { data: followersData, error: followersError } = await supabase
-        .from('follows')
-        .select('follower_id')
-        .eq('followed_id', user?.username);
-
-      if (followingError || followersError) {
-        console.error("Error fetching follow counts:", followingError || followersError);
-      } else {
-        setFollowingCount(followingData.length);
-        setFollowersCount(followersData.length);
-
-        // Info detallada de usuario seguido
-        const followedUserIds = followingData.map(follow => follow.followed_id);
-        const { data: followedUserDetails, error: userDetailsError } = await supabase
-          .from('users')
-          .select('username, first_name, last_name, profile_picture')
-          .in('username', followedUserIds);
-
-        if (userDetailsError) {
-          console.error("Error fetching followed users:", userDetailsError);
-        } else {
-          setFollowedUsers(followedUserDetails);
-        }
-      }
-    } catch (error) {
-      console.error("Error in fetching follow data:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (user) {
-      fetchFollowCountsAndUsers();
-    }
-  }, [user]);
 
   useEffect(() => {
     if (user) {
