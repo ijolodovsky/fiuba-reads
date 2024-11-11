@@ -31,6 +31,7 @@ export const FriendProfilePage = () => {
   const [reviews, setReviews] = useState([]);
   const [isModalFollowedOpen, setIsModalFollowedOpen] = useState(false);
   const [isModalFollowingOpen, setModalFollowingopen] = useState(false);
+  const [isModalOpen, setModalOpen] = useState(false);
   const [message, setMessage] = useState("");
   const { followingCount, followersCount, followedUsers, followingUsers } =
     useFollowCounts(userID);
@@ -186,7 +187,7 @@ export const FriendProfilePage = () => {
   };
 
   const handleSendMessageClick = () => {
-    setIsModalFollowedOpen(true);
+    setModalOpen(true);
   };
 
   const handleSendEmail = () => {
@@ -198,7 +199,7 @@ export const FriendProfilePage = () => {
   };
 
   const handleCancelMessage = () => {
-    setIsModalFollowedOpen(false);
+    setModalOpen(false);
     setMessage(""); // Limpiar el mensaje cuando se cancele
   };
 
@@ -240,7 +241,7 @@ export const FriendProfilePage = () => {
             Mandar Mensaje
           </Button>
         </div>
-        {/* {isModalOpen && (
+        {isModalOpen && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                 <div className="bg-gray-800 border border-blue-500 rounded-lg p-6 max-w-md mx-auto">
                   <h3 className="text-2xl font-semibold text-white mb-4">Enviar Mensaje</h3>
@@ -267,7 +268,7 @@ export const FriendProfilePage = () => {
                   </div>
                 </div>
               </div>
-            )} */}
+            )}
       </>
     );
   };
