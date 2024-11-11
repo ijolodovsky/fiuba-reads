@@ -1,12 +1,9 @@
 import React from 'react';
 import {
     Card,
-    CardHeader,
     CardContent,
-    CardDescription,
-    CardTitle,
   } from '@/components/ui/card';
-import { User, Mail, Calendar, Star, UserPlus, UserCheck, MessageCircle, Contact } from 'lucide-react';
+import { Star } from 'lucide-react';
 
 
 export  const UserReviews = ({ reviews }) => {
