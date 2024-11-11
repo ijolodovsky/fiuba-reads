@@ -1,10 +1,6 @@
-import React from "react";
-import { Mail, User, Calendar, Contact } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
-import { Users } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { FollowedUsersModal } from "./FollowedUsersModal";
+import React from 'react';
+import { Mail, User, Calendar } from 'lucide-react';
+import { FollowedUsersModal } from './FollowedUsersModal';
 
 export const UserInformation = ({
   fullName,
@@ -14,7 +10,7 @@ export const UserInformation = ({
   followingCount,
   followersCount,
   followersUsers,
-  followingUsers
+  followingUsers,
 }) => {
   return (
     <>
@@ -28,9 +24,17 @@ export const UserInformation = ({
             />
           </div>
         </div>
-        <div className="text-right">
-          <FollowedUsersModal users={followersUsers} followersCount={followersCount} title={"Seguidores"}/>
-          <FollowedUsersModal users={followingUsers} followersCount={followingCount} title={"Seguidos"}/>
+        <div className='text-right'>
+          <FollowedUsersModal
+            users={followersUsers}
+            followersCount={followersCount}
+            title={"Seguidores"}
+          />
+          <FollowedUsersModal
+            users={followingUsers}
+            followersCount={followingCount}
+            title={"Seguidos"}
+          />
         </div>
         <div className='w-full md:w-2/3'>
           <h3 className='text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600'>

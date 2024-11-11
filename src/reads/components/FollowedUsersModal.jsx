@@ -1,7 +1,13 @@
 import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Users } from 'lucide-react';
@@ -10,7 +16,10 @@ export const FollowedUsersModal = ({ users, followersCount, title }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant='outline' className='mr-2 btn border-1 rounded-lg shadow-2xl text-blue-400'>
+        <Button
+          variant='outline'
+          className='mr-2 btn border-1 rounded-lg shadow-2xl text-blue-400'
+        >
           <Users className='mr-2 h-4 w-4' />
           {followersCount} {title}
         </Button>
@@ -22,7 +31,7 @@ export const FollowedUsersModal = ({ users, followersCount, title }) => {
           </DialogTitle>
         </DialogHeader>
         <ScrollArea className='h-[60vh] pr-4'>
-        {users.length > 0 ? (
+          {users.length > 0 ? (
             <ul className='space-y-4'>
               {users.map((user) => (
                 <Link

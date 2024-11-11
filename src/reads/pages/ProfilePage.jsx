@@ -1,21 +1,24 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../../auth/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardHeader, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
-import { UserBooks, FollowedUsersModal, UserReviews } from '../components';
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardDescription,
+  CardTitle,
+} from '@/components/ui/card';
+import { UserBooks, UserReviews } from '../components';
 import { supabase } from '../../utils/supabase-client';
 import { LoadingSpinner, NotFound } from '@/src/ui/components';
 import './profilePage.css';
 import { UserInformation } from '../components/UserInformation';
 import { useFollowCounts } from '../hooks/useFollowCounts';
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
-import { Button } from '@/components/ui/button';
-import { Users } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-
 export const ProfilePage = () => {
-  const { authState: { user } } = useContext(AuthContext);
+  const {
+    authState: { user },
+  } = useContext(AuthContext);
 
   const [loading, setLoading] = useState(true);
   const [booksData, setBooksData] = useState([]);
@@ -23,43 +26,43 @@ export const ProfilePage = () => {
 
   const [reviews, setReviews] = useState([]);
 
-  const { followingCount, followersCount, followersUsers, followingUsers } = useFollowCounts(user.username);
+  const { followingCount, followersCount, followersUsers, followingUsers } =
+    useFollowCounts(user.username);
   const navigate = useNavigate();
 
-
   const handleAddBook = () => {
-    navigate('/add-book');
+    navigate("/add-book");
   };
 
-  const isAuthor = user.role === 'escritor';
+  const isAuthor = user.role === "escritor";
 
   const fetchBookData = async (firstName, lastName) => {
     const { data, error } = await supabase
-      .from('books')
-      .select('title, author, published_date, isbn')
-      .eq('author', `${firstName} ${lastName}`);
-  
+      .from("books")
+      .select("title, author, published_date, isbn")
+      .eq("author", `${firstName} ${lastName}`);
+
     if (error) {
-      setError('Error fetching book data');
+      setError("Error fetching book data");
     } else if (data.length > 0) {
       setBooksData(data);
     }
-  
+
     setLoading(false);
   };
 
   const fetchBookTitle = async (bookId) => {
     const { data, error } = await supabase
-      .from('books')
-      .select('title')
-      .eq('isbn', bookId)
+      .from("books")
+      .select("title")
+      .eq("isbn", bookId)
       .single();
-  
+
     if (error) {
       console.error(`Error fetching title for book ID ${bookId}:`, error);
-      return 'Título desconocido';
+      return "Título desconocido";
     }
-    return data?.title || 'Título desconocido';
+    return data?.title || "Título desconocido";
   };
 
   const fetchReviews = async () => {
@@ -67,7 +70,7 @@ export const ProfilePage = () => {
       .from("reviews")
       .select("*")
       .eq("username", user.username);
-  
+
     if (error) {
       console.error("Error fetching reviews:", error);
       setReviews([]);
@@ -76,7 +79,7 @@ export const ProfilePage = () => {
       const titles = await Promise.all(
         reviewsData.map(async (review) => {
           const title = await fetchBookTitle(review.book_id);
-          console.log(title)
+          console.log(title);
           return { ...review, title };
         })
       );
@@ -96,12 +99,13 @@ export const ProfilePage = () => {
 
   useEffect(() => {
     fetchReviews();
-}, [user]);
+  }, [user]);
 
   if (loading) return <LoadingSpinner />;
   if (error) return <NotFound />;
 
-  const { username, role, age, firstName, lastName, email, profilePicture } = user;
+  const { username, role, age, firstName, lastName, email, profilePicture } =
+    user;
   const fullName = `${firstName} ${lastName}`;
 
   return (
@@ -127,7 +131,7 @@ export const ProfilePage = () => {
               followersUsers={followersUsers}
               followingUsers={followingUsers}
             />
-            
+
             <div className='mt-8'>
               <h3 className='text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600'>
                 Reseñas de Libros
