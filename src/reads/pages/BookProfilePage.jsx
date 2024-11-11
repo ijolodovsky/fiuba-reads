@@ -27,6 +27,7 @@ export const BookProfile = () => {
   const [reviews, setReviews] = useState([]);
   const [newReview, setNewReview] = useState({ content: "", rating: 0 });
   const [editingReviewId, setEditingReviewId] = useState(null);
+  const [hasReviewed, setHasReviewed] = useState(false);
   const {
     authState: { user },
   } = useContext(AuthContext);
@@ -35,6 +36,39 @@ export const BookProfile = () => {
   const isSameUser = (review, user) => {
     return user.username === review.username;
   }
+
+  const checkIfReviewed = async () => {
+    if (!user) return;
+  
+    try {
+      const { data, error } = await supabase
+        .from("reviews")
+        .select("*")
+        .eq("username", user.username)
+        .eq("book_id", isbn);
+  
+      if (error) {
+        console.error("Error al verificar la reseña existente:", error);
+        return;
+      }
+  
+      // Si hay datos, significa que el usuario ya reseñó este libro
+      if (data && data.length > 0) {
+        console.log("Ya has reseñado este libro:", data[0]);
+        setHasReviewed(true);
+      } else{
+        console.log("No has reseñado este libro aún.");
+      }
+    } catch (error) {
+      console.error("Error en checkIfReviewed:", error);
+    }
+  };
+  
+  // Llama a checkIfReviewed cuando se monta el componente para verificar si ya ha reseñado
+  useEffect(() => {
+    checkIfReviewed();
+  }, [user, isbn]);
+  
 
   const fetchBookData = async () => {
     try {
@@ -83,6 +117,12 @@ export const BookProfile = () => {
       return;
     }
   
+    // Verifica si ya ha reseñado
+    if (hasReviewed) {
+      Swal.fire("Ya has dejado una reseña para este libro.");
+      return;
+    }
+  
     try {
       const { data, error } = await supabase
         .from("reviews")
@@ -95,7 +135,7 @@ export const BookProfile = () => {
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         })
-        .select(); // Asegúrate de seleccionar los datos insertados
+        .select();
   
       if (error) {
         console.error("Error al agregar la reseña:", error);
@@ -104,6 +144,7 @@ export const BookProfile = () => {
       } else if (data && data.length > 0) {
         setReviews((prevReviews) => [...prevReviews, data[0]]);
         setNewReview({ content: "", rating: 0 });
+        setHasReviewed(true); // Actualiza para deshabilitar los campos
         Swal.fire("Reseña agregada correctamente");
   
         // Recalcular el promedio de las reseñas después de agregar una nueva reseña
@@ -149,6 +190,7 @@ export const BookProfile = () => {
   
 
   const handleEditReview = async (review) => {
+    setHasReviewed(false);
     setEditingReviewId(review.id);
     setNewReview({ content: review.content, rating: review.rating });
   };
@@ -171,6 +213,7 @@ export const BookProfile = () => {
         )
       );
       setEditingReviewId(null);
+      setHasReviewed(true);
       setNewReview({ content: "", rating: 0 });
       Swal.fire("Reseña actualizada correctamente");
   
@@ -189,6 +232,7 @@ export const BookProfile = () => {
       Swal.fire("Error al eliminar la reseña");
       console.error("Error:", error);
     } else {
+      setHasReviewed(false);
       setReviews(reviews.filter((review) => review.id !== id));
       Swal.fire("Reseña eliminada correctamente");
     }
@@ -345,11 +389,8 @@ export const BookProfile = () => {
           </h2>
           <div className='space-y-6'>
             {reviews.map((review) => (
-              <Card
-                key={review.id}
-                className='bg-gray-800 border border-blue-500 rounded-lg shadow-lg'
-              >
-                <CardContent className='p-6 bg-gray-800 p-6 rounded-lg border border-blue-500 shadow-lg'>
+              <Card key={review.id} className='bg-gray-800 border border-blue-500 rounded-lg shadow-lg'>
+                <CardContent className='p-6'>
                   <div className='flex items-center space-x-4 mb-4'>
                     <Avatar className='border-2 border-blue-500'>
                       <AvatarImage src={review.avatar} alt={review.username} />
@@ -358,50 +399,25 @@ export const BookProfile = () => {
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                    <Link
-                      to={(isSameUser(review, user)) ? `/profile` : `/users/${review.username}`}
-                      className='text-white text-xl font-semibold mr-4 text-decoration-none'
-                    >
-                        <p className='font-semibold text-blue-300'>
-                          {review.username}
-                        </p>{" "}
-                      </Link>
+                      <p className='font-semibold text-blue-300'>{review.username}</p>
                       <div className='flex items-center'>
                         {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`w-4 h-4 ${
-                              i < review.rating
-                                ? "text-yellow-400"
-                                : "text-gray-500"
-                            }`}
-                          />
+                          <Star key={i} className={`w-4 h-4 ${i < review.rating ? "text-yellow-400" : "text-gray-500"}`} />
                         ))}
                       </div>
                     </div>
                   </div>
-                  <div className='flex justify-between items-start'>
-                    <p className='text-blue-300 text-left flex-1 mr-4'>
-                      {review.content}
-                    </p>
-                    {/* Mostrar botones solo si el usuario es el autor de la reseña */}
-                    {user.username === review.username && (
-                      <div className='flex space-x-2'>
-                        <Button
-                          variant='ghost'
-                          onClick={() => handleEditReview(review)}
-                        >
-                          <Edit className='text-blue-500 hover:text-blue-700' />
-                        </Button>
-                        <Button
-                          variant='ghost'
-                          onClick={() => handleDeleteReview(review.id)}
-                        >
-                          <Trash2 className='text-red-500 hover:text-red-700' />
-                        </Button>
-                      </div>
-                    )}
-                  </div>
+                  <p className='text-blue-300'>{review.content}</p>
+                  {user.username === review.username && (
+                    <div className='flex space-x-2'>
+                      <Button variant='ghost' onClick={() => handleEditReview(review)}>
+                        <Edit className='text-blue-500 hover:text-blue-700' />
+                      </Button>
+                      <Button variant='ghost' onClick={() => handleDeleteReview(review.id)}>
+                        <Trash2 className='text-red-500 hover:text-red-700' />
+                      </Button>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))}
@@ -409,15 +425,12 @@ export const BookProfile = () => {
 
           {user && (
             <div className='mt-8'>
-              <h3 className='text-xl mb-4'>
-                {editingReviewId ? "Editar Reseña" : "Agregar Reseña"}
-              </h3>
+              <h3 className='text-xl mb-4'>{editingReviewId ? "Editar Reseña" : "Agregar Reseña"}</h3>
               <Textarea
                 placeholder='Escribe tu reseña aquí...'
                 value={newReview.content}
-                onChange={(e) =>
-                  setNewReview({ ...newReview, content: e.target.value })
-                }
+                onChange={(e) => setNewReview({ ...newReview, content: e.target.value })}
+                disabled={hasReviewed}
                 className='bg-gray-700 border-blue-500 text-white placeholder-blue-300'
               />
               <input
@@ -425,15 +438,11 @@ export const BookProfile = () => {
                 max={5}
                 min={0}
                 value={newReview.rating}
-                onChange={(e) =>
-                  setNewReview({ ...newReview, rating: Number(e.target.value) })
-                }
+                onChange={(e) => setNewReview({ ...newReview, rating: Number(e.target.value) })}
+                disabled={hasReviewed}
                 className='w-full bg-gray-800 mt-2 p-2 text-blue-200 rounded'
               />
-              <Button
-                onClick={editingReviewId ? handleUpdateReview : handleAddReview}
-                className='mt-4'
-              >
+              <Button onClick={editingReviewId ? handleUpdateReview : handleAddReview} disabled={hasReviewed} className='mt-4'>
                 {editingReviewId ? "Actualizar Reseña" : "Agregar Reseña"}
               </Button>
             </div>
