@@ -4,8 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import {Button} from '@/components/ui/button';
 import { Card, CardHeader, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
 import { BookPlus, User, Mail, Calendar, Contact } from "lucide-react";
+import { UserBooks } from '../components/UserBooks';
 import image from '../../assets/profile.webp';
 import { supabase } from '../../utils/supabase-client';
+import { LoadingSpinner, NotFound } from '@/src/ui/components';
 import './profilePage.css';
 
 export const ProfilePage = () => {
@@ -13,11 +15,34 @@ export const ProfilePage = () => {
 
   const [followingCount, setFollowingCount] = useState(0);
   const [followersCount, setFollowersCount] = useState(0);
+
+  const [loading, setLoading] = useState(true);
+  const [booksData, setBooksData] = useState([]);
+
+  const [error, setError] = useState(null);
   
   const navigate = useNavigate();
 
   const handleAddBook = () => {
     navigate('/add-book');
+  };
+
+  const isAuthor = user.role === 'escritor';
+
+
+  const fetchBookData = async (firstName, lastName) => {
+    const { data, error } = await supabase
+      .from('books')
+      .select('title, author, published_date, isbn')
+      .eq('author', `${firstName} ${lastName}`);
+  
+    if (error) {
+      setError('Error fetching book data');
+    } else if (data.length > 0) {
+      setBooksData(data);
+    }
+  
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -44,7 +69,17 @@ export const ProfilePage = () => {
       fetchFollowCounts();
     }
   }, [user]);
-  
+
+  useEffect(() => {
+    if (user) {
+      if (isAuthor) {
+        fetchBookData(user.firstName, user.lastName);
+      }
+    }
+  }, [user]);
+
+  if (loading) return <LoadingSpinner />;
+  if (error) return <NotFound />;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12">
@@ -106,6 +141,7 @@ export const ProfilePage = () => {
                 </ul>
               </div>
             </div>
+            {isAuthor && <UserBooks booksData={booksData} />}
           </CardContent>
         </Card>
       </div>
