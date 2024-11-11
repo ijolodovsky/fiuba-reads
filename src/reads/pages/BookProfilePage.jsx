@@ -30,11 +30,14 @@ export const BookProfile = () => {
   const [hasReviewed, setHasReviewed] = useState(false);
   const [rate, setRating] = useState(null);
 
-
   const {
     authState: { user },
   } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  const isSameUser = (review, user) => {
+    return user.username === review.username;
+  }
 
   const fetchBookRating = async () => {
     const { data: reviewsData, error } = await supabase
@@ -430,7 +433,14 @@ export const BookProfile = () => {
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className='font-semibold text-blue-300'>{review.username}</p>
+                    <Link
+                      to={(isSameUser(review, user)) ? `/profile` : `/users/${review.username}`}
+                      className='text-white text-xl font-semibold mr-4 text-decoration-none'
+                    >
+                        <p className='font-semibold text-blue-300'>
+                          {review.username}
+                        </p>{" "}
+                      </Link>
                       <div className='flex items-center'>
                         {[...Array(5)].map((_, i) => (
                           <Star key={i} className={`w-4 h-4 ${i < review.rating ? "text-yellow-400" : "text-gray-500"}`} />
