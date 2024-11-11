@@ -28,14 +28,38 @@ export const BookProfile = () => {
   const [newReview, setNewReview] = useState({ content: "", rating: 0 });
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [hasReviewed, setHasReviewed] = useState(false);
+  const [rate, setRating] = useState(null);
+
+
   const {
     authState: { user },
   } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const isSameUser = (review, user) => {
-    return user.username === review.username;
-  }
+  const fetchBookRating = async () => {
+    const { data: reviewsData, error } = await supabase
+      .from("reviews")
+      .select("rating")
+      .eq("book_id", isbn);
+
+    if (error) {
+      setError("Error al obtener las reseñas");
+      console.error("Error al obtener las reseñas:", error);
+      return;
+    }
+
+    // Calcular el promedio de las calificaciones
+    const totalRating = reviewsData.reduce((acc, review) => acc + review.rating, 0);
+    const averageRating = totalRating / reviewsData.length;
+
+    // Actualizar el rating en el estado
+    setRating(averageRating);
+  };
+
+  // Llamar a la función al cargar el componente
+  useEffect(() => {
+    fetchBookRating();
+  }, [isbn]);
 
   const checkIfReviewed = async () => {
     if (!user) return;
@@ -144,11 +168,12 @@ export const BookProfile = () => {
       } else if (data && data.length > 0) {
         setReviews((prevReviews) => [...prevReviews, data[0]]);
         setNewReview({ content: "", rating: 0 });
+        // Recalcular el promedio de las reseñas después de agregar una nueva reseña
+        await updateBookRating();
         setHasReviewed(true); // Actualiza para deshabilitar los campos
         Swal.fire("Reseña agregada correctamente");
   
-        // Recalcular el promedio de las reseñas después de agregar una nueva reseña
-        await updateBookRating();
+        
       } else {
         console.error("No se recibió ningún dato de la base de datos");
       }
@@ -171,9 +196,13 @@ export const BookProfile = () => {
       return;
     }
   
-    // Calcular el promedio de las calificaciones
-    const totalRating = reviewsData.reduce((acc, review) => acc + review.rating, 0);
-    const averageRating = totalRating / reviewsData.length;
+    let averageRating = 0; // Inicializa el rating como 0 por defecto
+  
+    // Si hay reseñas, calcular el promedio
+    if (reviewsData.length > 0) {
+      const totalRating = reviewsData.reduce((acc, review) => acc + review.rating, 0);
+      averageRating = totalRating / reviewsData.length;
+    }
   
     // Actualizar el promedio en la tabla de libros
     const { error: updateError } = await supabase
@@ -185,9 +214,9 @@ export const BookProfile = () => {
       console.error("Error al actualizar el promedio de calificación del libro:", updateError);
     } else {
       console.log("Promedio de calificación actualizado correctamente.");
+      setRating(averageRating); // Actualiza el estado local con el nuevo rating
     }
-  };
-  
+  };  
 
   const handleEditReview = async (review) => {
     setHasReviewed(false);
@@ -214,11 +243,12 @@ export const BookProfile = () => {
       );
       setEditingReviewId(null);
       setHasReviewed(true);
+      // Recalcular el promedio de las reseñas después de la actualización
+      await updateBookRating();
       setNewReview({ content: "", rating: 0 });
       Swal.fire("Reseña actualizada correctamente");
   
-      // Recalcular el promedio de las reseñas después de la actualización
-      await updateBookRating();
+      
     } else {
       console.error("No se recibió ningún dato de la base de datos");
     }
@@ -233,6 +263,7 @@ export const BookProfile = () => {
       console.error("Error:", error);
     } else {
       setHasReviewed(false);
+      await updateBookRating();
       setReviews(reviews.filter((review) => review.id !== id));
       Swal.fire("Reseña eliminada correctamente");
     }
