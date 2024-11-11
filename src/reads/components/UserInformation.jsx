@@ -56,7 +56,7 @@ export const UserInformation = ({
                 <span className='text-gray-300'>{followingCount}</span>
                 <Button
                   onClick={handleToggleModal}
-                  className='ml-2 bg-blue-600 text-white px-2 py-1 rounded'
+                  className='ml-2 bg-blue-600 text-white px-2 py-1 rounded btn'
                 >
                   Ver
                 </Button>
