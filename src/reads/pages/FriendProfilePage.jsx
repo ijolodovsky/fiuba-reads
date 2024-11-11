@@ -15,7 +15,7 @@ import { supabase } from '../../utils/supabase-client';
 import { LoadingSpinner, NotFound } from '@/src/ui/components';
 import Swal from 'sweetalert2';
 
-import { UserBooks, FollowedUsersModal, UserInformation, UserReviews } from '../components';
+import { UserBooks, UserInformation, UserReviews } from '../components';
 import { useFollowCounts } from '../hooks/useFollowCounts';
 
 export const FriendProfilePage = () => {
@@ -29,20 +29,10 @@ export const FriendProfilePage = () => {
   const [error, setError] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const [reviews, setReviews] = useState([]);
-  const [isModalFollowedOpen, setIsModalFollowedOpen] = useState(false);
-  const [isModalFollowingOpen, setModalFollowingopen] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
   const [message, setMessage] = useState("");
   const { followingCount, followersCount, followersUsers, followingUsers } =
     useFollowCounts(userID);
-
-  const handleToggleModalFollowed = () => {
-    setIsModalFollowedOpen((prev) => !prev);
-  };
-
-  const handleToggleModalFollowing = () => {
-    setModalFollowingopen((prev) => !prev);
-  };
 
   const fetchBookTitle = async (bookId) => {
     const { data, error } = await supabase
@@ -195,7 +185,7 @@ export const FriendProfilePage = () => {
       userData.email
     }&su=Mensaje desde la aplicación&body=${encodeURIComponent(message)}`;
     window.open(mailtoLink, "_blank");
-    setIsModalFollowedOpen(false); // Cerrar el modal después de enviar el mensaje
+    setModalOpen(false); // Cerrar el modal después de enviar el mensaje
   };
 
   const handleCancelMessage = () => {
