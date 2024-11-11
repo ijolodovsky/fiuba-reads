@@ -92,7 +92,9 @@ export const FriendProfilePage = () => {
     } else if (data.length > 0) {
       const user = data[0];
       setUserData(user);
-      await fetchBookData(user.first_name, user.last_name);
+      if (user.role === 'escritor') {
+        await fetchBookData(user.first_name, user.last_name);
+      }
       
     } else {
       setError('No user found');

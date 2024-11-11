@@ -29,7 +29,6 @@ export const ProfilePage = () => {
 
   const isAuthor = user.role === 'escritor';
 
-
   const fetchBookData = async (firstName, lastName) => {
     const { data, error } = await supabase
       .from('books')
@@ -74,6 +73,8 @@ export const ProfilePage = () => {
     if (user) {
       if (isAuthor) {
         fetchBookData(user.firstName, user.lastName);
+      } else {
+        setLoading(false);
       }
     }
   }, [user]);
@@ -99,7 +100,7 @@ export const ProfilePage = () => {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                {user?.role === 'escritor' && (
+                {isAuthor && (
                   <Button 
                     className="mt-4 bg-blue-600 hover:bg-blue-700 text-white btn"
                     onClick={handleAddBook}
