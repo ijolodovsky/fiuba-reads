@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import {Button} from '@/components/ui/button';
 import { Card, CardHeader, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
 import { BookPlus, User, Mail, Calendar, Contact } from "lucide-react";
-import { UserBooks } from '../components/UserBooks';
+import { UserBooks, FollowedUsersModal } from '../components';
 import image from '../../assets/profile.webp';
 import { supabase } from '../../utils/supabase-client';
 import { LoadingSpinner, NotFound } from '@/src/ui/components';
@@ -15,13 +15,16 @@ export const ProfilePage = () => {
 
   const [followingCount, setFollowingCount] = useState(0);
   const [followersCount, setFollowersCount] = useState(0);
-
   const [loading, setLoading] = useState(true);
   const [booksData, setBooksData] = useState([]);
-
   const [error, setError] = useState(null);
-  
+  const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
+  const [followedUsers, setFollowedUsers] = useState([]); // 
   const navigate = useNavigate();
+
+  const handleToggleModal = () => {
+    setIsModalOpen((prev) => !prev);
+  };
 
   const handleAddBook = () => {
     navigate('/add-book');
@@ -44,28 +47,47 @@ export const ProfilePage = () => {
     setLoading(false);
   };
 
-  useEffect(() => {
-    const fetchFollowCounts = async () => {
+  const fetchFollowCountsAndUsers = async () => {
+    try {
+      // Fetch count of following users
       const { data: followingData, error: followingError } = await supabase
         .from('follows')
-        .select('followed_id', { count: 'exact' })
+        .select('followed_id')
         .eq('follower_id', user?.username);
-  
+
+      // Get followers count
       const { data: followersData, error: followersError } = await supabase
         .from('follows')
-        .select('follower_id', { count: 'exact' })
+        .select('follower_id')
         .eq('followed_id', user?.username);
-      
+
       if (followingError || followersError) {
         console.error("Error fetching follow counts:", followingError || followersError);
       } else {
         setFollowingCount(followingData.length);
         setFollowersCount(followersData.length);
+
+        // Info detallada de usuario seguido
+        const followedUserIds = followingData.map(follow => follow.followed_id);
+        const { data: followedUserDetails, error: userDetailsError } = await supabase
+          .from('users')
+          .select('username, first_name, last_name, profile_picture')
+          .in('username', followedUserIds);
+
+        if (userDetailsError) {
+          console.error("Error fetching followed users:", userDetailsError);
+        } else {
+          setFollowedUsers(followedUserDetails);
+        }
       }
-    };
-  
+    } catch (error) {
+      console.error("Error in fetching follow data:", error);
+    }
+  };
+
+  useEffect(() => {
     if (user) {
-      fetchFollowCounts();
+      fetchFollowCountsAndUsers();
     }
   }, [user]);
 
@@ -128,9 +150,11 @@ export const ProfilePage = () => {
                   <li className="flex items-center space-x-3">
                     <Contact className="text-blue-400" />
                     <span>
-                      <strong className="text-blue-300">Usuarios seguidos:</strong>{" "}
+                      <strong className="text-blue-300">Seguidos:</strong>{" "}
                       <span className="text-gray-300">{followingCount}</span>
+                      <Button onClick={handleToggleModal} className="ml-2 bg-blue-600 text-white px-2 py-1 rounded">Ver</Button>
                     </span>
+                    
                   </li>
                   <li className="flex items-center space-x-3">
                     <Contact className="text-blue-400" />
@@ -146,6 +170,7 @@ export const ProfilePage = () => {
           </CardContent>
         </Card>
       </div>
+      <FollowedUsersModal isOpen={isModalOpen} onClose={handleToggleModal} users={followedUsers} />
     </div>
   );
 };
