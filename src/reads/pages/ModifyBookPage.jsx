@@ -38,7 +38,7 @@ export const ModifyBookPage = () => {
         .single();
 
       if (data) {
-        setBookData(data); // Actualizar el estado con los datos obtenidos
+        setBookData(data);
       } else if (error) {
         console.error('Error al cargar el libro:', error);
       }

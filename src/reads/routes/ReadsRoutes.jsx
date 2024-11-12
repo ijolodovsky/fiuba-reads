@@ -2,6 +2,7 @@ import React from "react";
 import { Route, Routes } from 'react-router-dom';
 import { Navbar } from '../../ui/components';
 import { HomePage, ProfilePage, AddBookPage, BookProfile, ModifyBookPage, FriendProfilePage, UserSearch } from '../pages';
+import { ChatPage } from "../pages/ChatPage";
 
 export const ReadsRoutes = () => {
   return (
@@ -16,6 +17,7 @@ export const ReadsRoutes = () => {
           <Route path="/books/:isbn" element={<BookProfile />} />
           <Route path="/users/:userID" element={<FriendProfilePage />} />
           <Route path="users" element={<UserSearch />} />
+          <Route path="chatlist" element={<ChatPage />} />
         </Routes> 
       </div>
     </>
