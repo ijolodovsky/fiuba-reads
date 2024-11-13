@@ -34,6 +34,10 @@ export const ProfilePage = () => {
     navigate("/add-book");
   };
 
+  const handleUpdateProfile = () => {
+    navigate("/update-profile");
+  };
+
   const isAuthor = user.role === "escritor";
 
   const fetchBookData = async (firstName, lastName) => {
@@ -131,7 +135,12 @@ export const ProfilePage = () => {
               followersUsers={followersUsers}
               followingUsers={followingUsers}
             />
-
+            <button
+              onClick={handleUpdateProfile}
+              className='mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+            >
+              Editar perfil
+            </button>
             <div className='mt-8'>
               <h3 className='text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600'>
                 Reseñas de Libros
