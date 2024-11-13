@@ -15,16 +15,17 @@ import './profilePage.css';
 export const ModifyProfilePage = () => {
   const {
     authState: { user },
+    login,
   } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    firstName: user.firstName,
-    lastName: user.lastName,
-    age: user.age,
-    email: user.email,
-    password: '',
-    profilePicture: user.profilePicture,
+    firstName: user.firstName || '',
+    lastName: user.lastName || '',
+    age: user.age || '',
+    email: user.email || '',
+    password: user.password || '',
+    profilePicture: user.profilePicture || '',
   });
 
   const [errorMessage, setErrorMessage] = useState('');
@@ -56,6 +57,14 @@ export const ModifyProfilePage = () => {
     } else {
       setSuccessMessage('Profile updated successfully');
       console.log('Profile updated successfully', data);
+      login({
+        ...user,
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        age: formData.age,
+        email: formData.email,
+        profile_picture: formData.profilePicture,
+      });
       navigate('/profile');
     }
   };
