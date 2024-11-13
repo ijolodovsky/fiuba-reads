@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { supabase } from '../../utils/supabase-client';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { SendHorizontal } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 

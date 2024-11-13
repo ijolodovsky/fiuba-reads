@@ -6,3 +6,5 @@ export * from './FriendProfilePage';
 export * from './BookProfilePage';
 export * from './UserSearch';
 export * from './ModifyProfilePage';
+export * from './ChatPage';
+export * from './ListChatPage';
