@@ -38,7 +38,7 @@ export const ModifyBookPage = () => {
         .single();
 
       if (data) {
-        setBookData(data); // Actualizar el estado con los datos obtenidos
+        setBookData(data);
       } else if (error) {
         console.error('Error al cargar el libro:', error);
       }
@@ -71,7 +71,7 @@ export const ModifyBookPage = () => {
               <img src={bookBlueImage} alt="Book Blue" width={80} height={80} className="animate-float" />
               <img src={bookRedImage} alt="Book Red" width={80} height={80} className="animate-float-delayed" />
             </div>
-            <CardTitle className="text-3xl font-bold text-white">Agrega tus libros a FIUBA Reads</CardTitle>
+            <CardTitle className="text-3xl font-bold text-white">Actualiza tus libros en FIUBA Reads</CardTitle>
           </CardHeader>
           <CardContent className="p-6">
             <p className="text-center text-blue-300 mb-6">Completa el siguiente formulario para agregar un libro a la plataforma. Solo puedes subir libros de tu autoría :) Los campos marcados con <span className="text-red-500">*</span> son obligatorios.</p>

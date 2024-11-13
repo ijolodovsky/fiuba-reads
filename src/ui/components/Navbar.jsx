@@ -39,7 +39,14 @@ export const Navbar = () => {
           >
             Amigos
           </NavLink>
-
+          <NavLink
+            to="/chatList"
+            className={({ isActive }) =>
+              `text-white hover:text-gray-300 text-decoration-none ${isActive ? 'underline' : ''}`
+            }
+          >
+            Chats
+          </NavLink>
           {/* TODO: Add other sections here */}
         </div>
       </div>
