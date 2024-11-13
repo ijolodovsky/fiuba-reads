@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { SendHorizontal } from 'lucide-react';
 import { useParams } from 'react-router-dom';
-
+import { LoadingSpinner } from '@/src/ui/components';
 
 export const ChatPage = () => {
     const [messages, setMessages] = useState([]);
@@ -95,7 +95,7 @@ export const ChatPage = () => {
         }
     }
 
-    
+    if (isLoading) return <LoadingSpinner />;
 
     return (
         <div className='min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12'>
@@ -148,5 +148,3 @@ export const ChatPage = () => {
         </div>
     );
 };
-
-export default ChatPage;
