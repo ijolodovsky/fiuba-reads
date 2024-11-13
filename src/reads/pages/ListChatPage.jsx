@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom'; // Hook para navegación
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../utils/supabase-client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -24,14 +24,12 @@ export const ListChatPage = () => {
             } else {
                 setChatrooms(data);
             }
-            console.log(data);
         };
 
         fetchChatrooms();
     }, [user]);
 
     const goToChatroom = (chatroomID) => {
-        console.log(chatroomID);
         navigate(`/chat/${chatroomID}`);
     };
 
@@ -43,7 +41,7 @@ export const ListChatPage = () => {
                 <div className='space-y-4'>
                     {chatrooms.map((chatroom) => (
                         <Card key={chatroom.uuid} className='bg-gray-800 text-white'>
-                            <CardContent className='flex justify-between items-center'>
+                            <CardContent className='flex justify-between items-center mt-auto'>
                                 <div>
                                     <h3 className='text-lg font-semibold'>{chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1}</h3>
                                     <p className='text-sm text-gray-400'>

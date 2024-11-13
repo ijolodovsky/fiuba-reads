@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../auth/context/AuthContext';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 import {
   Card,
@@ -23,6 +24,7 @@ export const FriendProfilePage = () => {
     authState: { user },
   } = useContext(AuthContext);
   const { userID } = useParams();
+  const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
   const [booksData, setBooksData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -62,7 +64,6 @@ export const FriendProfilePage = () => {
       const titles = await Promise.all(
         reviewsData.map(async (review) => {
           const title = await fetchBookTitle(review.book_id);
-          console.log(title);
           return { ...review, title };
         })
       );
@@ -176,22 +177,43 @@ export const FriendProfilePage = () => {
     }
   };
 
-  const handleSendMessageClick = () => {
-    setModalOpen(true);
+
+  const handleSendMessage = async () => {
+    try {
+      const { data: existingChatrooms, error } = await supabase
+        .from('chatroom')
+        .select('id')
+        .or(`username1.eq.${user.username},username2.eq.${user.username}`)
+        .or(`username1.eq.${userData.username},username2.eq.${userData.username}`);
+
+      if (error) {
+        console.error("Error al verificar el chatroom:", error.message);
+        return;
+      }
+
+      let chatroomID;
+      if (existingChatrooms && existingChatrooms.length > 0) {
+        chatroomID = existingChatrooms[0].id;
+      } else {
+        const { data: newChatroom, error: creationError } = await supabase
+          .from('chatroom')
+          .insert([{ username1: user.username, username2: userData.username }])
+          .select('id')
+          .single();
+
+        if (creationError) {
+          console.error("Error al crear el chatroom:", creationError.message);
+          return;
+        }
+        chatroomID = newChatroom.id;
+      }
+
+      navigate(`/chat/${chatroomID}`);
+    } catch (error) {
+      console.error("Error al iniciar o redirigir al chat:", error.message);
+    }
   };
 
-  const handleSendEmail = () => {
-    const mailtoLink = `https://mail.google.com/mail/?view=cm&fs=1&to=${
-      userData.email
-    }&su=Mensaje desde la aplicación&body=${encodeURIComponent(message)}`;
-    window.open(mailtoLink, "_blank");
-    setModalOpen(false); // Cerrar el modal después de enviar el mensaje
-  };
-
-  const handleCancelMessage = () => {
-    setModalOpen(false);
-    setMessage(""); // Limpiar el mensaje cuando se cancele
-  };
 
   if (loading) return <LoadingSpinner />;
   if (error) return <NotFound />;
@@ -225,7 +247,7 @@ export const FriendProfilePage = () => {
           </Button>
           <Button
             className='ml-4 bg-green-600 hover:bg-green-700 text-white'
-            onClick={handleSendMessageClick}
+            onClick={handleSendMessage}
           >
             <MessageCircle className='inline-block mr-2' />
             Mandar Mensaje
@@ -245,15 +267,9 @@ export const FriendProfilePage = () => {
                   <div className="mt-4 flex justify-end space-x-2">
                     <Button
                       className="bg-green-600 hover:bg-green-700 text-white"
-                      onClick={handleSendEmail}
+                      onClick={handleSendMessage}
                     >
                       Enviar Mensaje
-                    </Button>
-                    <Button
-                      className="bg-red-600 hover:bg-red-700 text-white"
-                      onClick={handleCancelMessage}
-                    >
-                      Cancelar
                     </Button>
                   </div>
                 </div>
