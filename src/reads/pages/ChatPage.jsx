@@ -38,30 +38,32 @@ export const ChatPage = () => {
         fetchMessages();
     }, [chatroomID]);
 
-    // useEffect(() => {
-    //     const fectchUsers = async () => {
-    //         const usernames = [...new Set(messages.map(message => message.sender))];
-    //         const [username1, username2] = usernames;
+    useEffect(() => {
+        const fetchUsers = async () => {
+            const usernames = [...new Set(messages.map(message => message.sender))];
+            const [username1, username2] = usernames;
 
-    //         const { data, error } = await supabase
-    //             .from('users')
-    //             .select('username, profile_picture')
-    //             .in('username', [username1, username2])
+            const { data, error } = await supabase
+                .from('users')
+                .select('username, profile_picture')
+                .in('username', [username1, username2])
 
-    //         if (error) {
-    //             console.error("Error al obtener los usuarios:", error.message);
-    //         } else {
-    //             setUsers(data);
-    //         }
-    //         fectchUsers();
-    //     };
-    // }, [messages]);
+            if (error) {
+                console.error("Error al obtener los usuarios:", error.message);
+            } else {
+                setUsers(data);
+            }
+        };
+        if (messages.length > 0) {
+            fetchUsers();
+        }
+    }, [messages]);
 
-    // useEffect(() => {
-    //     if (messages.length > 0 && users.length > 0) {
-    //         setIsLoading(false);
-    //     }
-    // }, [messages, users]);
+    useEffect(() => {
+        if (messages.length > 0 && users.length > 0) {
+            setIsLoading(false);
+        }
+    }, [messages, users]);
     
     const handleSendMessage = async () => {
         if (newMessage.trim() === '') return;
