@@ -74,10 +74,11 @@ export const ModifyBookPage = () => {
             <CardTitle className="text-3xl font-bold text-white">Actualiza tus libros en FIUBA Reads</CardTitle>
           </CardHeader>
           <CardContent className="p-6">
-            <p className="text-center text-blue-300 mb-6">Modifica los siguientes campos para actualizar un libro en la plataforma. Solo puedes actualizar libros de tu autoría :)</p>
+            <p className="text-center text-blue-300 mb-6">Completa el siguiente formulario para agregar un libro a la plataforma. Solo puedes subir libros de tu autoría :) Los campos marcados con <span className="text-red-500">*</span> son obligatorios.</p>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="flex items-center space-x-4">
                 <BookOpen className="text-blue-400" />
+                <span className="text-red-500">*</span>
                 <Input
                   type="text"
                   name="title"
@@ -89,7 +90,7 @@ export const ModifyBookPage = () => {
                 />
               </div>
 
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-10">
                 <BookPlus className="text-blue-400" />
                 <Input
                   type="text"
@@ -100,7 +101,7 @@ export const ModifyBookPage = () => {
                 />
               </div>
 
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-10">
                 <Hash className="text-blue-400" />
                 <Input
                   type="text"
@@ -114,28 +115,32 @@ export const ModifyBookPage = () => {
 
               <div className="flex items-center space-x-4">
                 <Calendar className="text-blue-400" />
+                <span className="text-red-500">*</span>
                 <Input
                   type="date"
                   name="published_date"
                   value={bookData.published_date}
                   onChange={handleChange}
+                  required
                   className="bg-gray-700 border-blue-500 text-white"
                 />
               </div>
 
               <div className="flex items-center space-x-4">
                 <Building className="text-blue-400" />
+                <span className="text-red-500">*</span>
                 <Input
                   type="text"
                   name="publisher"
                   value={bookData.publisher}
                   onChange={handleChange}
+                  required
                   placeholder="Editorial"
                   className="bg-gray-700 border-blue-500 text-white placeholder-blue-300"
                 />
               </div>
 
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-10">
                 <FileText className="text-blue-400" />
                 <Textarea
                   name="description"
@@ -148,29 +153,33 @@ export const ModifyBookPage = () => {
 
               <div className="flex items-center space-x-4">
                 <Bookmark className="text-blue-400" />
+                <span className="text-red-500">*</span>
                 <Input
                   type="text"
                   name="genre"
                   value={bookData.genre}
                   onChange={handleChange}
                   placeholder="Género"
+                  required
                   className="bg-gray-700 border-blue-500 text-white placeholder-blue-300"
                 />
               </div>
 
               <div className="flex items-center space-x-4">
                 <FileSpreadsheet className="text-blue-400" />
+                <span className="text-red-500">*</span>
                 <Input
                   type="number"
                   name="page_count"
                   value={bookData.page_count}
                   onChange={handleChange}
+                  required
                   placeholder="Número de Páginas"
                   className="bg-gray-700 border-blue-500 text-white placeholder-blue-300"
                 />
               </div>
 
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-10">
                 <Image className="text-blue-400" />
                 <Input
                   type="url"
