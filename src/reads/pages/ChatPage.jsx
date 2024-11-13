@@ -6,13 +6,14 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import SendIcon from '@mui/icons-material/Send';
+import { useParams } from 'react-router-dom';
 
 
 export const ChatPage = () => {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const { authState: { user } } = useContext(AuthContext);
-    const chatroomID = "69023843-f960-46b8-921b-3ad104bfbb9f";
+    const { chatroomID } = useParams();
 
     useEffect(() => {
         const fetchMessages = async () => {

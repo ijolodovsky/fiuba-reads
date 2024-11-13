@@ -71,10 +71,10 @@ export const ModifyBookPage = () => {
               <img src={bookBlueImage} alt="Book Blue" width={80} height={80} className="animate-float" />
               <img src={bookRedImage} alt="Book Red" width={80} height={80} className="animate-float-delayed" />
             </div>
-            <CardTitle className="text-3xl font-bold text-white">Agrega tus libros a FIUBA Reads</CardTitle>
+            <CardTitle className="text-3xl font-bold text-white">Actualiza tus libros en FIUBA Reads</CardTitle>
           </CardHeader>
           <CardContent className="p-6">
-            <p className="text-center text-blue-300 mb-6">Completa el siguiente formulario para agregar un libro a la plataforma. Solo puedes subir libros de tu autoría :)</p>
+            <p className="text-center text-blue-300 mb-6">Modifica los siguientes campos para actualizar un libro en la plataforma. Solo puedes actualizar libros de tu autoría :)</p>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="flex items-center space-x-4">
                 <BookOpen className="text-blue-400" />
