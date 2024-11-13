@@ -1,18 +1,20 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../utils/supabase-client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { AuthContext } from '../../auth/context/AuthContext';
+import _ from 'lodash';
+import PeopleFinder from './PeopleFinder';
 
 export const ListChatPage = () => {
     const [chatrooms, setChatrooms] = useState([]);
     const { authState: { user } } = useContext(AuthContext);
+    const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchChatrooms = async () => {
-            if (!user) return;  // Asegúrate de que el usuario está cargado
 
             const { data, error } = await supabase
                 .from('chatroom')
@@ -33,10 +35,10 @@ export const ListChatPage = () => {
         navigate(`/chat/${chatroomID}`);
     };
 
-
     return (
         <div className='min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12'>
             <div className='container mx-auto px-4'>
+                <PeopleFinder />
                 <h2 className='text-2xl font-bold mb-6 text-center text-blue-300'>Tus Chats</h2>
                 <div className='space-y-4'>
                     {chatrooms.map((chatroom) => (
