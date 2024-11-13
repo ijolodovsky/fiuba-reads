@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
 import { AuthContext } from '../../auth/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -135,12 +136,12 @@ export const ProfilePage = () => {
               followersUsers={followersUsers}
               followingUsers={followingUsers}
             />
-            <button
+            <Button
               onClick={handleUpdateProfile}
               className='mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
             >
               Editar perfil
-            </button>
+            </Button>
             <div className='mt-8'>
               <h3 className='text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600'>
                 Reseñas de Libros

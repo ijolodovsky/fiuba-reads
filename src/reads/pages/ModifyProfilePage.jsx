@@ -171,7 +171,7 @@ export const ModifyProfilePage = () => {
                 />
               </div>
               <Button type='submit' className='w-full bg-blue-600 hover:bg-blue-700 text-white'>
-                Actualizar Perfil
+                Guardar cambios
               </Button>
             </form>
           </CardContent>
