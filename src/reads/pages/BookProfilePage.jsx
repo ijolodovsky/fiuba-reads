@@ -18,8 +18,32 @@ import { AuthContext } from '../../auth/context/AuthContext';
 import { LoadingSpinner, NotFound } from '@/src/ui/components';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import axios from 'axios';
+
+import { initMercadoPago, Wallet } from '@mercadopago/sdk-react'
 
 export const BookProfile = () => {
+  const [preferenceId, setPreferenceId] = useState(null);
+  initMercadoPago('APP_USR-d2e4042d-1ebe-4e98-b918-0fa7a7928725', { locale: 'es-AR' });
+
+  const createPreference = async () => {
+    try{
+      const response = await axios.post("http://localhost:4000/create_preference", {
+        title: bookData.title,
+        quantity: 1,
+        unit_price: 100, //bookData.price, CAMBIAR!!!!!!!
+        user_id: user.id,
+      });
+
+      const { id } = response.data;
+      return id;
+      
+    } catch (error) {
+      console.error("Error en la compra:", error);
+      Swal.fire("Ocurrió un error al procesar la compra.");
+    }
+  }
+
   const { isbn } = useParams();
   const [bookData, setBookData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -272,16 +296,11 @@ export const BookProfile = () => {
     }
   };
 
-  const handleBuyBook = () => {
-    Swal.fire({
-      title: "¡Gracias por comprar el libro!",
-      text: "Esperamos que disfrutes de tu lectura.",
-      icon: "success",
-      confirmButtonText: "Cerrar",
-      background: "#1f2937",
-      color: "#fff",
-      confirmButtonColor: "#4f46e5",
-    });
+  const handleBuy = async () => {
+    const id = await createPreference();
+    if (id) {
+      setPreferenceId(id);
+    }
   };
 
   if (loading) return <LoadingSpinner />;
@@ -390,12 +409,13 @@ export const BookProfile = () => {
             </div>
             <div className='mt-6 flex items-center space-x-4'>
               <button
-                onClick={handleBuyBook}
+                onClick={handleBuy}
                 className='mt-6 px-4 py-2 bg-purple-600 text-white rounded-lg shadow-md hover:bg-purple-700 transition-colors duration-300 flex items-center'
               >
                 <CircleDollarSign className='w-4 h-4 mr-1' />
                 Comprar libro
               </button>
+              {preferenceId && <Wallet initialization={{ preferenceId: preferenceId }} customization={{ texts:{ valueProp: 'smart_option'}}} />}
               {isAuthor && (
                 <>
                   <button
