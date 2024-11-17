@@ -1,12 +1,14 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { AuthContext } from '../../auth/context/AuthContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { supabase } from '../../utils/supabase-client';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { SendHorizontal } from 'lucide-react';
+import { Scroll, SendHorizontal } from 'lucide-react';
 import { useParams } from 'react-router-dom';
+import { ScrollArea } from "@/components/ui/scroll-area"
+
 
 
 export const ChatPage = () => {
@@ -16,6 +18,7 @@ export const ChatPage = () => {
     const { authState: { user } } = useContext(AuthContext);
     const { chatroomID } = useParams();
     const [isLoading, setIsLoading] = useState(true);
+    const chatEndRef = useRef(null);
 
     useEffect(() => {
         const fetchMessages = async () => {
@@ -95,6 +98,12 @@ export const ChatPage = () => {
         }
     }
 
+    useEffect(() => {
+        if (chatEndRef.current) {
+          chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, [messages]);
+
     
 
     return (
@@ -103,10 +112,10 @@ export const ChatPage = () => {
                 <Card className='w-full max-w-2xl mx-auto bg-gray-800 text-white'>
                     <CardContent>
                         <h2 className='text-2xl font-bold mb-4 text-center text-white'>Chat</h2>
-                        <div className='chat-messages space-y-4'>
+                        <ScrollArea className='chat-messages space-y-4 overflow-y-auto p-4' style={{ height: '400px' }}>
                             {messages.map((message, index) => (
                                 <div key={index} className={`flex ${message.sender === user.username ? 'justify-end' : 'justify-start'}`}>
-                                    <div className='flex items-center space-x-3'>
+                                    <div className='flex items-center space-x-3 space-y-6'>
                                         {message.sender !== user.username && (
                                             <Avatar>
                                                 <AvatarImage src={users.find(user => user.username === message.sender)?.profile_picture || '/default-avatar.png'}/>
@@ -124,7 +133,8 @@ export const ChatPage = () => {
                                     </div>
                                 </div>
                             ))}
-                        </div>
+                            <div ref={chatEndRef} />
+                        </ScrollArea>
                     </CardContent>
                     <CardContent className='mt-4'>
                         <div className="flex items-center space-x-2">
@@ -132,7 +142,7 @@ export const ChatPage = () => {
                                 value={newMessage}
                                 onChange={(e) => setNewMessage(e.target.value)}
                                 onKeyDown={handleEnter}
-                                placeholder='Escribe tu mensaje aquí...'
+                                placeholder='Mensaje'
                                 className='flex-1 bg-gray-700 text-white'
                             />
                             <Button
