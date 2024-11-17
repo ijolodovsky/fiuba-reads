@@ -6,6 +6,7 @@
     "@craco/craco": "^7.1.0",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
+    "@mercadopago/sdk-react": "^0.0.19",
     "@mui/styled-engine-sc": "^6.1.5",
     "@radix-ui/react-avatar": "^1.1.1",
     "@radix-ui/react-dialog": "^1.1.2",
