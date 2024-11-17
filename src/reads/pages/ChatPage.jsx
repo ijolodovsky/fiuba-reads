@@ -5,9 +5,10 @@ import { supabase } from '../../utils/supabase-client';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Scroll, SendHorizontal } from 'lucide-react';
+import { Scroll, SendHorizontal, ArrowLeft } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -19,6 +20,7 @@ export const ChatPage = () => {
     const { chatroomID } = useParams();
     const [isLoading, setIsLoading] = useState(true);
     const chatEndRef = useRef(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchMessages = async () => {
@@ -39,6 +41,34 @@ export const ChatPage = () => {
             }
         };
         fetchMessages();
+
+        const channel = supabase
+            .channel(`chatroom:${chatroomID}`)
+            .on(
+                'postgres_changes',
+                {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'messages',
+                    filter: `chatroomUUID=eq.${chatroomID}`
+                },
+                (payload) => {
+                    setMessages((prevMessages) => [
+                        ...prevMessages,
+                        {
+                            text: payload.new.text,
+                            sender: payload.new.send_by,
+                            timestamp: new Date(payload.new.created_at).toLocaleTimeString(),
+                        },
+                    ]);
+                }
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
+
     }, [chatroomID]);
 
     useEffect(() => {
@@ -62,11 +92,6 @@ export const ChatPage = () => {
         }
     }, [messages]);
 
-    useEffect(() => {
-        if (messages.length > 0 && users.length > 0) {
-            setIsLoading(false);
-        }
-    }, [messages, users]);
     
     const handleSendMessage = async () => {
         if (newMessage.trim() === '') return;
@@ -81,14 +106,6 @@ export const ChatPage = () => {
                 },
             ]);
 
-        setMessages([
-            ...messages,
-            {
-                text: newMessage,
-                sender: user.username,
-                timestamp: new Date().toLocaleTimeString(),
-            },
-        ]);
         setNewMessage('');
     };
 
@@ -104,10 +121,20 @@ export const ChatPage = () => {
         }
       }, [messages]);
 
+    const handleGoBack = () => {
+        navigate("/chatList");
+    }
+
     
 
     return (
         <div className='min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12'>
+            <Button
+                onClick={handleGoBack}
+                className='bg-red-500 hover:bg-red-800 text-white w-10 h-10 rounded-full flex items-center justify-center mr-auto ml-12'
+            >
+                <ArrowLeft />
+            </Button>
             <div className='container mx-auto px-4'>
                 <Card className='w-full max-w-2xl mx-auto bg-gray-800 text-white'>
                     <CardContent>
