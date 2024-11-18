@@ -28,7 +28,7 @@ export const BookProfile = () => {
 
   const createPreference = async () => {
     try{
-      const response = await axios.post("http://localhost:4000/create_preference", {
+      const response = await axios.post("https://fiuba-reads-back.vercel.app/create_preference", {
         title: bookData.title,
         quantity: 1,
         unit_price: 100, //bookData.price, CAMBIAR!!!!!!!

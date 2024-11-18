@@ -41,7 +41,8 @@ app.post("/create_preference", async (req, res) => {
         res.json({ id: result.id });
     }catch(error){
         console.log(error);
-        res.status(500).json({ error: error.message });
+        const status = error.status || 500;
+        res.status(status).json({ error: error.message, status: status });
     }
 });
 
