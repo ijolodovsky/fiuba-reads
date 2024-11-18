@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../auth';
 import { Button } from '@/components/ui/button'; // example Shadcn button component
-import { LogOutIcon, LogOut} from 'lucide-react';
+import { LogOutIcon, UsersRound, MessageCircleMore } from 'lucide-react';
 
 export const Navbar = () => {
   const { logout, authState } = useContext(AuthContext);
@@ -23,11 +23,11 @@ export const Navbar = () => {
           FIUBA READS
         </Link>
 
-        <div className="space-x-4">
+        <div className="flex space-x-4">
           <NavLink
             to="/"
             className={({ isActive }) =>
-              `text-white hover:text-gray-300 text-decoration-none ${isActive ? 'underline' : ''}`
+              `text-white hover:text-gray-300 text-decoration-none flex items-center space-x-1 ${isActive ? 'underline' : ''}`
             }
           >
             Home
@@ -35,17 +35,19 @@ export const Navbar = () => {
           <NavLink
             to="/users"
             className={({ isActive }) =>
-              `text-white hover:text-gray-300 text-decoration-none ${isActive ? 'underline' : ''}`
+              `text-white hover:text-gray-300 text-decoration-none flex items-center space-x-1 ${isActive ? 'underline' : ''}`
             }
           >
+            <UsersRound className="text-white w-7 h-5" />
             Amigos
           </NavLink>
           <NavLink
             to="/chatList"
             className={({ isActive }) =>
-              `text-white hover:text-gray-300 text-decoration-none ${isActive ? 'underline' : ''}`
+              `text-white hover:text-gray-300 text-decoration-none flex items-center space-x-1 ${isActive ? 'underline' : ''}`
             }
           >
+            <MessageCircleMore className="text-white w-7 h-5" />
             Chats
           </NavLink>
           {/* TODO: Add other sections here */}
