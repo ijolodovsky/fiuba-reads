@@ -16,6 +16,8 @@ import './profilePage.css';
 import { UserInformation } from '../components/UserInformation';
 import { useFollowCounts } from '../hooks/useFollowCounts';
 import { Carousel } from '@/components/ui/carousel';
+import { Link } from 'react-router-dom';
+
 
 export const ProfilePage = () => {
   const {
@@ -102,14 +104,14 @@ export const ProfilePage = () => {
         .from("user_books")
         .select(`
         status,
-        books (
+        books:book_isbn (
           isbn,
           title,
           author,
           cover_image_url
         )
       `)
-        .eq("user_id", user.id);
+        .eq("username", user.username);
 
     if (error) {
       console.error("Error fetching user books:", error);
@@ -121,16 +123,18 @@ export const ProfilePage = () => {
     const wantToRead = [];
 
     data.forEach((item) => {
-      switch (item.status) {
-        case "Leído":
-          read.push(item.books);
-          break;
-        case "Leyendo":
-          reading.push(item.books);
-          break;
-        case "Quiero leer":
-          wantToRead.push(item.books);
-          break;
+      if (item.books) {
+        switch (item.status) {
+          case "Leído":
+            read.push(item.books);
+            break;
+          case "Leyendo":
+            reading.push(item.books);
+            break;
+          case "Quiero leer":
+            wantToRead.push(item.books);
+            break;
+        }
       }
     });
 
@@ -159,17 +163,17 @@ export const ProfilePage = () => {
         <h3 className="text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
           {title}
         </h3>
-        <Carousel>
+        <div className="flex overflow-x-auto space-x-4 pb-4">
           {books.map((book) => (
-              <a href={`/books/${book.isbn}`} key={book.isbn}>
+              <Link to={`/books/${book.isbn}`} key={book.isbn} className="flex-shrink-0">
                 <img
                     src={book.cover_image_url}
                     alt={book.title}
                     className="w-32 h-48 object-cover rounded-lg shadow-lg hover:opacity-75 transition-opacity"
                 />
-              </a>
+              </Link>
           ))}
-        </Carousel>
+        </div>
       </div>
   );
 
@@ -211,7 +215,7 @@ export const ProfilePage = () => {
             </Button>
             <BookCarousel books={readBooks} title="Libros Leídos" />
             <BookCarousel books={readingBooks} title="Libros Leyendo" />
-            <BookCarousel books={wantToReadBooks} title="Libros que Quiero Leer" />
+            <BookCarousel books={wantToReadBooks} title="Quiero Leer" />
             <div className='mt-8'>
               <h3 className='text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600'>
                 Reseñas de Libros

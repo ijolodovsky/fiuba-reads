@@ -49,17 +49,19 @@ export const BookProfile = () => {
   }
 
   const fetchReadingStatus = async () => {
-    if (!user) return;
+    if (!user || !isbn) return;
 
     const { data, error } = await supabase
         .from("user_books")
         .select("status")
-        .eq("user_id", user.id)
-        .eq("book_id", isbn)
+        .eq("username", user.username)
+        .eq("book_isbn", isbn)
         .single();
 
     if (error) {
-      console.error("Error fetching reading status:", error);
+      if (error.code !== 'PGRST116') { // PGRST116 means no rows returned
+        console.error("Error fetching reading status:", error);
+      }
     } else {
       setReadingStatus(data?.status || null);
     }
@@ -70,16 +72,16 @@ export const BookProfile = () => {
   }, [user, isbn]);
 
   const updateReadingStatus = async (status) => {
-    if (!user) {
+    if (!user || !isbn) {
       Swal.fire("Debes iniciar sesión para actualizar el estado de lectura.");
       return;
     }
 
-    const { error } = await supabase
+    const { data, error } = await supabase
         .from("user_books")
         .upsert(
-            { user_id: user.id, book_id: isbn, status },
-            { onConflict: ['user_id', 'book_id'] }
+            { username: user.username, book_isbn: isbn, status },
+            { onConflict: ['username', 'book_isbn'] }
         );
 
     if (error) {
@@ -443,19 +445,19 @@ export const BookProfile = () => {
             <div className='mt-6 flex items-center space-x-4'>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="bg-blue-600 px-4 py-2 text-white rounded-md">
-                    <BookMarked className="inline mr-2" />
+                  <Button className="bg-blue-600 hover:bg-blue-700">
+                    <BookMarked className="mr-2 h-4 w-4" />
                     {readingStatus || "Marcar como"}
-                  </button>
+                  </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <DropdownMenuItem onClick={() => updateReadingStatus("Leído")}>
+                  <DropdownMenuItem onSelect={() => updateReadingStatus("Leído")}>
                     Leído
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => updateReadingStatus("Leyendo")}>
+                  <DropdownMenuItem onSelect={() => updateReadingStatus("Leyendo")}>
                     Leyendo
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => updateReadingStatus("Quiero leer")}>
+                  <DropdownMenuItem onSelect={() => updateReadingStatus("Quiero leer")}>
                     Quiero leer
                   </DropdownMenuItem>
                 </DropdownMenuContent>
