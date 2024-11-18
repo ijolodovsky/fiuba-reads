@@ -194,6 +194,9 @@ export const UserSearch = () => {
         )}
         {reviews.length > 0 ? (
           <div className="w-full max-w-2xl mx-auto mt-8">
+            <h2 className='text-3xl font-semibold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600'>
+              Reseñas de tus amigos
+            </h2>
             {reviews.map((review) => (
               <Card key={review.id} className="bg-gray-800 rounded-lg shadow-2xl mb-4">
                 <CardContent className="p-4">
@@ -209,7 +212,7 @@ export const UserSearch = () => {
                 </CardContent>
               </Card>
             ))}
-            <CardFooter className="p-2 text-sm text-center text-gray-400">
+            {(totalPages > 1) && ( <CardFooter className="p-2 text-sm text-center text-gray-400">
               <div className="flex justify-center space-x-2">
                 {/* Botón de flecha hacia atrás */}
                 <button
@@ -231,7 +234,7 @@ export const UserSearch = () => {
                   Siguiente &#9654;
                 </button>
               </div>
-            </CardFooter>
+            </CardFooter>)}
           </div>
         ) : (
           <div className="w-full max-w-2xl mx-auto mt-8 text-center text-gray-400">No se encontraron reseñas para mostrar</div>
