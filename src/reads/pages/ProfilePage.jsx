@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
 import { AuthContext } from '../../auth/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -8,6 +9,9 @@ import {
   CardDescription,
   CardTitle,
 } from '@/components/ui/card';
+import {
+  Edit
+} from 'lucide-react';
 import { UserBooks, UserReviews } from '../components';
 import { supabase } from '../../utils/supabase-client';
 import { LoadingSpinner, NotFound } from '@/src/ui/components';
@@ -32,6 +36,10 @@ export const ProfilePage = () => {
 
   const handleAddBook = () => {
     navigate("/add-book");
+  };
+
+  const handleUpdateProfile = () => {
+    navigate("/update-profile");
   };
 
   const isAuthor = user.role === "escritor";
@@ -119,6 +127,15 @@ export const ProfilePage = () => {
             <CardDescription className='text-xl text-blue-200'>
               {role}
             </CardDescription>
+            <Button
+                onClick={handleUpdateProfile}
+                className="text-white rounded-full p-2 absolute btn"
+                size="icon"
+                variant="ghost"
+              >
+                <Edit className="h-4 w-4" />
+                <span className="sr-only">Editar perfil</span>
+              </Button>
           </CardHeader>
           <CardContent className='p-6'>
             <UserInformation
@@ -131,7 +148,6 @@ export const ProfilePage = () => {
               followersUsers={followersUsers}
               followingUsers={followingUsers}
             />
-
             <div className='mt-8'>
               <h3 className='text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600'>
                 Reseñas de Libros
