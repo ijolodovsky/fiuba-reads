@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../auth';
 import { Button } from '@/components/ui/button'; // example Shadcn button component
+import { LogOutIcon, LogOut} from 'lucide-react';
 
 export const Navbar = () => {
   const { logout, authState } = useContext(AuthContext);
@@ -65,6 +66,7 @@ export const Navbar = () => {
           onClick={onLogout} 
           className="text-white bg-red-600 hover:bg-red-700"
         >
+          <LogOutIcon className="text-white" />
           Cerrar sesión
         </Button>
       </div>
