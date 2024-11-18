@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../utils/supabase-client';
 import { Card, CardContent } from '@/components/ui/card';
@@ -43,12 +43,9 @@ export const ListChatPage = () => {
                 <div className='space-y-4'>
                     {chatrooms.map((chatroom) => (
                         <Card key={chatroom.uuid} className='bg-gray-800 text-white'>
-                            <CardContent className='flex justify-between items-center mt-auto'>
+                            <CardContent className='flex justify-between items-center mt-auto space-y-4'>
                                 <div>
-                                    <h3 className='text-lg font-semibold'>{chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1}</h3>
-                                    <p className='text-sm text-gray-400'>
-                                        {chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1}
-                                    </p>
+                                    <h3 className='text-lg font-semibold mt-4'>{chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1}</h3>
                                 </div>
                                 <Button onClick={() => goToChatroom(chatroom.id)} className='bg-blue-500 hover:bg-blue-600 text-white'>
                                     Ir al chat
@@ -61,3 +58,5 @@ export const ListChatPage = () => {
         </div>
     );
 };
+
+export default ListChatPage;
