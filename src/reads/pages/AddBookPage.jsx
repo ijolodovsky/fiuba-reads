@@ -25,7 +25,6 @@ export const AddBookPage = () => {
     cover_image_url: ''
   });
   const navigate = useNavigate();
-  console.log(user);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

@@ -87,7 +87,6 @@ export const ProfilePage = () => {
       const titles = await Promise.all(
         reviewsData.map(async (review) => {
           const title = await fetchBookTitle(review.book_id);
-          console.log(title);
           return { ...review, title };
         })
       );

@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../auth';
 import { Button } from '@/components/ui/button'; // example Shadcn button component
-import { LogOutIcon, UsersRound, MessageCircleMore } from 'lucide-react';
+import { LogOutIcon, UsersRound, MessageCircleMore, Bell } from 'lucide-react';
 
 export const Navbar = () => {
   const { logout, authState } = useContext(AuthContext);
@@ -49,6 +49,15 @@ export const Navbar = () => {
           >
             <MessageCircleMore className="text-white w-7 h-5" />
             Chats
+          </NavLink>
+          <NavLink
+            to="/notifications"
+            className={({ isActive }) =>
+              `text-white hover:text-gray-300 text-decoration-none flex items-center space-x-1 ${isActive ? 'underline' : ''}`
+            }
+          >
+            <Bell className="text-white w-7 h-5" />
+            Notificaciones
           </NavLink>
           {/* TODO: Add other sections here */}
         </div>

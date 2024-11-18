@@ -25,7 +25,6 @@ export const ModifyBookPage = () => {
     cover_image_url: ''
   });
   const navigate = useNavigate();
-  console.log(user);
 
   const {isbn} = useParams();
 

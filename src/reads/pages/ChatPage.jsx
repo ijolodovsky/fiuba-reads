@@ -60,14 +60,13 @@ export const ChatPage = () => {
     }, [messages]);
 
     useEffect(() => {
-        if (messages.length > 0 && users.length > 0) {
+        if (messages.length >= 0 && users.length >= 0) {
             setIsLoading(false);
         }
     }, [messages, users]);
     
     const handleSendMessage = async () => {
         if (newMessage.trim() === '') return;
-        console.log(newMessage);
         const { data, error } = await supabase
             .from('messages')
             .insert([
