@@ -15,6 +15,7 @@ import { LoadingSpinner, NotFound } from '@/src/ui/components';
 import './profilePage.css';
 import { UserInformation } from '../components/UserInformation';
 import { useFollowCounts } from '../hooks/useFollowCounts';
+import { Carousel } from '@/components/ui/carousel';
 
 export const ProfilePage = () => {
   const {
@@ -24,6 +25,10 @@ export const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [booksData, setBooksData] = useState([]);
   const [error, setError] = useState(null);
+  const [readBooks, setReadBooks] = useState([]);
+  const [readingBooks, setReadingBooks] = useState([]);
+  const [wantToReadBooks, setWantToReadBooks] = useState([]);
+
 
   const [reviews, setReviews] = useState([]);
 
@@ -92,8 +97,51 @@ export const ProfilePage = () => {
     }
   };
 
+  const fetchUserBooks = async () => {
+    const { data, error } = await supabase
+        .from("user_books")
+        .select(`
+        status,
+        books (
+          isbn,
+          title,
+          author,
+          cover_image_url
+        )
+      `)
+        .eq("user_id", user.id);
+
+    if (error) {
+      console.error("Error fetching user books:", error);
+      return;
+    }
+
+    const read = [];
+    const reading = [];
+    const wantToRead = [];
+
+    data.forEach((item) => {
+      switch (item.status) {
+        case "Leído":
+          read.push(item.books);
+          break;
+        case "Leyendo":
+          reading.push(item.books);
+          break;
+        case "Quiero leer":
+          wantToRead.push(item.books);
+          break;
+      }
+    });
+
+    setReadBooks(read);
+    setReadingBooks(reading);
+    setWantToReadBooks(wantToRead);
+  };
+
   useEffect(() => {
     if (user) {
+      fetchUserBooks();
       if (isAuthor) {
         fetchBookData(user.firstName, user.lastName);
       } else {
@@ -105,6 +153,25 @@ export const ProfilePage = () => {
   useEffect(() => {
     fetchReviews();
   }, [user]);
+
+  const BookCarousel = ({ books, title }) => (
+      <div className="mt-8">
+        <h3 className="text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
+          {title}
+        </h3>
+        <Carousel>
+          {books.map((book) => (
+              <a href={`/books/${book.isbn}`} key={book.isbn}>
+                <img
+                    src={book.cover_image_url}
+                    alt={book.title}
+                    className="w-32 h-48 object-cover rounded-lg shadow-lg hover:opacity-75 transition-opacity"
+                />
+              </a>
+          ))}
+        </Carousel>
+      </div>
+  );
 
   if (loading) return <LoadingSpinner />;
   if (error) return <NotFound />;
@@ -142,6 +209,9 @@ export const ProfilePage = () => {
             >
               Editar perfil
             </Button>
+            <BookCarousel books={readBooks} title="Libros Leídos" />
+            <BookCarousel books={readingBooks} title="Libros Leyendo" />
+            <BookCarousel books={wantToReadBooks} title="Libros que Quiero Leer" />
             <div className='mt-8'>
               <h3 className='text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600'>
                 Reseñas de Libros

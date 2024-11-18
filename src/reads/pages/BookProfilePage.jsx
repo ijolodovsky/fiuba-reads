@@ -19,6 +19,14 @@ import { LoadingSpinner, NotFound } from '@/src/ui/components';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { BookMarked } from 'lucide-react';
+
 export const BookProfile = () => {
   const { isbn } = useParams();
   const [bookData, setBookData] = useState(null);
@@ -29,6 +37,7 @@ export const BookProfile = () => {
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [hasReviewed, setHasReviewed] = useState(false);
   const [rate, setRating] = useState(null);
+  const [readingStatus, setReadingStatus] = useState(null);
 
   const {
     authState: { user },
@@ -38,6 +47,49 @@ export const BookProfile = () => {
   const isSameUser = (review, user) => {
     return user.username === review.username;
   }
+
+  const fetchReadingStatus = async () => {
+    if (!user) return;
+
+    const { data, error } = await supabase
+        .from("user_books")
+        .select("status")
+        .eq("user_id", user.id)
+        .eq("book_id", isbn)
+        .single();
+
+    if (error) {
+      console.error("Error fetching reading status:", error);
+    } else {
+      setReadingStatus(data?.status || null);
+    }
+  };
+
+  useEffect(() => {
+    fetchReadingStatus();
+  }, [user, isbn]);
+
+  const updateReadingStatus = async (status) => {
+    if (!user) {
+      Swal.fire("Debes iniciar sesión para actualizar el estado de lectura.");
+      return;
+    }
+
+    const { error } = await supabase
+        .from("user_books")
+        .upsert(
+            { user_id: user.id, book_id: isbn, status },
+            { onConflict: ['user_id', 'book_id'] }
+        );
+
+    if (error) {
+      console.error("Error updating reading status:", error);
+      Swal.fire("Error al actualizar el estado de lectura.");
+    } else {
+      setReadingStatus(status);
+      Swal.fire("Estado de lectura actualizado correctamente.");
+    }
+  };
 
   const fetchBookRating = async () => {
     const { data: reviewsData, error } = await supabase
@@ -389,6 +441,25 @@ export const BookProfile = () => {
               <p className='text-blue-200'>{description}</p>
             </div>
             <div className='mt-6 flex items-center space-x-4'>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="bg-blue-600 px-4 py-2 text-white rounded-md">
+                    <BookMarked className="inline mr-2" />
+                    {readingStatus || "Marcar como"}
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={() => updateReadingStatus("Leído")}>
+                    Leído
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => updateReadingStatus("Leyendo")}>
+                    Leyendo
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => updateReadingStatus("Quiero leer")}>
+                    Quiero leer
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
               <button
                 onClick={handleBuyBook}
                 className='mt-6 px-4 py-2 bg-purple-600 text-white rounded-lg shadow-md hover:bg-purple-700 transition-colors duration-300 flex items-center'
