@@ -1,10 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../auth';
-import { Button } from '@/components/ui/button'; // example Shadcn button component
-import { LogOutIcon, LogOut, MessageCircleMore } from 'lucide-react';
-import { supabase } from '../../utils/supabase-client';
-
+import { Button } from '@/components/ui/button';
+import { LogOutIcon, UsersRound, MessageCircleMore, Bell } from 'lucide-react';
+import { supabase } from '../../utils/supabase-client'
 
 export const Navbar = () => {
   const { logout, authState } = useContext(AuthContext);
@@ -64,17 +63,19 @@ export const Navbar = () => {
     if (authState.user) {
       fetchUnRead();
     }
-  }, [chatrooms]);
+  }, [unRead]);
 
   useEffect(() => {
     setAllMessagesEmpty(unRead.every(item => item.messages.length === 0));
   }, [unRead]);
 
   const handleToReadIcon = () => {
-    if(!allMessagesEmpty){
-      return <MessageCircleMore className='ml-1 text-sm' style={{ color: '#b400f5' }} />;
+    if (!allMessagesEmpty) {
+      return '#b400f5';
     }
   };
+
+  console.log(unRead)
 
   return (
     <nav className="bg-gray-800 p-4 flex items-center justify-between">
@@ -86,11 +87,11 @@ export const Navbar = () => {
           FIUBA READS
         </Link>
 
-        <div className="space-x-4">
+        <div className="flex space-x-4">
           <NavLink
             to="/"
             className={({ isActive }) =>
-              `text-white hover:text-gray-300 text-decoration-none ${isActive ? 'underline' : ''}`
+              `text-white hover:text-gray-300 text-decoration-none flex items-center space-x-1 ${isActive ? 'underline' : ''}`
             }
           >
             Home
@@ -98,18 +99,29 @@ export const Navbar = () => {
           <NavLink
             to="/users"
             className={({ isActive }) =>
-              `text-white hover:text-gray-300 text-decoration-none ${isActive ? 'underline' : ''}`
+              `text-white hover:text-gray-300 text-decoration-none flex items-center space-x-1 ${isActive ? 'underline' : ''}`
             }
           >
+            <UsersRound className="text-white w-7 h-5" />
             Amigos
           </NavLink>
           <NavLink
             to="/chatList"
             className={({ isActive }) =>
-              `text-white hover:text-gray-300 text-decoration-none ${isActive ? 'underline' : ''}`
+              `text-white hover:text-gray-300 text-decoration-none flex items-center space-x-1 ${isActive ? 'underline' : ''}`
             }
           >
-            Chats {handleToReadIcon()}
+            <MessageCircleMore className="text-white w-7 h-5" style={{ color: handleToReadIcon() }} />
+            Chats
+          </NavLink>
+          <NavLink
+            to="/notifications"
+            className={({ isActive }) =>
+              `text-white hover:text-gray-300 text-decoration-none flex items-center space-x-1 ${isActive ? 'underline' : ''}`
+            }
+          >
+            <Bell className="text-white w-7 h-5" />
+            Notificaciones
           </NavLink>
           {/* TODO: Add other sections here */}
         </div>

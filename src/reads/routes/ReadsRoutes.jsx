@@ -1,7 +1,7 @@
 import React from "react";
 import { Route, Routes } from 'react-router-dom';
 import { Navbar } from '../../ui/components';
-import { HomePage, ProfilePage, AddBookPage, BookProfile, ModifyBookPage, FriendProfilePage, UserSearch, ModifyProfilePage, ChatPage, ListChatPage } from '../pages';
+import { HomePage, ProfilePage, AddBookPage, BookProfile, ModifyBookPage, FriendProfilePage, UserSearch, ModifyProfilePage, ChatPage, ListChatPage, NotificationListener } from '../pages';
 
 export const ReadsRoutes = () => {
   return (
@@ -19,6 +19,8 @@ export const ReadsRoutes = () => {
           <Route path="chatlist" element={<ListChatPage />} />
           <Route path="chat/:chatroomID" element={<ChatPage />} />
           <Route path="update-profile" element={<ModifyProfilePage />} />
+          <Route path="notifications" element={<NotificationListener />} />
+          <Route path="success" element={<h1>Success</h1>} />
         </Routes> 
       </div>
     </>

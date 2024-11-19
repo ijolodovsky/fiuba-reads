@@ -5,12 +5,10 @@ import { supabase } from '../../utils/supabase-client';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import { Scroll, SendHorizontal, ArrowLeft } from 'lucide-react';
+import {SendHorizontal, ArrowLeft } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useNavigate } from 'react-router-dom';
-
-
 
 export const ChatPage = () => {
     const [messages, setMessages] = useState([]);
@@ -108,7 +106,6 @@ export const ChatPage = () => {
     
     const handleSendMessage = async () => {
         if (newMessage.trim() === '') return;
-        console.log(newMessage);
         const { data, error } = await supabase
             .from('messages')
             .insert([
@@ -118,9 +115,9 @@ export const ChatPage = () => {
                     chatroomUUID: chatroomID,
                 },
             ]);
-
-        const lastSendTime = new Date().toISOString();
         
+        const lastSendTime = new Date().toISOString();
+
         if (lastSendTime) {
             const { error: chatroomError } = await supabase
                 .from('chatroom')

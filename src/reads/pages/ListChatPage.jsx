@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useContext, useCallback } from 'react';
+import React, { useState, useEffect, useContext} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../utils/supabase-client';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { AuthContext } from '../../auth/context/AuthContext';
 import _ from 'lodash';
@@ -33,7 +33,37 @@ export const ListChatPage = () => {
         };
 
         fetchChatrooms();
-    }, [user]);
+
+        const channel = supabase
+            .channel(`chatroom-updates}`)
+            .on(
+                'postgres_changes',
+                {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'chatroom',
+                },
+                (payload) => {
+                    const newMessageChatroomID = payload.new.chatroomUUID;
+                    setChatrooms((prevChatrooms) => {
+                        const updatedChatrooms = prevChatrooms.map((chatroom) => {
+                            if (chatroom.id === newMessageChatroomID) {
+                                return { ...chatroom, last_send: payload.new.created_at };
+                            }
+                            return chatroom;
+                        });
+
+                        return _.orderBy(updatedChatrooms, ['last_send'], ['desc']);
+                    });
+                }
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
+
+    }, [chatrooms]);
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -104,25 +134,33 @@ export const ListChatPage = () => {
         <div className='min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12'>
             <div className='container mx-auto px-4'>
                 <PeopleFinder />
-                <h2 className='text-2xl font-bold mb-6 text-center text-blue-300'>Tus Chats</h2>
-                <div className='space-y-4'>
-                    {chatrooms.map((chatroom) => (
-                        <Card key={chatroom.uuid} className='bg-gray-800 text-white'>
-                            <CardContent className='flex justify-between items-center mt-auto mt-4'>
-                                <div className='flex items-center'>
-                                    <Avatar>
-                                        <AvatarImage src={getUserAvatar(chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1)} />
-                                    </Avatar>
-                                    <h3 className='text-lg font-semibold ml-4'>{chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1}</h3>
-                                    {handleToReadIcon(chatroom.id)}
-                                </div>
-                                <Button onClick={() => goToChatroom(chatroom.id)} className='bg-blue-500 hover:bg-blue-600 text-white'>
-                                    Ir al chat
-                                </Button>
-                            </CardContent>
-                        </Card>
-                    ))}
-                </div>
+                <Card className="bg-gray-800 border-2 border-blue-500 rounded-lg shadow-2xl overflow-hidden">
+                    <CardHeader className="text-center bg-gradient-to-r from-blue-600 to-purple-600 py-6">
+                        <CardTitle className="text-3xl font-bold text-white flex items-center justify-center">
+                            Chats
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-4">
+                        <div className='space-y-4'>
+                            {chatrooms.map((chatroom) => (
+                                <Card key={chatroom.uuid} className='bg-gray-800 text-white'>
+                                    <CardContent className='flex justify-between items-center mt-auto mt-4'>
+                                        <div className='flex items-center'>
+                                            <Avatar>
+                                                <AvatarImage src={getUserAvatar(chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1)} />
+                                            </Avatar>
+                                            <h3 className='text-lg font-semibold ml-4'>{chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1}</h3>
+                                            {handleToReadIcon(chatroom.id)}
+                                        </div>
+                                        <Button onClick={() => goToChatroom(chatroom.id)} className='bg-blue-500 hover:bg-blue-600 text-white'>
+                                            Ir al chat
+                                        </Button>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
         </div>
     );
