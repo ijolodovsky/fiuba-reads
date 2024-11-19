@@ -18,8 +18,8 @@ import { LoadingSpinner, NotFound } from '@/src/ui/components';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import axios from 'axios';
-
 import { initMercadoPago, Wallet } from '@mercadopago/sdk-react'
+import { NotificationType } from '../utils/NotificationType';
 
 const MercadoPagoButton = memo(({ preferenceId }) => (
   preferenceId && (
