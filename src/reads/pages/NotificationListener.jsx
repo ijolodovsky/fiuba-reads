@@ -3,7 +3,7 @@ import { supabase } from '../../utils/supabase-client';
 import { AuthContext } from '../../auth';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Bell, Book, User, Star, Settings, Trash2, CheckCircle } from 'lucide-react'
+import { Bell, Book, User, Star, CheckCircle } from 'lucide-react'
 import { useFollowCounts } from '../hooks/useFollowCounts';
 
 export const NotificationListener = () => {

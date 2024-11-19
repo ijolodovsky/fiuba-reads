@@ -20,6 +20,7 @@ export const ReadsRoutes = () => {
           <Route path="chat/:chatroomID" element={<ChatPage />} />
           <Route path="update-profile" element={<ModifyProfilePage />} />
           <Route path="notifications" element={<NotificationListener />} />
+          <Route path="success" element={<h1>Success</h1>} />
         </Routes> 
       </div>
     </>
