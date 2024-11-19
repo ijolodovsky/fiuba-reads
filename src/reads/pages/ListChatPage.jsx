@@ -6,11 +6,14 @@ import { Button } from '@/components/ui/button';
 import { AuthContext } from '../../auth/context/AuthContext';
 import _ from 'lodash';
 import PeopleFinder from './PeopleFinder';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import { MessageCircleMore } from 'lucide-react';
 
 export const ListChatPage = () => {
     const [chatrooms, setChatrooms] = useState([]);
+    const [users, setUsers] = useState([]);
     const { authState: { user } } = useContext(AuthContext);
-    const [searchTerm, setSearchTerm] = useState('');
+    const [unRead, setUnRead] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -19,7 +22,8 @@ export const ListChatPage = () => {
             const { data, error } = await supabase
                 .from('chatroom')
                 .select('*')
-                .or(`username1.eq.${user.username},username2.eq.${user.username}`);
+                .or(`username1.eq.${user.username},username2.eq.${user.username}`)
+                .order('last_send', { ascending: false });
 
             if (error) {
                 console.error("Error al cargar los chats:", error.message);
@@ -31,9 +35,70 @@ export const ListChatPage = () => {
         fetchChatrooms();
     }, [user]);
 
+    useEffect(() => {
+        const fetchUsers = async () => {
+            const usernames = [...new Set(chatrooms.flatMap(chatroom => [chatroom.username1, chatroom.username2]))];
+            const { data, error } = await supabase
+                .from('users')
+                .select('username, profile_picture')
+                .in('username', usernames);
+
+            if (error) {
+                console.error("Error al cargar los usuarios:", error.message);
+            } else {
+                setUsers(data);
+            }
+        };
+
+        if (chatrooms.length > 0) {
+            fetchUsers();
+        }
+    }, [chatrooms]);
+
+    useEffect(() => {
+        const fetchUnRead = async () => {
+            const unreadMessages = [];
+            
+            for (let chatroom of chatrooms) {
+                const { data, error } = await supabase
+                    .from('messages')
+                    .select('is_read, chatroomUUID')
+                    .eq('chatroomUUID', chatroom.id)
+                    .eq('is_read', false)
+                    .neq('send_by', user.username);
+
+                if (error) {
+                    console.error("Error al cargar mensajes no leídos:", error.message);
+                } else {
+                    unreadMessages.push({ chatroomID: chatroom.id, messages: data });
+                }
+            }
+
+            setUnRead(unreadMessages);
+        };
+
+        if (chatrooms.length > 0) {
+            fetchUnRead();
+        }
+    }, [chatrooms, user]);
+
     const goToChatroom = (chatroomID) => {
         navigate(`/chat/${chatroomID}`);
     };
+
+    const getUserAvatar = (username) => {
+        const user = users.find(u => u.username === username);
+        return user?.profile_picture || '/default-avatar.png';
+    };
+
+    const handleToReadIcon = (chatroomID) => {
+        const unreadChatroom = unRead.find(item => item.chatroomID === chatroomID);
+
+        if (unreadChatroom && unreadChatroom.messages && unreadChatroom.messages.length > 0) {
+            return <MessageCircleMore className='ml-4' style={{ color: '#b400f5' }} />;
+        }
+        return null;
+        };
 
     return (
         <div className='min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12'>
@@ -43,9 +108,13 @@ export const ListChatPage = () => {
                 <div className='space-y-4'>
                     {chatrooms.map((chatroom) => (
                         <Card key={chatroom.uuid} className='bg-gray-800 text-white'>
-                            <CardContent className='flex justify-between items-center mt-auto space-y-4'>
-                                <div>
-                                    <h3 className='text-lg font-semibold mt-4'>{chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1}</h3>
+                            <CardContent className='flex justify-between items-center mt-auto mt-4'>
+                                <div className='flex items-center'>
+                                    <Avatar>
+                                        <AvatarImage src={getUserAvatar(chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1)} />
+                                    </Avatar>
+                                    <h3 className='text-lg font-semibold ml-4'>{chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1}</h3>
+                                    {handleToReadIcon(chatroom.id)}
                                 </div>
                                 <Button onClick={() => goToChatroom(chatroom.id)} className='bg-blue-500 hover:bg-blue-600 text-white'>
                                     Ir al chat

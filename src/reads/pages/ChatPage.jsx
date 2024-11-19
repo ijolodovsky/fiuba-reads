@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { supabase } from '../../utils/supabase-client';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Scroll, SendHorizontal, ArrowLeft } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -18,7 +18,6 @@ export const ChatPage = () => {
     const [users, setUsers] = useState([]);
     const { authState: { user } } = useContext(AuthContext);
     const { chatroomID } = useParams();
-    const [isLoading, setIsLoading] = useState(true);
     const chatEndRef = useRef(null);
     const navigate = useNavigate();
 
@@ -38,6 +37,7 @@ export const ChatPage = () => {
                     sender: msg.send_by,
                     timestamp: new Date(msg.created_at).toLocaleTimeString()
                 })));
+                await messageRead();
             }
         };
         fetchMessages();
@@ -70,6 +70,19 @@ export const ChatPage = () => {
         };
 
     }, [chatroomID]);
+
+    const messageRead = async (chatroomId) => {
+        const { error } = await supabase
+            .from('messages')
+            .update({ is_read: true })
+            .eq('chatroomUUID', chatroomID)
+            .eq('is_read', false)
+            .neq('send_by', user.username);
+
+        if (error) {
+            console.error("Error al marcar los mensajes como leídos:", error.message);
+        }
+    };
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -105,6 +118,19 @@ export const ChatPage = () => {
                     chatroomUUID: chatroomID,
                 },
             ]);
+
+        const lastSendTime = new Date().toISOString();
+        
+        if (lastSendTime) {
+            const { error: chatroomError } = await supabase
+                .from('chatroom')
+                .update({ last_send: new Date().toISOString() })
+                .eq('id', chatroomID);
+
+            if (chatroomError) {
+                console.error('Error al actualizar el chatroom:', chatroomError.message);
+            }
+        }
 
         setNewMessage('');
     };
