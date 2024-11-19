@@ -111,8 +111,7 @@ export const ProfilePage = () => {
   if (loading) return <LoadingSpinner />;
   if (error) return <NotFound />;
 
-  const { username, role, age, firstName, lastName, email, profilePicture } =
-    user;
+  const { username, role, age, firstName, lastName, email, profilePicture } = user;
   const fullName = `${firstName} ${lastName}`;
 
   return (
@@ -154,7 +153,7 @@ export const ProfilePage = () => {
               <UserReviews reviews={reviews} />
             </div>
             {isAuthor && (
-              <UserBooks booksData={booksData} handleAddBook={handleAddBook} />
+              <UserBooks booksData={booksData} handleAddBook={handleAddBook} isCurrentUser={true}/>
             )}
           </CardContent>
         </Card>

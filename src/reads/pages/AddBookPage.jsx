@@ -10,6 +10,7 @@ import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import './AddBookPage.css';
 import bookBlueImage from '../../assets/book_blue.svg';
 import bookRedImage from '../../assets/book_red.svg';
+import { NotificationType } from '../utils/NotificationType';
 
 export const AddBookPage = () => {
   const { authState: { user } } = useContext(AuthContext);
@@ -34,8 +35,25 @@ export const AddBookPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { error } = await supabase.from('books').insert([bookData]);
-    if (!error) navigate('/');
-    else console.error(error);
+    if (error) {
+      console.error(error);
+    } else {
+      // Crear la notificación asociada
+      const { error: notificationError } = await supabase
+        .from('notifications')
+        .insert([{
+          send_to: null,
+          content: `${user.username} ha agregado el libro ${bookData.title}.`,
+          type: NotificationType.NEW_BOOK,
+          send_from: user.username
+        }]);
+
+      if (notificationError) {
+        console.error("Error creating notification:", notificationError.message);
+      }
+
+      navigate('/');
+    }
   };
 
   return (

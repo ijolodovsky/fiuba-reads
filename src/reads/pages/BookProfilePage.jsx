@@ -21,13 +21,14 @@ import { Button } from '@/components/ui/button';
 import axios from 'axios';
 
 import { initMercadoPago, Wallet } from '@mercadopago/sdk-react'
+import { NotificationType } from '../utils/NotificationType';
 
 export const BookProfile = () => {
   const [preferenceId, setPreferenceId] = useState(null);
   initMercadoPago('APP_USR-d2e4042d-1ebe-4e98-b918-0fa7a7928725', { locale: 'es-AR' });
 
   const createPreference = async () => {
-    try{
+    try {
       const response = await axios.post("https://fiuba-reads-back.vercel.app/create_preference", {
         title: bookData.title,
         quantity: 1,
@@ -37,7 +38,7 @@ export const BookProfile = () => {
 
       const { id } = response.data;
       return id;
-      
+
     } catch (error) {
       console.error("Error en la compra:", error);
       Swal.fire("Ocurrió un error al procesar la compra.");
@@ -90,36 +91,36 @@ export const BookProfile = () => {
 
   const checkIfReviewed = async () => {
     if (!user) return;
-  
+
     try {
       const { data, error } = await supabase
         .from("reviews")
         .select("*")
         .eq("username", user.username)
         .eq("book_id", isbn);
-  
+
       if (error) {
         console.error("Error al verificar la reseña existente:", error);
         return;
       }
-  
+
       // Si hay datos, significa que el usuario ya reseñó este libro
       if (data && data.length > 0) {
         console.log("Ya has reseñado este libro:", data[0]);
         setHasReviewed(true);
-      } else{
+      } else {
         console.log("No has reseñado este libro aún.");
       }
     } catch (error) {
       console.error("Error en checkIfReviewed:", error);
     }
   };
-  
+
   // Llama a checkIfReviewed cuando se monta el componente para verificar si ya ha reseñado
   useEffect(() => {
     checkIfReviewed();
   }, [user, isbn]);
-  
+
 
   const fetchBookData = async () => {
     try {
@@ -127,11 +128,11 @@ export const BookProfile = () => {
         .from("books")
         .select("title, author, published_date, description, genre, page_count, cover_image_url, rating")
         .eq("isbn", isbn);
-  
+
       if (error) {
         throw new Error(error.message);
       }
-  
+
       if (data.length > 0) {
         setBookData(data[0]);
       } else {
@@ -144,7 +145,7 @@ export const BookProfile = () => {
       setLoading(false);
     }
   };
-  
+
 
   const fetchReviews = async () => {
     const { data, error } = await supabase
@@ -167,13 +168,13 @@ export const BookProfile = () => {
       Swal.fire("Debes iniciar sesión para agregar una reseña.");
       return;
     }
-  
+
     // Verifica si ya ha reseñado
     if (hasReviewed) {
       Swal.fire("Ya has dejado una reseña para este libro.");
       return;
     }
-  
+
     try {
       const { data, error } = await supabase
         .from("reviews")
@@ -187,7 +188,7 @@ export const BookProfile = () => {
           updated_at: new Date().toISOString(),
         })
         .select();
-  
+
       if (error) {
         console.error("Error al agregar la reseña:", error);
         Swal.fire("Error al agregar la reseña");
@@ -198,9 +199,23 @@ export const BookProfile = () => {
         // Recalcular el promedio de las reseñas después de agregar una nueva reseña
         await updateBookRating();
         setHasReviewed(true); // Actualiza para deshabilitar los campos
-        Swal.fire("Reseña agregada correctamente");
-  
         
+        // Crear la notificación asociada
+        const { error: notificationError } = await supabase
+          .from('notifications')
+          .insert([{
+            send_to: null,
+            content: `${user.username} ha agregado una reseña al libro ${bookData.title}.`,
+            type: NotificationType.REVIEW,
+            send_from: user.username
+          }]);
+
+        if (notificationError) {
+          console.error("Error creating notification:", notificationError.message);
+        }
+
+        Swal.fire("Reseña agregada correctamente");
+
       } else {
         console.error("No se recibió ningún dato de la base de datos");
       }
