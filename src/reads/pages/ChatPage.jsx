@@ -10,8 +10,6 @@ import { useParams } from 'react-router-dom';
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useNavigate } from 'react-router-dom';
 
-
-
 export const ChatPage = () => {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
@@ -95,7 +93,6 @@ export const ChatPage = () => {
     
     const handleSendMessage = async () => {
         if (newMessage.trim() === '') return;
-        console.log(newMessage);
         const { data, error } = await supabase
             .from('messages')
             .insert([

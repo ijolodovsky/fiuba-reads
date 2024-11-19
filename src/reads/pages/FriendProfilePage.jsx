@@ -18,6 +18,7 @@ import Swal from 'sweetalert2';
 
 import { UserBooks, UserInformation, UserReviews } from '../components';
 import { useFollowCounts } from '../hooks/useFollowCounts';
+import { NotificationType } from '../utils/NotificationType';
 
 export const FriendProfilePage = () => {
   const {
@@ -174,6 +175,20 @@ export const FriendProfilePage = () => {
       } else {
         setIsFollowing(true);
       }
+
+
+      // Crear la notificación asociada
+      const { error: notificationError } = await supabase
+      .from('notifications')
+      .insert([{ 
+      send_to: userID, 
+      content: `${user.username} te ha comenzado a seguir.`,
+      type: NotificationType.NEW_FOLLOWER,
+      }]);
+
+      if (notificationError) {
+      console.error("Error creating notification:", notificationError.message);
+      }
     }
   };
 
@@ -219,8 +234,7 @@ export const FriendProfilePage = () => {
   if (error) return <NotFound />;
   if (!userData) return null;
 
-  const { username, role, age, first_name, last_name, email, profile_picture } =
-    userData;
+  const { username, role, age, first_name, last_name, email, profile_picture } = userData;
 
   const fullName = `${first_name} ${last_name}`;
   const isAuthor = role === "escritor";
@@ -309,7 +323,7 @@ export const FriendProfilePage = () => {
               </h3>
               <UserReviews reviews={reviews} />
             </div>
-            {isAuthor && <UserBooks booksData={booksData} />}
+            {isAuthor && <UserBooks booksData={booksData} isCurrentUser={false}/>}
           </CardContent>
         </Card>
       </div>

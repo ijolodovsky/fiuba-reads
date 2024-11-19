@@ -56,7 +56,6 @@ export const ModifyProfilePage = () => {
       console.error('Error updating profile:', error);
     } else {
       setSuccessMessage('Profile updated successfully');
-      console.log('Profile updated successfully', data);
       login({
         ...user,
         first_name: formData.firstName,
