@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Bell, Book, User, Star, CheckCircle } from 'lucide-react'
 import { useFollowCounts } from '../hooks/useFollowCounts';
 
-export const NotificationListener = () => {
+export const NotificationPage = () => {
   const { authState: { user } } = useContext(AuthContext);
   const [notifications, setNotifications] = useState([]);
   const { followingUsers } = useFollowCounts(user.username);

@@ -8,4 +8,4 @@ export * from './UserSearch';
 export * from './ModifyProfilePage';
 export * from './ChatPage';
 export * from './ListChatPage';
-export * from './NotificationListener';
+export * from './NotificationPage';
