@@ -452,10 +452,10 @@ export const BookProfile = () => {
                 <h2 className="text-2xl font-semibold mb-2 text-blue-400 text-left">Sinopsis</h2>
                 <p className="text-blue-200">{description}</p>
               </div>
-              <div className="mt-6 flex items-center space-x-4">
+              <div className="mt-6 flex items-center space-x-4 flex-wrap">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button className="bg-blue-600 hover:bg-blue-700">
+                    <Button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md flex items-center">
                       <BookMarked className="mr-2 h-4 w-4"/>
                       {readingStatus || "Marcar como"}
                     </Button>
@@ -474,7 +474,7 @@ export const BookProfile = () => {
                 </DropdownMenu>
                 <button
                     onClick={handleBuyBook}
-                    className="mt-6 px-4 py-2 bg-purple-600 text-white rounded-lg shadow-md hover:bg-purple-700 transition-colors duration-300 flex items-center"
+                    className="px-4 py-2 bg-purple-600 text-white rounded-lg shadow-md hover:bg-purple-700 transition-colors duration-300 flex items-center"
                 >
                   <CircleDollarSign className="w-4 h-4 mr-1"/>
                   Comprar libro
@@ -482,14 +482,14 @@ export const BookProfile = () => {
                 {isAuthor && (
                     <>
                       <button
-                          className="mt-6 px-4 py-2 bg-purple-600 text-white rounded-lg shadow-md hover:bg-purple-700 transition-colors duration-300 flex items-center"
+                          className="px-4 py-2 bg-purple-600 text-white rounded-lg shadow-md hover:bg-purple-700 transition-colors duration-300 flex items-center"
                           onClick={handleUpdateBook}
                       >
                         <Edit className="w-4 h-4 mr-1"/>
                         Modificar Libro
                       </button>
                       <button
-                          className="mt-6 px-4 py-2 text-white rounded-lg shadow-md bg-red-600 hover:bg-red-700 transition-colors duration-300 flex items-center"
+                          className="px-4 py-2 bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700 transition-colors duration-300 flex items-center"
                           onClick={handleDeleteBook}
                       >
                         <Trash2 className="w-4 h-4 mr-1"/>
