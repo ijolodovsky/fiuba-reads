@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
     Card,
     CardContent,
@@ -9,7 +9,8 @@ import {
 
   import { useNavigate } from 'react-router-dom';
 
-export const UserBooks = ({booksData, handleAddBook}) => {
+export const UserBooks = ({ booksData, handleAddBook, isCurrentUser }) => {
+
     const navigate = useNavigate();
     
     const handleViewBook = (bookId) => {
@@ -20,13 +21,13 @@ export const UserBooks = ({booksData, handleAddBook}) => {
       <h3 className="text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
         Libros Escritos
       </h3>
-      <Button 
+      {  isCurrentUser && (<Button 
         className="mb-4 bg-blue-600 hover:bg-blue-700 text-white btn"
         onClick={handleAddBook}
       >
         <BookPlus className="mr-2 h-4 w-4" />
         Agregar Libro
-      </Button>     
+      </Button> )    }
       <div className="space-y-4">
         {booksData.map((book) => (
           <Card key={book.isbn} className="bg-gray-700 border-blue-400">

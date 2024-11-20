@@ -4,7 +4,7 @@ import { AuthContext } from '../../auth/context/AuthContext';
 import { supabase } from '../../utils/supabase-client';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { BookPlus, Calendar, BookOpen, Bookmark, Building,  FileText, Hash, FileSpreadsheet, Image} from "lucide-react";
+import { BookPlus, Calendar, BookOpen, Bookmark, DollarSign, Building,  FileText, Hash, FileSpreadsheet, Image} from "lucide-react";
 import { Input } from "@/components/ui/input"
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import './AddBookPage.css';
@@ -25,7 +25,6 @@ export const ModifyBookPage = () => {
     cover_image_url: ''
   });
   const navigate = useNavigate();
-  console.log(user);
 
   const {isbn} = useParams();
 
@@ -109,6 +108,20 @@ export const ModifyBookPage = () => {
                   value={bookData.isbn}
                   disabled
                   placeholder="ISBN"
+                  className="bg-gray-700 border-blue-500 text-white placeholder-blue-300"
+                />
+              </div>
+
+              <div className="flex items-center space-x-10">
+                <DollarSign className="text-blue-400" />
+                
+                <Input
+                  type="number"
+                  name="price"
+                  value={bookData.price}
+                  onChange={handleChange}
+                  placeholder="Precio"
+                  required
                   className="bg-gray-700 border-blue-500 text-white placeholder-blue-300"
                 />
               </div>

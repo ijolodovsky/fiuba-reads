@@ -1,13 +1,14 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { AuthContext } from '../../auth/context/AuthContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { supabase } from '../../utils/supabase-client';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import { SendHorizontal } from 'lucide-react';
+import { SendHorizontal, ArrowLeft } from 'lucide-react';
 import { useParams } from 'react-router-dom';
-import { LoadingSpinner } from '@/src/ui/components';
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { useNavigate } from 'react-router-dom';
 
 export const ChatPage = () => {
     const [messages, setMessages] = useState([]);
@@ -15,7 +16,8 @@ export const ChatPage = () => {
     const [users, setUsers] = useState([]);
     const { authState: { user } } = useContext(AuthContext);
     const { chatroomID } = useParams();
-    const [isLoading, setIsLoading] = useState(true);
+    const chatEndRef = useRef(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchMessages = async () => {
@@ -33,10 +35,52 @@ export const ChatPage = () => {
                     sender: msg.send_by,
                     timestamp: new Date(msg.created_at).toLocaleTimeString()
                 })));
+                await messageRead();
             }
         };
         fetchMessages();
+
+        const channel = supabase
+            .channel(`chatroom:${chatroomID}`)
+            .on(
+                'postgres_changes',
+                {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'messages',
+                    filter: `chatroomUUID=eq.${chatroomID}`
+                },
+                (payload) => {
+                    setMessages((prevMessages) => [
+                        ...prevMessages,
+                        {
+                            text: payload.new.text,
+                            sender: payload.new.send_by,
+                            timestamp: new Date(payload.new.created_at).toLocaleTimeString(),
+                        },
+                    ]);
+                }
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
+
     }, [chatroomID]);
+
+    const messageRead = async (chatroomId) => {
+        const { error } = await supabase
+            .from('messages')
+            .update({ is_read: true })
+            .eq('chatroomUUID', chatroomID)
+            .eq('is_read', false)
+            .neq('send_by', user.username);
+
+        if (error) {
+            console.error("Error al marcar los mensajes como leídos:", error.message);
+        }
+    };
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -59,15 +103,9 @@ export const ChatPage = () => {
         }
     }, [messages]);
 
-    useEffect(() => {
-        if (messages.length > 0 && users.length > 0) {
-            setIsLoading(false);
-        }
-    }, [messages, users]);
-    
+
     const handleSendMessage = async () => {
         if (newMessage.trim() === '') return;
-        console.log(newMessage);
         const { data, error } = await supabase
             .from('messages')
             .insert([
@@ -78,53 +116,82 @@ export const ChatPage = () => {
                 },
             ]);
 
-        setMessages([
-            ...messages,
-            {
-                text: newMessage,
-                sender: user.username,
-                timestamp: new Date().toLocaleTimeString(),
-            },
-        ]);
+        const lastSendTime = new Date().toISOString();
+
+        if (lastSendTime) {
+            const { error: chatroomError } = await supabase
+                .from('chatroom')
+                .update({ last_send: new Date().toISOString() })
+                .eq('id', chatroomID);
+
+            if (chatroomError) {
+                console.error('Error al actualizar el chatroom:', chatroomError.message);
+            }
+        }
+
         setNewMessage('');
     };
 
     const handleEnter = (e) => {
-        if(e.key === 'Enter') {
+        if (e.key === 'Enter') {
             handleSendMessage();
         }
     }
 
-    if (isLoading) return <LoadingSpinner />;
+    useEffect(() => {
+        if (chatEndRef.current) {
+            chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [messages]);
+
+    const handleGoBack = () => {
+        navigate("/chatList");
+    }
+
+
 
     return (
         <div className='min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12'>
+            <Button
+                onClick={handleGoBack}
+                className='bg-red-500 hover:bg-red-800 text-white w-10 h-10 rounded-full flex items-center justify-center mr-auto ml-12'
+            >
+                <ArrowLeft />
+            </Button>
             <div className='container mx-auto px-4'>
                 <Card className='w-full max-w-2xl mx-auto bg-gray-800 text-white'>
                     <CardContent>
                         <h2 className='text-2xl font-bold mb-4 text-center text-white'>Chat</h2>
-                        <div className='chat-messages space-y-4'>
+                        <ScrollArea className='chat-messages space-y-4 overflow-y-auto p-4' style={{ height: '400px' }}>
                             {messages.map((message, index) => (
                                 <div key={index} className={`flex ${message.sender === user.username ? 'justify-end' : 'justify-start'}`}>
-                                    <div className='flex items-center space-x-3'>
+                                    <div className='flex items-center space-x-3 space-y-6'>
+
                                         {message.sender !== user.username && (
-                                            <Avatar>
-                                                <AvatarImage src={users.find(user => user.username === message.sender)?.profile_picture || '/default-avatar.png'}/>
-                                            </Avatar>
+                                            <div className="flex flex-col items-center space-y-1">
+                                                <Avatar>
+                                                    <AvatarImage src={users.find(user => user.username === message.sender)?.profile_picture || '/default-avatar.png'} />
+                                                </Avatar>
+                                                <p className="text-xs text-gray-400">{message.sender}</p>
+                                            </div>
                                         )}
                                         <div className={`bg-${message.sender === user.username ? 'green-600' : 'blue-600'} rounded-lg px-4 py-2 shadow-md`}>
                                             <p className='text-sm'>{message.text}</p>
                                             <p className='text-xs text-gray-300'>{message.timestamp}</p>
                                         </div>
                                         {message.sender === user.username && (
-                                            <Avatar>
-                                                <AvatarImage src={users.find(user => user.username === message.sender)?.profile_picture || '/default-avatar.png'} alt='You' />
-                                            </Avatar>
+                                            <div className="flex flex-col items-center space-y-1">
+                                                <Avatar>
+                                                    <AvatarImage src={users.find(user => user.username === message.sender)?.profile_picture || '/default-avatar.png'} alt='You' />
+                                                </Avatar>
+                                                <p className="text-xs text-gray-400">{message.sender}</p>
+                                            </div>
                                         )}
                                     </div>
                                 </div>
                             ))}
-                        </div>
+                            <div ref={chatEndRef} />
+                        </ScrollArea>
                     </CardContent>
                     <CardContent className='mt-4'>
                         <div className="flex items-center space-x-2">
@@ -132,7 +199,7 @@ export const ChatPage = () => {
                                 value={newMessage}
                                 onChange={(e) => setNewMessage(e.target.value)}
                                 onKeyDown={handleEnter}
-                                placeholder='Escribe tu mensaje aquí...'
+                                placeholder='Mensaje'
                                 className='flex-1 bg-gray-700 text-white'
                             />
                             <Button

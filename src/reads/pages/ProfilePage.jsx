@@ -9,6 +9,9 @@ import {
   CardDescription,
   CardTitle,
 } from '@/components/ui/card';
+import {
+  Edit
+} from 'lucide-react';
 import { UserBooks, UserReviews } from '../components';
 import { supabase } from '../../utils/supabase-client';
 import { LoadingSpinner, NotFound } from '@/src/ui/components';
@@ -93,7 +96,6 @@ export const ProfilePage = () => {
       const titles = await Promise.all(
         reviewsData.map(async (review) => {
           const title = await fetchBookTitle(review.book_id);
-          console.log(title);
           return { ...review, title };
         })
       );
@@ -211,8 +213,7 @@ export const ProfilePage = () => {
   if (loading) return <LoadingSpinner />;
   if (error) return <NotFound />;
 
-  const { username, role, age, firstName, lastName, email, profilePicture } =
-    user;
+  const { username, role, age, firstName, lastName, email, profilePicture } = user;
   const fullName = `${firstName} ${lastName}`;
 
   return (
@@ -226,6 +227,15 @@ export const ProfilePage = () => {
             <CardDescription className='text-xl text-blue-200'>
               {role}
             </CardDescription>
+            <Button
+                onClick={handleUpdateProfile}
+                className="text-white rounded-full p-2 absolute btn"
+                size="icon"
+                variant="ghost"
+              >
+                <Edit className="h-4 w-4" />
+                <span className="sr-only">Editar perfil</span>
+              </Button>
           </CardHeader>
           <CardContent className='p-6'>
             <UserInformation
@@ -238,17 +248,11 @@ export const ProfilePage = () => {
               followersUsers={followersUsers}
               followingUsers={followingUsers}
             />
-            <Button
-              onClick={handleUpdateProfile}
-              className='mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-            >
-              Editar perfil
-            </Button>
-            <CardContent className="p-6">
-              <BookCarousel books={readBooks} title="Leídos" />
-              <BookCarousel books={readingBooks} title="Leyendo" />
-              <BookCarousel books={wantToReadBooks} title="Quiero Leer" />
-            </CardContent>
+             <CardContent className="p-6">
+               <BookCarousel books={readBooks} title="Leídos" />
+               <BookCarousel books={readingBooks} title="Leyendo" />
+               <BookCarousel books={wantToReadBooks} title="Quiero Leer" />
+             </CardContent>
             <div className='mt-8'>
               <h3 className='text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600'>
                 Reseñas de Libros
@@ -256,7 +260,7 @@ export const ProfilePage = () => {
               <UserReviews reviews={reviews} />
             </div>
             {isAuthor && (
-              <UserBooks booksData={booksData} handleAddBook={handleAddBook} />
+              <UserBooks booksData={booksData} handleAddBook={handleAddBook} isCurrentUser={true}/>
             )}
           </CardContent>
         </Card>

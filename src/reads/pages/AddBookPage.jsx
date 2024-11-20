@@ -4,12 +4,13 @@ import { AuthContext } from '../../auth/context/AuthContext';
 import { supabase } from '../../utils/supabase-client';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { BookPlus, Calendar, BookOpen, Bookmark, Building,  FileText, Hash, FileSpreadsheet, Image} from "lucide-react";
+import { BookPlus, Calendar, BookOpen, Bookmark, Building,  FileText, Hash, FileSpreadsheet, Image, DollarSign} from "lucide-react";
 import { Input } from "@/components/ui/input"
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import './AddBookPage.css';
 import bookBlueImage from '../../assets/book_blue.svg';
 import bookRedImage from '../../assets/book_red.svg';
+import { NotificationType } from '../utils/NotificationType';
 
 export const AddBookPage = () => {
   const { authState: { user } } = useContext(AuthContext);
@@ -22,10 +23,10 @@ export const AddBookPage = () => {
     description: '',
     genre: '',
     page_count: '',
-    cover_image_url: ''
+    cover_image_url: '',
+    price: ''
   });
   const navigate = useNavigate();
-  console.log(user);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -35,8 +36,25 @@ export const AddBookPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { error } = await supabase.from('books').insert([bookData]);
-    if (!error) navigate('/');
-    else console.error(error);
+    if (error) {
+      console.error(error);
+    } else {
+      // Crear la notificación asociada
+      const { error: notificationError } = await supabase
+        .from('notifications')
+        .insert([{
+          send_to: null,
+          content: `${user.username} ha agregado el libro ${bookData.title}.`,
+          type: NotificationType.NEW_BOOK,
+          send_from: user.username
+        }]);
+
+      if (notificationError) {
+        console.error("Error creating notification:", notificationError.message);
+      }
+
+      navigate('/');
+    }
   };
 
   return (
@@ -87,6 +105,20 @@ export const AddBookPage = () => {
                   value={bookData.isbn}
                   onChange={handleChange}
                   placeholder="ISBN"
+                  required
+                  className="bg-gray-700 border-blue-500 text-white placeholder-blue-300"
+                />
+              </div>
+
+              <div className="flex items-center space-x-4">
+                <DollarSign className="text-blue-400" />
+                <span className="text-red-500">*</span>
+                <Input
+                  type="number"
+                  name="price"
+                  value={bookData.price}
+                  onChange={handleChange}
+                  placeholder="Precio"
                   required
                   className="bg-gray-700 border-blue-500 text-white placeholder-blue-300"
                 />
