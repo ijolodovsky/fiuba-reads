@@ -77,19 +77,21 @@ export const BookProfile = () => {
       return;
     }
 
-    const { data, error } = await supabase
-        .from("user_books")
-        .upsert(
-            { username: user.username, book_isbn: isbn, status },
-            { onConflict: ['username', 'book_isbn'] }
-        );
+    try {
+      const { data, error } = await supabase
+          .from("user_books")
+          .upsert(
+              { username: user.username, book_isbn: isbn, status },
+              { onConflict: ["username", "book_isbn"], returning: "minimal" }
+          );
 
-    if (error) {
-      console.error("Error updating reading status:", error);
-      Swal.fire("Error al actualizar el estado de lectura.");
-    } else {
-      setReadingStatus(status);
+      if (error) throw error;
+
+      setReadingStatus(status); // Actualizar el estado de lectura localmente
       Swal.fire("Estado de lectura actualizado correctamente.");
+    } catch (error) {
+      console.error("Error al actualizar el estado de lectura:", error);
+      Swal.fire("Error al actualizar el estado de lectura.");
     }
   };
 

@@ -103,14 +103,14 @@ export const ProfilePage = () => {
     const { data, error } = await supabase
         .from("user_books")
         .select(`
-        status,
-        books:book_isbn (
-          isbn,
-          title,
-          author,
-          cover_image_url
-        )
-      `)
+      status,
+      books:book_isbn (
+        isbn,
+        title,
+        author,
+        cover_image_url
+      )
+    `)
         .eq("username", user.username);
 
     if (error) {
@@ -213,9 +213,11 @@ export const ProfilePage = () => {
             >
               Editar perfil
             </Button>
-            <BookCarousel books={readBooks} title="Libros Leídos" />
-            <BookCarousel books={readingBooks} title="Libros Leyendo" />
-            <BookCarousel books={wantToReadBooks} title="Quiero Leer" />
+            <CardContent className="p-6">
+              <BookCarousel books={readBooks} title="Libros Leídos" />
+              <BookCarousel books={readingBooks} title="Libros Leyendo" />
+              <BookCarousel books={wantToReadBooks} title="Libros Quiero Leer" />
+            </CardContent>
             <div className='mt-8'>
               <h3 className='text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600'>
                 Reseñas de Libros
