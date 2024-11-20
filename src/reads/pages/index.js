@@ -9,3 +9,4 @@ export * from './ModifyProfilePage';
 export * from './ChatPage';
 export * from './ListChatPage';
 export * from './NotificationPage';
+export * from './SuccessPage';
