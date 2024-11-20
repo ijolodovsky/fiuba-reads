@@ -34,26 +34,6 @@ const MercadoPagoButton = memo(({ preferenceId }) => (
 
 export const BookProfile = () => {
   const [preferenceId, setPreferenceId] = useState(null);
-  initMercadoPago('APP_USR-d2e4042d-1ebe-4e98-b918-0fa7a7928725', { locale: 'es-AR' });
-
-  const createPreference = async () => {
-    try {
-      const response = await axios.post("https://fiuba-reads-back.vercel.app/create_preference", {
-        title: bookData.title,
-        quantity: 1,
-        unit_price: bookData.price,
-        user_id: user.id,
-      });
-
-      const { id } = response.data;
-      setPreferenceId(id);
-
-    } catch (error) {
-      console.error("Error en la compra:", error);
-      Swal.fire("Ocurrió un error al procesar la compra.");
-    }
-  }
-
   const { isbn } = useParams();
   const [bookData, setBookData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -68,6 +48,27 @@ export const BookProfile = () => {
     authState: { user },
   } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  initMercadoPago('APP_USR-d2e4042d-1ebe-4e98-b918-0fa7a7928725', { locale: 'es-AR' });
+
+  const createPreference = async () => {
+    try {
+      const response = await axios.post("https://fiuba-reads-back.vercel.app/create_preference", {
+        title: bookData.title,
+        quantity: 1,
+        unit_price: bookData.price,
+        user_id: user.username,
+        isbn: isbn
+      });
+
+      const { id } = response.data;
+      setPreferenceId(id);
+
+    } catch (error) {
+      console.error("Error en la compra:", error);
+      Swal.fire("Ocurrió un error al procesar la compra.");
+    }
+  }
 
   const isSameUser = (review, user) => {
     return user.username === review.username;
