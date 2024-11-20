@@ -1,18 +1,15 @@
 import React, { useEffect } from 'react';
 import { supabase } from '../../utils/supabase-client';
-import { useSearchParams } from 'react-router-dom';
 
 const Success = () => {
-    const [searchParams] = useSearchParams();
-
     useEffect(() => {
-        const purchaseData = {
-            user_id: searchParams.get('user_id'),
-            book_id: searchParams.get('book_id'),
-            price: Number(searchParams.get('price')),
-            purchase_date: new Date().toISOString(), // Fecha actual
-        };
 
+        const purchaseData = {
+            user_id,
+            book_id,
+            price,
+            purchase_date: new Date().toISOString(), // Fecha de la compra actual
+          };
         const addDataToTable = async () => {
             const { data, error } = await supabase
                 .from('bookPurchases')
@@ -26,7 +23,7 @@ const Success = () => {
         };
 
         addDataToTable();
-    }, [searchParams]);
+    }, []);
 
     return (
         <div>

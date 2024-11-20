@@ -20,9 +20,6 @@ app.get("/", (req, res) => {
 app.post("/create_preference", async (req, res) => {
     console.log(req.body);
     try{
-
-        const {user_id, book_id, price} = req.body;
-        console.log(user_id, book_id, price);
         const body = {
             items: [
                 {
@@ -33,7 +30,7 @@ app.post("/create_preference", async (req, res) => {
                 },
             ],
             back_urls: {
-                success: "https://fiuba-reads.vercel.app/success?user_id="+user_id+"&book_id="+book_id+"&price="+price,
+                success: "https://fiuba-reads.vercel.app/success",
                 failure: "https://fiuba-reads.vercel.app/failure",
                 pending: "https://fiuba-reads.vercel.app/pending",
             },
