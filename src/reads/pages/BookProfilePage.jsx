@@ -43,6 +43,7 @@ export const BookProfile = () => {
         quantity: 1,
         unit_price: 100, //bookData.price, CAMBIAR!!!!!!!
         user_id: user.id,
+        book_id: isbn,
       });
 
       const { id } = response.data;
