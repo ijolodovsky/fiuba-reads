@@ -429,9 +429,18 @@ export const BookProfile = () => {
               </h2>
               <p className='text-blue-200'>{description}</p>
             </div>
-            <div className='mt-6 flex items-center space-x-4'>
-              <MercadoPagoButton preferenceId={preferenceId} />
+            <div className='mt-6'>
+              <h2 className='text-2xl font-semibold mb-2 text-blue-400 text-left'>
+                Comprar Libro
+              </h2>
+              <p className='text-lg text-blue-300 mb-4'>
+                Precio: ${bookData.price.toFixed(2)}
+              </p>
+              <div className='flex items-start space-x-4'>
+                <MercadoPagoButton preferenceId={preferenceId} />
+              </div>
             </div>
+
             <div className='mt-6'>
               {isAuthor && (
                 <>
