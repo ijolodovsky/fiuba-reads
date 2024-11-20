@@ -30,7 +30,7 @@ app.post("/create_preference", async (req, res) => {
                 },
             ],
             back_urls: {
-                success: "https://fiuba-reads.vercel.app/success",
+                success: "https://fiuba-reads.vercel.app/",
                 failure: "https://fiuba-reads.vercel.app/failure",
                 pending: "https://fiuba-reads.vercel.app/pending",
             },
