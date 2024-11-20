@@ -20,17 +20,19 @@ app.get("/", (req, res) => {
 app.post("/create_preference", async (req, res) => {
     console.log(req.body);
     try{
+        const { title, quantity, unit_price, user_id, isbn } = req.body;
+
         const body = {
             items: [
                 {
-                    title: req.body.title,
-                    quantity: Number(req.body.quantity),
-                    unit_price: Number(req.body.unit_price),
+                    title: title,
+                    quantity: Number(quantity),
+                    unit_price: Number(unit_price),
                     currency_id: "ARS",
                 },
             ],
             back_urls: {
-                success: "https://fiuba-reads.vercel.app/success",
+                success: `https://fiuba-reads.vercel.app/success?userId=${user_id}&bookId=${isbn}&price=${unit_price}`,
                 failure: "https://fiuba-reads.vercel.app/failure",
                 pending: "https://fiuba-reads.vercel.app/pending",
             },

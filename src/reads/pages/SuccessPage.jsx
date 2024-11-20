@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { supabase } from '../../utils/supabase-client';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AuthContext } from '@/src/auth';
@@ -9,28 +9,34 @@ export const SuccessPage = () => {
     const { authState: { user } } = useContext(AuthContext);
 
     const navigate = useNavigate();
-    // useEffect(() => {
+    const [searchParams] = useSearchParams();
 
-    //     const purchaseData = {
-    //         user_id,
-    //         book_id,
-    //         price,
-    //         purchase_date: new Date().toISOString(), // Fecha de la compra actual
-    //       };
-    //     const addDataToTable = async () => {
-    //         const { data, error } = await supabase
-    //             .from('bookPurchases')
-    //             .insert(purchaseData);
+    const userId = searchParams.get('userId');
+    const bookId = searchParams.get('bookId');
+    const price = searchParams.get('price');
 
-    //         if (error) {
-    //             console.error('Error inserting data:', error);
-    //         } else {
-    //             console.log('Data inserted successfully:', data);
-    //         }
-    //     };
+    useEffect(() => {
+        const purchaseData = {
+            username: userId,
+            book_id: bookId,
+            price: parseFloat(price),
+            purchase_date: new Date().toISOString(),
+        };
 
-    //     addDataToTable();
-    // }, []);
+        const addDataToTable = async () => {
+            const { data, error } = await supabase
+                .from('bookPurchases')
+                .insert(purchaseData);
+
+            if (error) {
+                console.error('Error inserting data:', error);
+            } else {
+                console.log('Data inserted successfully:', data);
+            }
+        };
+
+        addDataToTable();
+    }, []);
 
     const handleGoHome = () => {
         navigate('/');
@@ -44,7 +50,7 @@ export const SuccessPage = () => {
               ¡Compra Exitosa!
             </h2>
             <p className="text-lg text-gray-300 mb-8">
-              {user.username} tu pedido se ha procesado correctamente!
+              {user.username} tu pedido de ISBN #{bookId} se ha procesado correctamente!
             </p>
             <div className="flex space-x-4 justify-center">
               {/* <Button 
