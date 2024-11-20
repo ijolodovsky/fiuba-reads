@@ -41,7 +41,7 @@ export const BookProfile = () => {
       const response = await axios.post("https://fiuba-reads-back.vercel.app/create_preference", {
         title: bookData.title,
         quantity: 1,
-        unit_price: 100, //bookData.price, CAMBIAR!!!!!!!
+        unit_price: bookData.price,
         user_id: user.id,
       });
 
@@ -135,7 +135,7 @@ export const BookProfile = () => {
     try {
       const { data, error } = await supabase
         .from("books")
-        .select("title, author, published_date, description, genre, page_count, cover_image_url, rating")
+        .select("title, author, published_date, description, genre, page_count, cover_image_url, rating, price")
         .eq("isbn", isbn);
 
       if (error) {
