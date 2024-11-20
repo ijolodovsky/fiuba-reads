@@ -1,11 +1,14 @@
 import React from "react";
 import { Route, Routes } from 'react-router-dom';
-import { Navbar } from '../../ui/components';
+import { Navbar, NotificationListener } from '../../ui/components';
 import { HomePage, ProfilePage, AddBookPage, BookProfile, ModifyBookPage, FriendProfilePage, UserSearch, ModifyProfilePage, ChatPage, ListChatPage, NotificationPage } from '../pages';
+import { ToastContainer } from 'react-toastify';
 
 export const ReadsRoutes = () => {
   return (
-    <> 
+    <>
+    <NotificationListener />
+    <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={true} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
       <Navbar />
       <div>
         <Routes>
