@@ -245,9 +245,9 @@ export const ProfilePage = () => {
               Editar perfil
             </Button>
             <CardContent className="p-6">
-              <BookCarousel books={readBooks} title="Libros Leídos" />
-              <BookCarousel books={readingBooks} title="Libros Leyendo" />
-              <BookCarousel books={wantToReadBooks} title="Libros Quiero Leer" />
+              <BookCarousel books={readBooks} title="Leídos" />
+              <BookCarousel books={readingBooks} title="Leyendo" />
+              <BookCarousel books={wantToReadBooks} title="Quiero Leer" />
             </CardContent>
             <div className='mt-8'>
               <h3 className='text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600'>
