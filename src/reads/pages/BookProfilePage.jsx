@@ -517,48 +517,50 @@ export const BookProfile = () => {
               </h2>
               <p className='text-blue-200'>{description}</p>
             </div>
-            <div className='mt-6'>
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md flex items-center">
-                            <BookMarked className="mr-2 h-4 w-4"/>
-                            {readingStatus || "Marcar como"}
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                        <DropdownMenuItem onSelect={() => updateReadingStatus("Leído")}>Leído</DropdownMenuItem>
-                        <DropdownMenuItem onSelect={() => updateReadingStatus("Leyendo")}>Leyendo</DropdownMenuItem>
-                        <DropdownMenuItem onSelect={() => updateReadingStatus("Quiero leer")}>Quiero leer</DropdownMenuItem>
-                        {readingStatus && (
-                            <DropdownMenuItem onSelect={() => updateReadingStatus(null)}>
-                                <X className="mr-2 h-4 w-4"/>
-                                Quitar de la lista
-                            </DropdownMenuItem>
-                        )}
-                    </DropdownMenuContent>
-                </DropdownMenu>
-              <h2 className='text-2xl font-semibold mb-2 text-blue-400 text-left'>
-                Comprar Libro
-              </h2>
-              <p className='text-lg text-blue-300 mb-4'>
-                Precio: ${bookData.price.toFixed(2)}
-              </p>
-              <div className='flex items-start space-x-4'>
-                <MercadoPagoButton preferenceId={preferenceId} />
+              <div className='mt-6'>
+                  <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                          <Button
+                              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md flex items-center">
+                              <BookMarked className="mr-2 h-4 w-4"/>
+                              {readingStatus || "Marcar como"}
+                          </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                          <DropdownMenuItem onSelect={() => updateReadingStatus("Leído")}>Leído</DropdownMenuItem>
+                          <DropdownMenuItem onSelect={() => updateReadingStatus("Leyendo")}>Leyendo</DropdownMenuItem>
+                          <DropdownMenuItem onSelect={() => updateReadingStatus("Quiero leer")}>Quiero
+                              leer</DropdownMenuItem>
+                          {readingStatus && (
+                              <DropdownMenuItem onSelect={() => updateReadingStatus(null)}>
+                                  <X className="mr-2 h-4 w-4"/>
+                                  Quitar de la lista
+                              </DropdownMenuItem>
+                          )}
+                      </DropdownMenuContent>
+                  </DropdownMenu>
+                  <h2 className='text-2xl font-semibold mb-2 text-blue-400 text-left'>
+                      Comprar Libro
+                  </h2>
+                  <p className='text-lg text-blue-300 mb-4'>
+                      Precio: ${bookData.price.toFixed(2)}
+                  </p>
+                  <div className='flex items-start space-x-4'>
+                      <MercadoPagoButton preferenceId={preferenceId}/>
+                  </div>
               </div>
-            </div>
 
-            <div className='mt-6'>
-              {isAuthor && (
-                <>
-                  <div className='mt-6 flex space-x-4'>
-                    <button
-                      className='px-4 py-2 bg-purple-600 text-white rounded-lg shadow-md hover:bg-purple-700 transition-colors duration-300 flex items-center'
-                      onClick={handleUpdateBook}
-                    >
+              <div className='mt-6'>
+                  {isAuthor && (
+                      <>
+                          <div className='mt-6 flex space-x-4'>
+                              <button
+                                  className='px-4 py-2 bg-purple-600 text-white rounded-lg shadow-md hover:bg-purple-700 transition-colors duration-300 flex items-center'
+                                  onClick={handleUpdateBook}
+                              >
 
-                      <Edit className='w-4 h-4 mr-1' />
-                      Modificar Libro
+                                  <Edit className='w-4 h-4 mr-1'/>
+                                  Modificar Libro
                     </button>
                     <button
                       className='px-4 py-2 text-white rounded-lg shadow-md bg-red-600 hover:bg-red-700 transition-colors duration-300 flex items-center'
