@@ -5,7 +5,7 @@ import { supabase } from '../../utils/supabase-client';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import {SendHorizontal, ArrowLeft } from 'lucide-react';
+import { SendHorizontal, ArrowLeft } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useNavigate } from 'react-router-dom';
@@ -103,7 +103,7 @@ export const ChatPage = () => {
         }
     }, [messages]);
 
-    
+
     const handleSendMessage = async () => {
         if (newMessage.trim() === '') return;
         const { data, error } = await supabase
@@ -115,7 +115,7 @@ export const ChatPage = () => {
                     chatroomUUID: chatroomID,
                 },
             ]);
-        
+
         const lastSendTime = new Date().toISOString();
 
         if (lastSendTime) {
@@ -133,22 +133,22 @@ export const ChatPage = () => {
     };
 
     const handleEnter = (e) => {
-        if(e.key === 'Enter') {
+        if (e.key === 'Enter') {
             handleSendMessage();
         }
     }
 
     useEffect(() => {
         if (chatEndRef.current) {
-          chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+            chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
         }
-      }, [messages]);
+    }, [messages]);
 
     const handleGoBack = () => {
         navigate("/chatList");
     }
 
-    
+
 
     return (
         <div className='min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12'>
@@ -166,19 +166,26 @@ export const ChatPage = () => {
                             {messages.map((message, index) => (
                                 <div key={index} className={`flex ${message.sender === user.username ? 'justify-end' : 'justify-start'}`}>
                                     <div className='flex items-center space-x-3 space-y-6'>
+
                                         {message.sender !== user.username && (
-                                            <Avatar>
-                                                <AvatarImage src={users.find(user => user.username === message.sender)?.profile_picture || '/default-avatar.png'}/>
-                                            </Avatar>
+                                            <div className="flex flex-col items-center space-y-1">
+                                                <Avatar>
+                                                    <AvatarImage src={users.find(user => user.username === message.sender)?.profile_picture || '/default-avatar.png'} />
+                                                </Avatar>
+                                                <p className="text-xs text-gray-400">{message.sender}</p>
+                                            </div>
                                         )}
                                         <div className={`bg-${message.sender === user.username ? 'green-600' : 'blue-600'} rounded-lg px-4 py-2 shadow-md`}>
                                             <p className='text-sm'>{message.text}</p>
                                             <p className='text-xs text-gray-300'>{message.timestamp}</p>
                                         </div>
                                         {message.sender === user.username && (
-                                            <Avatar>
-                                                <AvatarImage src={users.find(user => user.username === message.sender)?.profile_picture || '/default-avatar.png'} alt='You' />
-                                            </Avatar>
+                                            <div className="flex flex-col items-center space-y-1">
+                                                <Avatar>
+                                                    <AvatarImage src={users.find(user => user.username === message.sender)?.profile_picture || '/default-avatar.png'} alt='You' />
+                                                </Avatar>
+                                                <p className="text-xs text-gray-400">{message.sender}</p>
+                                            </div>
                                         )}
                                     </div>
                                 </div>
@@ -208,5 +215,3 @@ export const ChatPage = () => {
         </div>
     );
 };
-
-export default ChatPage;

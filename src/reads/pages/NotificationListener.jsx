@@ -11,63 +11,25 @@ export const NotificationListener = () => {
   const [notifications, setNotifications] = useState([]);
   const { followingUsers } = useFollowCounts(user.username);
 
-  // Notificaciones de "seguidores"
-  const fetchNotifications = async () => {
+  const fetchAllNotifications = async () => {
     const { data, error } = await supabase
-      .from("notifications")
-      .select("*")
-      .eq("send_to", user.username);
+    .from("notifications")
+    .select("*")
+    .or(
+      `send_from.in.(${followingUsers.map((followingUser) => followingUser.username).join(",")}),send_to.eq.${user.username}`
+    );
 
-    if (error) {
-      console.error(`Error fetching notification for ${user.username}:`, error);
-    } else if (data) {
-      setNotifications((prevNotifications) => {
-        const existingIds = new Set(prevNotifications.map((n) => n.id)); // Crear un conjunto con los IDs existentes
-        const newNotifications = data.filter((notification) => !existingIds.has(notification.id)); // Filtrar duplicados
-        return [...prevNotifications, ...newNotifications]; // Agregar solo las nuevas
-      });
-    }
-  };
+    setNotifications(data);
 
-  // Notificaciones de reseñas y libros
-  const fetchReviewsNotifications = async () => {
-    try {
-      const notificationsPromises = followingUsers.map(async (followingUser) => {
-        const { data, error } = await supabase
-          .from("notifications")
-          .select("*")
-          .eq("send_from", followingUser.username);
-
-        if (error) {
-          console.error(`Error fetching notification for ${followingUser.username}:`, error);
-          return [];
-        }
-        return data || [];
-      });
-
-      // Resolver todas las promesas
-      const notificationsArrays = await Promise.all(notificationsPromises);
-      const allNotifications = notificationsArrays.flat();
-
-      // Agregar solo notificaciones nuevas
-      setNotifications((prevNotifications) => {
-        const existingIds = new Set(prevNotifications.map((n) => n.id));
-        const newNotifications = allNotifications.filter(
-          (notification) => !existingIds.has(notification.id)
-        );
-        return [...prevNotifications, ...newNotifications];
-      });
-    } catch (error) {
-      console.error("Error fetching review notifications:", error);
-    }
+  if (error) {
+    console.error("Error fetching notifications:", error);
+  } else {
+    console.log("Notifications:", data);
+  }
   };
 
   useEffect(() => {
-    fetchNotifications();
-  }, [user]);
-
-  useEffect(() => {
-    fetchReviewsNotifications();
+    fetchAllNotifications();
   }, [followingUsers]);
 
   const handleMarkAsRead = async (notificationId) => {
@@ -76,11 +38,11 @@ export const NotificationListener = () => {
         .from("notifications")
         .update({ is_read: true })
         .eq("id", notificationId);
-
+  
       if (error) {
         console.error("Error updating notification:", error);
-      } else if (data) {
-        // Actualizar el estado local para reflejar que la notificación ha sido leída
+      } else {
+        // Actualiza las notificaciones localmente sin mutar directamente el estado
         setNotifications((prevNotifications) =>
           prevNotifications.map((notification) =>
             notification.id === notificationId
@@ -93,6 +55,7 @@ export const NotificationListener = () => {
       console.error("Unexpected error marking notification as read:", error);
     }
   };
+  
 
   // Función para formatear la fecha a "año-mes-día hh:mm".
   const formatDate = (date) => {

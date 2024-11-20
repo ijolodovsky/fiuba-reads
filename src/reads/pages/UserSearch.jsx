@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useCallback  } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { AuthContext } from '../../auth/context/AuthContext';
 import { supabase } from '../../utils/supabase-client';
 import _ from 'lodash';
@@ -42,14 +42,15 @@ export const UserSearch = () => {
   const fetchReviews = async (followedUsers) => {
     if (!followedUsers || followedUsers.length === 0) return;
 
-    const offset = (currentPage - 1) * 10; // Cálculo para la paginación
+    const offset = (currentPage - 1) * 5; // Cálculo para la paginación
 
     const { data, error, count } = await supabase
       .from('reviews')
-      .select('id, username, book_id, content, rating, created_at')
+      .select('id, username, book_id, content, rating, created_at', { count: 'exact' }) // 'exact' para obtener el conteo total
       .in('username', followedUsers)
       .order('created_at', { ascending: false })
-      .range(offset, offset + 9); // Limitar a 10 reseñas por página
+      .range(offset, offset + 4); // Cambiamos el rango a 5 (offset + 4)
+
 
     if (error) {
       console.error("Error fetching reviews:", error);
@@ -74,7 +75,8 @@ export const UserSearch = () => {
           };
         });
         setReviews(reviewsWithBooks); // Guardar las reseñas con el título del libro
-        setTotalPages(Math.ceil(count / 10)); // Calcular el número total de páginas
+        setTotalPages(Math.ceil(count / 5)); // Calcular el número total de páginas
+        console.log(totalPages)
       }
     }
   };
@@ -86,7 +88,7 @@ export const UserSearch = () => {
           .from('users')
           .select('username, first_name, last_name, profile_picture')
           .or(`first_name.ilike.%${term}%,last_name.ilike.%${term}%`);
-        
+
         if (error) {
           console.error('Error fetching users:', error);
         } else {
@@ -127,12 +129,6 @@ export const UserSearch = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
     }
-  };
-
-  // Función para formatear la fecha a "año-mes-día"
-  const formatDate = (date) => {
-    const formattedDate = new Date(date);
-    return formattedDate.toISOString().split('T')[0]; // Año-mes-día
   };
 
   return (
@@ -212,29 +208,31 @@ export const UserSearch = () => {
                 </CardContent>
               </Card>
             ))}
-            {(totalPages > 1) && ( <CardFooter className="p-2 text-sm text-center text-gray-400">
-              <div className="flex justify-center space-x-2">
-                {/* Botón de flecha hacia atrás */}
-                <button
-                  onClick={handlePrevPage}
-                  disabled={currentPage === 1}
-                  className={`px-4 py-2 rounded-md border-2 ${currentPage === 1 ? 'border-gray-500 text-gray-400 cursor-not-allowed' : 'border-blue-500 text-blue-500'}`}
-                >
-                  &#9664; Anterior
-                </button>
-                <span className="mx-2 text-blue-300">
-                  Página {currentPage} de {totalPages}
-                </span>
-                {/* Botón de flecha hacia adelante */}
-                <button
-                  onClick={handleNextPage}
-                  disabled={currentPage === totalPages}
-                  className={`px-4 py-2 rounded-md border-2 ${currentPage === totalPages ? 'border-gray-500 text-gray-400 cursor-not-allowed' : 'border-blue-500 text-blue-500'}`}
-                >
-                  Siguiente &#9654;
-                </button>
-              </div>
-            </CardFooter>)}
+            {(totalPages > 1) && (
+              <CardFooter className="p-2 text-sm text-center text-gray-400">
+                <div className="flex justify-center items-center space-x-2">
+                  {/* Botón de flecha hacia atrás */}
+                  <button
+                    onClick={handlePrevPage}
+                    disabled={currentPage === 1}
+                    className={`px-4 py-2 rounded-md border-2 ${currentPage === 1 ? 'border-gray-500 text-gray-400 cursor-not-allowed' : 'border-blue-500 text-blue-500'}`}
+                  >
+                    &#9664; Anterior
+                  </button>
+                  {/* Texto de página actual */}
+                  <span className="text-blue-300">
+                    Página {currentPage} de {totalPages}
+                  </span>
+                  {/* Botón de flecha hacia adelante */}
+                  <button
+                    onClick={handleNextPage}
+                    disabled={currentPage === totalPages}
+                    className={`px-4 py-2 rounded-md border-2 ${currentPage === totalPages ? 'border-gray-500 text-gray-400 cursor-not-allowed' : 'border-blue-500 text-blue-500'}`}
+                  >
+                    Siguiente &#9654;
+                  </button>
+                </div>
+              </CardFooter>)}
           </div>
         ) : (
           <div className="w-full max-w-2xl mx-auto mt-8 text-center text-gray-400">No se encontraron reseñas para mostrar</div>
