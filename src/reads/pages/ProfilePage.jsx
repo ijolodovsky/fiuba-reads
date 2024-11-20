@@ -164,7 +164,7 @@ export const ProfilePage = () => {
 
   const BookCarousel = ({ books, title }) => {
     const [startIndex, setStartIndex] = useState(0);
-    const booksPerPage = 5;
+    const booksPerPage = 10;
 
     const nextBooks = () => {
       if (startIndex + booksPerPage < books.length) {
