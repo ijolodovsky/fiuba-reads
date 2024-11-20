@@ -17,7 +17,8 @@ import { UserInformation } from '../components/UserInformation';
 import { useFollowCounts } from '../hooks/useFollowCounts';
 import { Carousel } from '@/components/ui/carousel';
 import { Link } from 'react-router-dom';
-
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Toast } from '@/components/ui/toast';
 
 export const ProfilePage = () => {
   const {
@@ -33,6 +34,7 @@ export const ProfilePage = () => {
 
 
   const [reviews, setReviews] = useState([]);
+  const [toast, setToast] = useState({ visible: false, message: '' });
 
   const { followingCount, followersCount, followersUsers, followingUsers } =
     useFollowCounts(user.username);
@@ -100,6 +102,8 @@ export const ProfilePage = () => {
   };
 
   const fetchUserBooks = async () => {
+    if (!user) return;
+
     const { data, error } = await supabase
         .from("user_books")
         .select(`
@@ -158,24 +162,51 @@ export const ProfilePage = () => {
     fetchReviews();
   }, [user]);
 
-  const BookCarousel = ({ books, title }) => (
-      <div className="mt-8">
-        <h3 className="text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
-          {title}
-        </h3>
-        <div className="flex overflow-x-auto space-x-4 pb-4">
-          {books.map((book) => (
-              <Link to={`/books/${book.isbn}`} key={book.isbn} className="flex-shrink-0">
-                <img
-                    src={book.cover_image_url}
-                    alt={book.title}
-                    className="w-32 h-48 object-cover rounded-lg shadow-lg hover:opacity-75 transition-opacity"
-                />
-              </Link>
-          ))}
+  const BookCarousel = ({ books, title }) => {
+    const [startIndex, setStartIndex] = useState(0);
+    const booksPerPage = 5;
+
+    const nextBooks = () => {
+      if (startIndex + booksPerPage < books.length) {
+        setStartIndex(startIndex + 1);
+      }
+    };
+
+    const prevBooks = () => {
+      if (startIndex > 0) {
+        setStartIndex(startIndex - 1);
+      }
+    };
+
+    return (
+        <div className="mt-8">
+          <h3 className="text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
+            {title}
+          </h3>
+          <div className="relative">
+            <div className="flex items-center">
+              <Button onClick={prevBooks} disabled={startIndex === 0} className="mr-2">
+                <ChevronLeft />
+              </Button>
+              <div className="flex overflow-hidden">
+                {books.slice(startIndex, startIndex + booksPerPage).map((book) => (
+                    <Link to={`/books/${book.isbn}`} key={book.isbn} className="flex-shrink-0 mx-2">
+                      <img
+                          src={book.cover_image_url}
+                          alt={book.title}
+                          className="w-32 h-48 object-cover rounded-lg shadow-lg hover:opacity-75 transition-opacity"
+                      />
+                    </Link>
+                ))}
+              </div>
+              <Button onClick={nextBooks} disabled={startIndex + booksPerPage >= books.length} className="ml-2">
+                <ChevronRight />
+              </Button>
+            </div>
+          </div>
         </div>
-      </div>
-  );
+    );
+  };
 
   if (loading) return <LoadingSpinner />;
   if (error) return <NotFound />;
@@ -230,6 +261,9 @@ export const ProfilePage = () => {
           </CardContent>
         </Card>
       </div>
-    </div>
+        {toast.visible && (
+            <Toast message={toast.message} onClose={() => setToast({ visible: false, message: '' })} />
+        )}
+      </div>
   );
-};
+}
