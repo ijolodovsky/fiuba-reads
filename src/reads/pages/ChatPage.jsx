@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import { AuthContext } from '../../auth/context/AuthContext';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '../../utils/supabase-client';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -14,6 +14,7 @@ export const ChatPage = () => {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [users, setUsers] = useState([]);
+    const [usernames, setUsernames] = useState([]);
     const { authState: { user } } = useContext(AuthContext);
     const { chatroomID } = useParams();
     const chatEndRef = useRef(null);
@@ -69,6 +70,8 @@ export const ChatPage = () => {
 
     }, [chatroomID]);
 
+
+    console.log(usernames)
     const messageRead = async (chatroomId) => {
         const { error } = await supabase
             .from('messages')
@@ -83,6 +86,20 @@ export const ChatPage = () => {
     };
 
     useEffect(() => {
+        const fetchUsernames = async () => {
+            const { data, error } = await supabase
+                .from('chatroom')
+                .select('username1, username2')
+                .eq('id', chatroomID)
+
+            if (error) {
+                console.error("Error al obtener los usuarios:", error.message);
+            } else {
+                const {username1, username2} = data[0];
+                setUsernames([username1, username2]);
+            }
+        };
+        fetchUsernames();
         const fetchUsers = async () => {
             const usernames = [...new Set(messages.map(message => message.sender))];
             const [username1, username2] = usernames;
@@ -101,7 +118,7 @@ export const ChatPage = () => {
         if (messages.length > 0) {
             fetchUsers();
         }
-    }, [messages]);
+    }, [messages,user]);
 
 
     const handleSendMessage = async () => {
@@ -151,7 +168,7 @@ export const ChatPage = () => {
 
 
     return (
-        <div className='min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12'>
+        <div className='bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12' style={{ height: 'calc(100vh - 4.5rem)' }}>
             <Button
                 onClick={handleGoBack}
                 className='bg-red-500 hover:bg-red-800 text-white w-10 h-10 rounded-full flex items-center justify-center mr-auto ml-12'
@@ -159,9 +176,15 @@ export const ChatPage = () => {
                 <ArrowLeft />
             </Button>
             <div className='container mx-auto px-4'>
-                <Card className='w-full max-w-2xl mx-auto bg-gray-800 text-white'>
+                <Card className="bg-gray-800 border-2 border-blue-500 rounded-lg w-full max-w-2xl mx-auto text-white overflow-hidden">
+                    <CardHeader className="text-center bg-gradient-to-r from-blue-600 to-purple-600 py-6">
+                        <CardTitle className="text-3xl font-bold text-white flex items-center justify-center" 
+                        style={{ cursor: 'pointer' }} onClick={() => 
+                        navigate(`/users/${usernames.find(username => username !== user.username) }`)}>
+                            {usernames.find(username => username !== user.username)}
+                        </CardTitle>
+                    </CardHeader>
                     <CardContent>
-                        <h2 className='text-2xl font-bold mb-4 text-center text-white'>Chat</h2>
                         <ScrollArea className='chat-messages space-y-4 overflow-y-auto p-4' style={{ height: '400px' }}>
                             {messages.map((message, index) => (
                                 <div key={index} className={`flex ${message.sender === user.username ? 'justify-end' : 'justify-start'}`}>
