@@ -4,6 +4,7 @@ import { AuthContext } from '../../auth';
 import { Button } from '@/components/ui/button';
 import { LogOutIcon, UsersRound, MessageCircleMore, Bell } from 'lucide-react';
 import { supabase } from '../../utils/supabase-client'
+import { useNotifications } from '@/src/reads/hooks/useNotifications';
 
 export const Navbar = () => {
   const { logout, authState } = useContext(AuthContext);
@@ -11,6 +12,8 @@ export const Navbar = () => {
   const [unRead, setUnRead] = useState([]);
   const [chatrooms, setChatrooms] = useState([]);
   const [allMessagesEmpty, setAllMessagesEmpty] = useState(true);
+  const { unreadNotifications } = useNotifications(authState.user.username); 
+  const [allNotificationsEmpty, setAllNotificationsEmpty] = useState(true);
 
   const onLogout = () => {
     logout();
@@ -69,13 +72,21 @@ export const Navbar = () => {
     setAllMessagesEmpty(unRead.every(item => item.messages.length === 0));
   }, [unRead]);
 
+  useEffect(() => {
+    setAllNotificationsEmpty(unreadNotifications.every(item => item.length === 0));
+  }, [unreadNotifications]);
+
   const handleToReadIcon = () => {
     if (!allMessagesEmpty) {
       return '#b400f5';
     }
   };
 
-  console.log(unRead)
+  const handleToReadNotifications = () => {
+    if (!allNotificationsEmpty) {
+      return '#b400f5';
+    }
+  };
 
   return (
     <nav className="bg-gray-800 p-4 flex items-center justify-between">
@@ -120,7 +131,7 @@ export const Navbar = () => {
               `text-white hover:text-gray-300 text-decoration-none flex items-center space-x-1 ${isActive ? 'underline' : ''}`
             }
           >
-            <Bell className="text-white w-7 h-5" />
+            <Bell className="text-white w-7 h-5" style={{color: handleToReadNotifications() }}/>
             Notificaciones
           </NavLink>
           {/* TODO: Add other sections here */}
