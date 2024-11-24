@@ -147,7 +147,9 @@ export const ListChatPage = () => {
                                     <CardContent className='flex justify-between items-center mt-auto mt-4'>
                                         <div className='flex items-center'>
                                             <Avatar>
-                                                <AvatarImage src={getUserAvatar(chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1)} />
+                                                <AvatarImage src={getUserAvatar(chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1)} 
+                                                onClick={() => navigate(`/users/${chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1}`)} 
+                                                style={{ cursor: 'pointer' }}/>
                                             </Avatar>
                                             <h3 className='text-lg font-semibold ml-4'>{chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1}</h3>
                                             {handleToReadIcon(chatroom.id)}
