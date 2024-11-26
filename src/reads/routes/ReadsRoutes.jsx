@@ -1,7 +1,7 @@
 import React from "react";
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { Navbar, NotificationListener } from '../../ui/components';
-import { HomePage, ProfilePage, AddBookPage, BookProfile, ModifyBookPage, FriendProfilePage, UserSearch, ModifyProfilePage, ChatPage, ListChatPage, NotificationPage } from '../pages';
+import { HomePage, ProfilePage, AddBookPage, BookProfile, ModifyBookPage, FriendProfilePage, UserSearch, ModifyProfilePage, ChatPage, ListChatPage, NotificationPage, SuccessPage } from '../pages';
 import { ToastContainer } from 'react-toastify';
 
 export const ReadsRoutes = () => {
