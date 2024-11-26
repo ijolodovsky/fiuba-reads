@@ -1,15 +1,23 @@
 import React from "react";
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import { Navbar, NotificationListener } from '../../ui/components';
 import { HomePage, ProfilePage, AddBookPage, BookProfile, ModifyBookPage, FriendProfilePage, UserSearch, ModifyProfilePage, ChatPage, ListChatPage, NotificationPage } from '../pages';
 import { ToastContainer } from 'react-toastify';
 
 export const ReadsRoutes = () => {
+  const location = useLocation();
+
+  // Verifica si estamos en una ruta de chat dinámica (por ejemplo, /chat/:chatroomID)
+  const isChatPage = location.pathname.startsWith('/chat/') && location.pathname !== '/chatlist';
+
   return (
     <>
-    <NotificationListener />
-    <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={true} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
-      <Navbar />
+      <NotificationListener />
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={true} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+
+      {/* Solo renderiza la Navbar si NO estamos en una página de ChatPage */}
+      {!isChatPage && <Navbar />}
+
       <div>
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -24,7 +32,7 @@ export const ReadsRoutes = () => {
           <Route path="update-profile" element={<ModifyProfilePage />} />
           <Route path="notifications" element={<NotificationPage />} />
           <Route path="success" element={<h1>Success</h1>} />
-        </Routes> 
+        </Routes>
       </div>
     </>
   );

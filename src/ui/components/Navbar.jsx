@@ -6,7 +6,7 @@ import { LogOutIcon, UsersRound, MessageCircleMore, Bell } from 'lucide-react';
 import { supabase } from '../../utils/supabase-client'
 import { useNotifications } from '@/src/reads/hooks/useNotifications';
 
-export const Navbar = () => {
+export const Navbar = React.forwardRef((props, ref) => {
   const { logout, authState } = useContext(AuthContext);
   const navigate = useNavigate();
   const [unRead, setUnRead] = useState([]);
@@ -89,7 +89,7 @@ export const Navbar = () => {
   };
 
   return (
-    <nav className="bg-gray-800 p-4 flex items-center justify-between">
+    <nav className="bg-gray-800 p-4 flex items-center justify-between" ref={ref}>
       <div className="flex items-center">
         <Link 
           to="/" 
@@ -158,4 +158,4 @@ export const Navbar = () => {
       </div>
     </nav>
   );
-};
+});
