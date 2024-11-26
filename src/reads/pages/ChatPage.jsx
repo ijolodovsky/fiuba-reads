@@ -179,13 +179,13 @@ export const ChatPage = () => {
         <div>
             <Navbar ref={navbarRef} />
             <div className='bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12' style={{ height: `calc(100vh - ${navbarHeight}px)` }}>
-                <Button
+                <div className='container mx-auto px-4'>
+                    <Button
                     onClick={handleGoBack}
                     className='bg-red-500 hover:bg-red-800 text-white w-10 h-10 rounded-full flex items-center justify-center mr-auto ml-12'
                 >
                     <ArrowLeft />
                 </Button>
-                <div className='container mx-auto px-4'>
                     <Card className="bg-gray-800 border-2 border-blue-500 rounded-lg w-full max-w-2xl mx-auto text-white overflow-hidden">
                         <CardHeader className="text-center bg-gradient-to-r from-blue-600 to-purple-600 py-6">
                             <CardTitle className="text-3xl font-bold text-white flex items-center justify-center"
@@ -195,7 +195,7 @@ export const ChatPage = () => {
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <ScrollArea className='chat-messages space-y-4 overflow-y-auto p-4' style={{ height: '400px' }}>
+                            <ScrollArea className='chat-messages space-y-4 overflow-y-auto p-4' style={{ height: '40vh' }}>
                                 {messages.map((message, index) => (
                                     <div key={index} className={`flex ${message.sender === user.username ? 'justify-end' : 'justify-start'}`}>
                                         <div className='flex items-center space-x-3 space-y-6'>

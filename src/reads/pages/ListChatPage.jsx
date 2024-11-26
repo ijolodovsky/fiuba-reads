@@ -7,7 +7,7 @@ import { AuthContext } from '../../auth/context/AuthContext';
 import _ from 'lodash';
 import PeopleFinder from './PeopleFinder';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import { MessageCircleMore } from 'lucide-react';
+import { MessageCircleMore, Trash2 } from 'lucide-react';
 
 export const ListChatPage = () => {
     const [chatrooms, setChatrooms] = useState([]);
@@ -130,6 +130,33 @@ export const ListChatPage = () => {
         return null;
         };
 
+    async function deleteChat(chatroomID){
+        console.log('entro')
+        try {
+            const { error: deleteMessagesError } = await supabase
+                .from('messages')
+                .delete()
+                .eq('chatroomUUID', chatroomID);
+
+            if (deleteMessagesError) {
+                throw new Error(`Error deleting messages: ${deleteMessagesError.message}`);
+            }
+
+            const { error: deleteChatroomError } = await supabase
+                .from('chatroom')
+                .delete()
+                .eq('id', chatroomID);
+
+            if (deleteChatroomError) {
+                throw new Error(`Error deleting chatroom: ${deleteChatroomError.message}`);
+            }
+
+            console.log(`Chatroom ${chatroomID} and its messages deleted successfully.`);
+        } catch (error) {
+            console.error('Error deleting chatroom and messages:', error.message);
+        }
+    }
+
     return (
         <div className='min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12'>
             <div className='container mx-auto px-4'>
@@ -154,9 +181,17 @@ export const ListChatPage = () => {
                                             <h3 className='text-lg font-semibold ml-4'>{chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1}</h3>
                                             {handleToReadIcon(chatroom.id)}
                                         </div>
-                                        <Button onClick={() => goToChatroom(chatroom.id)} className='bg-blue-500 hover:bg-blue-600 text-white'>
-                                            Ir al chat
-                                        </Button>
+                                        <div className='flex gap-4'>
+                                            <Button onClick={() => goToChatroom(chatroom.id)} className='bg-blue-500 hover:bg-blue-600 text-white'>
+                                                Ir al chat
+                                            </Button>
+                                            <Button
+                                                onClick={() => deleteChat(chatroom.id)}
+                                                className='bg-red-500 hover:bg-red-800 text-white w-10 h-10 rounded-full'
+                                            >
+                                                <Trash2 />
+                                            </Button>
+                                        </div>
                                     </CardContent>
                                 </Card>
                             ))}
