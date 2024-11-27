@@ -87,7 +87,7 @@ export const ListChatPage = () => {
     useEffect(() => {
         const fetchUnRead = async () => {
             const unreadMessages = [];
-            
+
             for (let chatroom of chatrooms) {
                 const { data, error } = await supabase
                     .from('messages')
@@ -170,6 +170,7 @@ export const ListChatPage = () => {
     }
 
     return (
+
         <div className='min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12'>
             <div className='container mx-auto px-4'>
                 <PeopleFinder />
@@ -180,33 +181,50 @@ export const ListChatPage = () => {
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="p-4">
-                        <div className='space-y-4'>
-                            {chatrooms.map((chatroom) => (
-                                <Card key={chatroom.id} className='bg-gray-800 text-white'>
-                                    <CardContent className='flex justify-between items-center mt-auto mt-4'>
-                                        <div className='flex items-center'>
-                                            <Avatar>
-                                                <AvatarImage src={getUserAvatar(chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1)} 
-                                                onClick={() => navigate(`/users/${chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1}`)} 
-                                                style={{ cursor: 'pointer' }}/>
-                                            </Avatar>
-                                            <h3 className='text-lg font-semibold ml-4' onClick={() => navigate(`/users/${chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1}`)} >{chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1}</h3>
-                                            {handleToReadIcon(chatroom.id)}
-                                        </div>
-                                        <div className='flex items-center space-x-2'>
-                                            <Button onClick={() => goToChatroom(chatroom.id)} className='bg-blue-500 hover:bg-blue-600 text-white'>
-                                                Ir al chat
-                                            </Button>
-                                            <Trash 
-                                                onClick={() => handleDeleteChatroom(chatroom.id)} 
-                                                className="text-red-500 cursor-pointer hover:text-red-700" 
-                                            />
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            ))}
-                        </div>
+                        {chatrooms.length > 0 ? (
+                            <div className='space-y-4'>
+                                {chatrooms.map((chatroom) => (
+                                    <Card key={chatroom.id} className='bg-gray-800 text-white'>
+                                        <CardContent className='flex justify-between items-center mt-auto mt-4'>
+                                            <div className='flex items-center'>
+                                                <Avatar>
+                                                    <AvatarImage
+                                                        src={getUserAvatar(chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1)}
+                                                        onClick={() => navigate(`/users/${chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1}`)}
+                                                        style={{ cursor: 'pointer' }}
+                                                    />
+                                                </Avatar>
+                                                <h3
+                                                    className='text-lg font-semibold ml-4'
+                                                    onClick={() => navigate(`/users/${chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1}`)}
+                                                >
+                                                    {chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1}
+                                                </h3>
+                                                {handleToReadIcon(chatroom.id)}
+                                            </div>
+                                            <div className='flex items-center space-x-2'>
+                                                <Button
+                                                    onClick={() => goToChatroom(chatroom.id)}
+                                                    className='bg-blue-500 hover:bg-blue-600 text-white'
+                                                >
+                                                    Ir al chat
+                                                </Button>
+                                                <Trash
+                                                    onClick={() => handleDeleteChatroom(chatroom.id)}
+                                                    className="text-red-500 cursor-pointer hover:text-red-700"
+                                                />
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-center text-gray-400 text-xl mt-4">
+                                No tenés chats aún
+                            </p>
+                        )}
                     </CardContent>
+
                 </Card>
             </div>
         </div>

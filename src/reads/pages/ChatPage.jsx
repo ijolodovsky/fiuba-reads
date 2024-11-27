@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import { AuthContext } from '../../auth/context/AuthContext';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import { supabase } from '../../utils/supabase-client';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -185,7 +185,7 @@ export const ChatPage = () => {
                 >
                     <ArrowLeft />
                 </Button>
-                    <Card className="bg-gray-800 border-2 border-blue-500 rounded-lg w-full max-w-2xl mx-auto text-white overflow-hidden">
+                    <Card className="bg-gray-800 border-2 border-blue-500 rounded-lg w-full max-w-2xl mx-auto text-white overflow-hidden mt-[-50px]">
                         <CardHeader className="text-center bg-gradient-to-r from-blue-600 to-purple-600 py-6">
                             <CardTitle className="text-3xl font-bold text-white flex items-center justify-center"
                                 style={{ cursor: 'pointer' }} onClick={() =>
