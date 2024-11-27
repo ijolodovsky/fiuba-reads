@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { supabase } from '../../utils/supabase-client';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, House } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AuthContext } from '@/src/auth';
 
@@ -43,7 +43,7 @@ export const SuccessPage = () => {
       };
     
       return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 flex flex-col items-center justify-center text-white py-12 px-4">
+        <div className="h-[calc(100vh-72px)] bg-gradient-to-br from-gray-900 to-blue-900 flex flex-col items-center justify-center text-white py-12 px-4">
           <div className="text-center">
             <CheckCircle className="h-20 w-20 text-green-400 mx-auto mb-6" />
             <h2 className="text-3xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600 mb-4">
@@ -53,16 +53,11 @@ export const SuccessPage = () => {
               {user.username} tu pedido de ISBN #{bookId} se ha procesado correctamente!
             </p>
             <div className="flex space-x-4 justify-center">
-              {/* <Button 
-                onClick={handleGoToOrders} 
-                className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-semibold py-2 px-4 rounded"
-              >
-                Ver Historial de Compras
-              </Button> */}
               <Button
                 onClick={handleGoHome} 
                 className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-2 px-4 rounded"
               >
+                <House className="inline-block mr-2" />
                 Ir a Inicio
               </Button>
             </div>
