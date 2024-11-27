@@ -222,6 +222,7 @@ export const ProfilePage = () => {
             {title}
           </h3>
           <div className="relative">
+          {books.length > 0 ? (
             <div className="flex items-center">
               <Button onClick={prevBooks} disabled={startIndex === 0} className="mr-2">
                 <ChevronLeft />
@@ -240,7 +241,7 @@ export const ProfilePage = () => {
               <Button onClick={nextBooks} disabled={startIndex + booksPerPage >= books.length} className="ml-2">
                 <ChevronRight />
               </Button>
-            </div>
+            </div>): (<p className="text-sm text-blue-200">No tienes libros en {title}</p>)}
           </div>
         </div>
     );
