@@ -34,6 +34,7 @@ export const ProfilePage = () => {
   const [readBooks, setReadBooks] = useState([]);
   const [readingBooks, setReadingBooks] = useState([]);
   const [wantToReadBooks, setWantToReadBooks] = useState([]);
+  const [purchasedBooks, setPurchasedBooks] = useState([]);
 
 
   const [reviews, setReviews] = useState([]);
@@ -149,9 +150,44 @@ export const ProfilePage = () => {
     setWantToReadBooks(wantToRead);
   };
 
+  const fetchPurchasedBooks = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+          .from("bookPurchases")
+          .select(`
+          book_id,
+          price,
+          purchase_date,
+          books:book_id (
+            isbn,
+            title,
+            author,
+            cover_image_url
+          )
+        `)
+          .eq("username", user.username);
+
+      if (error) throw error;
+
+      const purchased = data.map(item => ({
+        ...item.books,
+        price: item.price,
+        purchaseDate: item.purchase_date
+      })).filter(book => book !== null);
+
+      setPurchasedBooks(purchased);
+    } catch (error) {
+      console.error("Error buscando libros comprados:", error);
+      setToast({ visible: true, message: 'Error al cargar libros comprados' });
+    }
+  };
+
   useEffect(() => {
     if (user) {
       fetchUserBooks();
+      fetchPurchasedBooks();
       if (isAuthor) {
         fetchBookData(user.firstName, user.lastName);
       } else {
@@ -252,6 +288,7 @@ export const ProfilePage = () => {
                <BookCarousel books={readBooks} title="Leídos" />
                <BookCarousel books={readingBooks} title="Leyendo" />
                <BookCarousel books={wantToReadBooks} title="Quiero Leer" />
+               <BookCarousel books={purchasedBooks} title="Libros Comprados" />
              </CardContent>
             <div className='mt-8'>
               <h3 className='text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600'>

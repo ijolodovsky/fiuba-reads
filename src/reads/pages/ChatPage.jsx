@@ -10,7 +10,6 @@ import { useParams } from 'react-router-dom';
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../../ui/components/Navbar';
-import { Nav } from 'react-bootstrap';
 
 export const ChatPage = () => {
     const [messages, setMessages] = useState([]);
