@@ -168,10 +168,10 @@ export const ChatPage = () => {
 
 
     return (
-        <div className='bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12' style={{ height: 'calc(100vh - 4.5rem)' }}>
+        <div className='bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12 min-h-[100dvh]'>
             <Button
                 onClick={handleGoBack}
-                className='bg-red-500 hover:bg-red-800 text-white w-10 h-10 rounded-full flex items-center justify-center mr-auto ml-12'
+                className='absolute bg-red-500 hover:bg-red-800 text-white w-10 h-10 rounded-full flex items-center justify-center mr-auto ml-12'
             >
                 <ArrowLeft />
             </Button>
