@@ -10,7 +10,7 @@ import {
   CardDescription,
   CardTitle,
 } from '@/components/ui/card';
-import { UserPlus, UserCheck, MessageCircle, UserMinus } from 'lucide-react';
+import { UserPlus, UserCheck, MessageCircle } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '../../utils/supabase-client';
 import { LoadingSpinner, NotFound } from '@/src/ui/components';
@@ -240,49 +240,58 @@ export const FriendProfilePage = () => {
   const isAuthor = role === "escritor";
 
   const FollowStatus = () => {
-    const [isHovered, setIsHovered] = useState(false);
-  
     return (
-      <div className='mt-4 ml-4'>
-        <Button
-          className={`${
-            isFollowing
-              ? isHovered
-                ? "bg-red-600 hover:bg-red-700"
-                : "bg-purple-500 hover:bg-purple-600"
-              : "bg-blue-600 hover:bg-blue-700"
-          } text-white`}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-          onClick={handleFollowToggle}
-        >
-          {isFollowing ? (
-            isHovered ? (
-              <>
-                <UserMinus className='inline-block mr-2' /> Dejar de seguir
-              </>
-            ) : (
+      <>
+        <div className='mt-4 ml-4'>
+          <Button
+            className={`bg-blue-600 hover:bg-blue-700 text-white ${
+              isFollowing ? "bg-purple-500" : ""
+            }`}
+            onClick={handleFollowToggle}
+          >
+            {isFollowing ? (
               <>
                 <UserCheck className='inline-block mr-2' /> Siguiendo
               </>
-            )
-          ) : (
-            <>
-              <UserPlus className='inline-block mr-2' /> Seguir usuario
-            </>
-          )}
-        </Button>
-        <Button
-          className='ml-4 bg-green-600 hover:bg-green-700 text-white'
-          onClick={handleSendMessage}
-        >
-          <MessageCircle className='inline-block mr-2' />
-          Mandar Mensaje
-        </Button>
-      </div>
+            ) : (
+              <>
+                <UserPlus className='inline-block mr-2' /> Seguir usuario
+              </>
+            )}
+          </Button>
+          <Button
+            className='ml-4 bg-green-600 hover:bg-green-700 text-white'
+            onClick={handleSendMessage}
+          >
+            <MessageCircle className='inline-block mr-2' />
+            Mandar Mensaje
+          </Button>
+        </div>
+        {isModalOpen && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="bg-gray-800 border border-blue-500 rounded-lg p-6 max-w-md mx-auto">
+                  <h3 className="text-2xl font-semibold text-white mb-4">Enviar Mensaje</h3>
+                  <textarea
+                    className="w-full p-2 text-black rounded-md"
+                    rows="4"
+                    placeholder="Escribe tu mensaje aquí..."
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                  />
+                  <div className="mt-4 flex justify-end space-x-2">
+                    <Button
+                      className="bg-green-600 hover:bg-green-700 text-white"
+                      onClick={handleSendMessage}
+                    >
+                      Enviar Mensaje
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+      </>
     );
   };
-  
 
   return (
     <div className='min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12'>

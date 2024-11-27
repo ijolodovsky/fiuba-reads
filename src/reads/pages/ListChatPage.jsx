@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../utils/supabase-client';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { AuthContext } from '../../auth/context/AuthContext';
 import _ from 'lodash';
 import PeopleFinder from './PeopleFinder';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import { MessageCircleMore, Trash } from 'lucide-react';
+import { MessageCircleMore } from 'lucide-react';
 
 export const ListChatPage = () => {
     const [chatrooms, setChatrooms] = useState([]);
@@ -18,6 +18,7 @@ export const ListChatPage = () => {
 
     useEffect(() => {
         const fetchChatrooms = async () => {
+
             const { data, error } = await supabase
                 .from('chatroom')
                 .select('*')
@@ -87,7 +88,7 @@ export const ListChatPage = () => {
     useEffect(() => {
         const fetchUnRead = async () => {
             const unreadMessages = [];
-
+            
             for (let chatroom of chatrooms) {
                 const { data, error } = await supabase
                     .from('messages')
@@ -127,23 +128,9 @@ export const ListChatPage = () => {
             return <MessageCircleMore className='ml-4' style={{ color: '#b400f5' }} />;
         }
         return null;
-    };
-
-    const handleDeleteChatroom = async (chatroomID) => {
-        const { error } = await supabase
-            .from('chatroom')
-            .delete()
-            .eq('id', chatroomID);
-
-        if (error) {
-            console.error("Error al eliminar el chat:", error.message);
-        } else {
-            setChatrooms((prevChatrooms) => prevChatrooms.filter(chatroom => chatroom.id !== chatroomID));
-        }
-    };
+        };
 
     return (
-
         <div className='min-h-screen bg-gradient-to-br from-gray-900 to-blue-900 text-white py-12'>
             <div className='container mx-auto px-4'>
                 <PeopleFinder />
@@ -154,52 +141,29 @@ export const ListChatPage = () => {
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="p-4">
-                        {chatrooms.length > 0 ? (
-                            <div className='space-y-4'>
-                                {chatrooms.map((chatroom) => (
-                                    <Card key={chatroom.id} className='bg-gray-800 text-white'>
-                                        <CardContent className='flex justify-between items-center mt-auto mt-4'>
-                                            <div className='flex items-center'>
-                                                <Avatar>
-                                                    <AvatarImage
-                                                        src={getUserAvatar(chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1)}
-                                                        onClick={() => navigate(`/users/${chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1}`)}
-                                                        style={{ cursor: 'pointer' }}
-                                                    />
-                                                </Avatar>
-                                                <h3
-                                                    className='text-lg font-semibold ml-4'
-                                                    onClick={() => navigate(`/users/${chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1}`)}
-                                                >
-                                                    {chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1}
-                                                </h3>
-                                                {handleToReadIcon(chatroom.id)}
-                                            </div>
-                                            <div className='flex items-center space-x-2'>
-                                                <Button
-                                                    onClick={() => goToChatroom(chatroom.id)}
-                                                    className='bg-blue-500 hover:bg-blue-600 text-white'
-                                                >
-                                                    Ir al chat
-                                                </Button>
-                                                <Trash
-                                                    onClick={() => handleDeleteChatroom(chatroom.id)}
-                                                    className="text-red-500 cursor-pointer hover:text-red-700"
-                                                />
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                ))}
-                            </div>
-                        ) : (
-                            <p className="text-center text-gray-400 text-xl mt-4">
-                                No tenés chats aún
-                            </p>
-                        )}
+                        <div className='space-y-4'>
+                            {chatrooms.map((chatroom) => (
+                                <Card key={chatroom.uuid} className='bg-gray-800 text-white'>
+                                    <CardContent className='flex justify-between items-center mt-auto mt-4'>
+                                        <div className='flex items-center'>
+                                            <Avatar>
+                                                <AvatarImage src={getUserAvatar(chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1)} />
+                                            </Avatar>
+                                            <h3 className='text-lg font-semibold ml-4'>{chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1}</h3>
+                                            {handleToReadIcon(chatroom.id)}
+                                        </div>
+                                        <Button onClick={() => goToChatroom(chatroom.id)} className='bg-blue-500 hover:bg-blue-600 text-white'>
+                                            Ir al chat
+                                        </Button>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </div>
                     </CardContent>
-
                 </Card>
             </div>
         </div>
     );
 };
+
+export default ListChatPage;

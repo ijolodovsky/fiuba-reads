@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../auth';
 import { Button } from '@/components/ui/button';
-import { LogOutIcon, UsersRound, MessageCircleMore, Bell, House } from 'lucide-react';
+import { LogOutIcon, UsersRound, MessageCircleMore, Bell } from 'lucide-react';
 import { supabase } from '../../utils/supabase-client'
 import { useNotifications } from '@/src/reads/hooks/useNotifications';
 
@@ -105,7 +105,6 @@ export const Navbar = () => {
               `text-white hover:text-gray-300 text-decoration-none flex items-center space-x-1 ${isActive ? 'underline' : ''}`
             }
           >
-            <House className="text-white w-7 h-5" />
             Home
           </NavLink>
           <NavLink

@@ -197,22 +197,10 @@ export const UserSearch = () => {
               <Card key={review.id} className="bg-gray-800 rounded-lg shadow-2xl mb-4">
                 <CardContent className="p-4">
                   <div className="mb-4">
-                    {/* Enlazar el título del libro al detalle del libro */}
-                    <span 
-                      className="text-lg font-bold text-blue-300 cursor-pointer hover:underline"
-                      onClick={() => navigate(`/books/${review.book_id}`)}
-                    >
-                      {review.bookTitle}
-                    </span>
+                    <span className="text-lg font-bold text-blue-300">{review.bookTitle}</span>
                   </div>
                   <div className="flex justify-between items-center mb-2">
-                    {/* Enlazar el nombre del usuario al perfil del usuario */}
-                    <span 
-                      className="text-sm font-semibold text-blue-300 cursor-pointer hover:underline"
-                      onClick={() => navigate(`/users/${review.username}`)}
-                    >
-                      {review.username}
-                    </span>
+                    <span className="text-sm font-semibold text-blue-300">{review.username}</span>
                     <span className="text-yellow-400">{'★'.repeat(review.rating)}</span>
                   </div>
                   <span className="text-xs text-gray-400">{new Date(review.created_at).toLocaleDateString()}</span>
