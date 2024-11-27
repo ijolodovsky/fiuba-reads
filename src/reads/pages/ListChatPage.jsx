@@ -163,7 +163,7 @@ export const ListChatPage = () => {
                                                 onClick={() => navigate(`/users/${chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1}`)} 
                                                 style={{ cursor: 'pointer' }}/>
                                             </Avatar>
-                                            <h3 className='text-lg font-semibold ml-4'>{chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1}</h3>
+                                            <h3 className='text-lg font-semibold ml-4' onClick={() => navigate(`/users/${chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1}`)} >{chatroom.username1 === user.username ? chatroom.username2 : chatroom.username1}</h3>
                                             {handleToReadIcon(chatroom.id)}
                                         </div>
                                         <div className='flex items-center space-x-2'>
