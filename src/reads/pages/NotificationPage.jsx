@@ -30,6 +30,22 @@ export const NotificationPage = () => {
 
   useEffect(() => {
     fetchAllNotifications();
+    const subscription = supabase
+    .channel('notifications')
+    .on(
+      'postgres_changes',
+      { event: 'INSERT', schema: 'public', table: 'notifications' },
+      (payload) => {
+        console.log('Nueva notificación recibida:', payload.new);
+        setNotifications((prevNotifications) => [payload.new, ...prevNotifications]);
+      }
+    )
+    .subscribe();
+
+  // Limpieza del canal al desmontar el componente
+  return () => {
+    supabase.removeChannel(subscription);
+  };
   }, [followingUsers]);
 
   const handleMarkAsRead = async (notificationId) => {

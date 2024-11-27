@@ -20,6 +20,15 @@ import { Button } from '@/components/ui/button';
 import axios from 'axios';
 import { initMercadoPago, Wallet } from '@mercadopago/sdk-react'
 import { NotificationType } from '../utils/NotificationType';
+import { Toast } from '@/components/ui/toast';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { BookMarked } from 'lucide-react';
+import { X } from 'lucide-react';
 
 const MercadoPagoButton = memo(({ preferenceId }) => (
   preferenceId && (
@@ -43,6 +52,8 @@ export const BookProfile = () => {
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [hasReviewed, setHasReviewed] = useState(false);
   const [rate, setRating] = useState(null);
+  const [readingStatus, setReadingStatus] = useState(null);
+  const [toast, setToast] = useState({ visible: false, message: '' });
 
   const {
     authState: { user },
@@ -73,6 +84,63 @@ export const BookProfile = () => {
   const isSameUser = (review, user) => {
     return user.username === review.username;
   }
+
+  const fetchReadingStatus = async () => {
+    if (!user || !isbn) return;
+
+    const { data, error } = await supabase
+      .from("user_books")
+      .select("status")
+      .eq("username", user.username)
+      .eq("book_isbn", isbn)
+      .single();
+
+    if (error) {
+      if (error.code !== 'PGRST116') {
+        console.error("Error fetching reading status:", error);
+      }
+    } else {
+      setReadingStatus(data?.status || null);
+    }
+  };
+
+  useEffect(() => {
+    fetchReadingStatus();
+  }, [user, isbn]);
+
+  const updateReadingStatus = async (status) => {
+    if (!user || !isbn) {
+      Swal.fire("Debes iniciar sesión para actualizar el estado de lectura.");
+      return;
+    }
+
+    try {
+      if (status === null) {
+        // Remove the book from the user's list
+        await supabase
+          .from("user_books")
+          .delete()
+          .eq("username", user.username)
+          .eq("book_isbn", isbn);
+      } else {
+        // Update or insert the book status
+        await supabase
+          .from("user_books")
+          .upsert(
+            { username: user.username, book_isbn: isbn, status },
+            { onConflict: ["username", "book_isbn"], returning: "minimal" }
+          );
+      }
+
+      if (error) throw error;
+
+      setReadingStatus(status); // Actualizar el estado de lectura localmente
+      Swal.fire("Estado de lectura actualizado correctamente.");
+    } catch (error) {
+      console.error("Error al actualizar el estado de lectura:", error);
+      Swal.fire("Error al actualizar el estado de lectura.");
+    }
+  };
 
   const fetchBookRating = async () => {
     const { data: reviewsData, error } = await supabase
@@ -431,6 +499,27 @@ export const BookProfile = () => {
               <p className='text-blue-200'>{description}</p>
             </div>
             <div className='mt-6'>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md flex items-center">
+                    <BookMarked className="mr-2 h-4 w-4" />
+                    {readingStatus || "Marcar como"}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onSelect={() => updateReadingStatus("Leído")}>Leído</DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => updateReadingStatus("Leyendo")}>Leyendo</DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => updateReadingStatus("Quiero leer")}>Quiero
+                    leer</DropdownMenuItem>
+                  {readingStatus && (
+                    <DropdownMenuItem onSelect={() => updateReadingStatus(null)}>
+                      <X className="mr-2 h-4 w-4" />
+                      Quitar de la lista
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
               <h2 className='text-2xl font-semibold mb-2 text-blue-400 text-left'>
                 Comprar Libro
               </h2>
@@ -515,29 +604,39 @@ export const BookProfile = () => {
           </div>
 
           {user && (
-            <div className='mt-8'>
-              <h3 className='text-xl mb-4'>{editingReviewId ? "Editar Reseña" : "Agregar Reseña"}</h3>
+            <div className="mt-8">
+              <h3 className="text-xl mb-4">{editingReviewId ? "Editar Reseña" : "Agregar Reseña"}</h3>
               <Textarea
-                placeholder='Escribe tu reseña aquí...'
+                placeholder="Escribe tu reseña aquí..."
                 value={newReview.content}
                 onChange={(e) => setNewReview({ ...newReview, content: e.target.value })}
                 disabled={hasReviewed}
-                className='bg-gray-700 border-blue-500 text-white placeholder-blue-300'
+                className="bg-gray-700 border-blue-500 text-white placeholder-blue-300"
               />
-              <input
-                type='number'
-                max={5}
-                min={0}
-                value={newReview.rating}
-                onChange={(e) => setNewReview({ ...newReview, rating: Number(e.target.value) })}
+              <div className="flex mt-4 space-x-1">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setNewReview({ ...newReview, rating: star })}
+                    disabled={hasReviewed}
+                    className={`w-8 h-8 ${newReview.rating >= star ? "text-yellow-400" : "text-gray-500"
+                      }`}
+                  >
+                    ★
+                  </button>
+                ))}
+              </div>
+              <Button
+                onClick={editingReviewId ? handleUpdateReview : handleAddReview}
                 disabled={hasReviewed}
-                className='w-full bg-gray-800 mt-2 p-2 text-blue-200 rounded'
-              />
-              <Button onClick={editingReviewId ? handleUpdateReview : handleAddReview} disabled={hasReviewed} className='mt-4'>
+                className="mt-4"
+              >
                 {editingReviewId ? "Actualizar Reseña" : "Agregar Reseña"}
               </Button>
             </div>
           )}
+
         </div>
       </div>
     </div>
