@@ -178,10 +178,10 @@ export const ChatPage = () => {
 
     useEffect(() => {
         const updateScrollHeight = () => {
-            if (window.innerWidth >= 1024) {
-                setScrollHeight('50vh'); // Pantallas grandes
+            if (window.innerHeight >= 700) {
+                setScrollHeight('50vh');
             } else {
-                setScrollHeight('40vh'); // Pantallas pequeñas
+                setScrollHeight('40vh');
             }
         };
 
