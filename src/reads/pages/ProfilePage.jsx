@@ -22,6 +22,7 @@ import { Carousel } from '@/components/ui/carousel';
 import { Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Toast } from '@/components/ui/toast';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export const ProfilePage = () => {
   const {
@@ -35,6 +36,7 @@ export const ProfilePage = () => {
   const [readingBooks, setReadingBooks] = useState([]);
   const [wantToReadBooks, setWantToReadBooks] = useState([]);
   const [purchasedBooks, setPurchasedBooks] = useState([]);
+  const [activeTab, setActiveTab] = useState('reviews')
 
 
   const [reviews, setReviews] = useState([]);
@@ -108,8 +110,8 @@ export const ProfilePage = () => {
     if (!user) return;
 
     const { data, error } = await supabase
-        .from("user_books")
-        .select(`
+      .from("user_books")
+      .select(`
       status,
       books:book_isbn (
         isbn,
@@ -118,7 +120,7 @@ export const ProfilePage = () => {
         cover_image_url
       )
     `)
-        .eq("username", user.username);
+      .eq("username", user.username);
 
     if (error) {
       console.error("Error fetching user books:", error);
@@ -155,8 +157,8 @@ export const ProfilePage = () => {
 
     try {
       const { data, error } = await supabase
-          .from("bookPurchases")
-          .select(`
+        .from("bookPurchases")
+        .select(`
           book_id,
           price,
           purchase_date,
@@ -167,7 +169,7 @@ export const ProfilePage = () => {
             cover_image_url
           )
         `)
-          .eq("username", user.username);
+        .eq("username", user.username);
 
       if (error) throw error;
 
@@ -200,6 +202,24 @@ export const ProfilePage = () => {
     fetchReviews();
   }, [user]);
 
+  const Reviews = ({ reviews }) => (
+    <>
+      <h3 className='text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600'>
+        Reseñas de Libros
+      </h3>
+      <UserReviews reviews={reviews} />
+    </>
+  );
+
+  const ReadingLists = () => (
+    <>
+      <BookCarousel books={readBooks} title="Leídos" />
+      <BookCarousel books={readingBooks} title="Leyendo" />
+      <BookCarousel books={wantToReadBooks} title="Quiero Leer" />
+      <BookCarousel books={purchasedBooks} title="Libros Comprados" />
+    </>
+  );
+
   const BookCarousel = ({ books, title }) => {
     const [startIndex, setStartIndex] = useState(0);
     const booksPerPage = 10;
@@ -217,32 +237,33 @@ export const ProfilePage = () => {
     };
 
     return (
-        <div className="mt-8">
-          <h3 className="text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
-            {title}
-          </h3>
-          <div className="relative">
+      <div className="mt-8">
+        <h3 className="text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
+          {title}
+        </h3>
+        <div className="relative">
+          {books.length > 0 ? (
             <div className="flex items-center">
               <Button onClick={prevBooks} disabled={startIndex === 0} className="mr-2">
                 <ChevronLeft />
               </Button>
               <div className="flex overflow-hidden">
                 {books.slice(startIndex, startIndex + booksPerPage).map((book) => (
-                    <Link to={`/books/${book.isbn}`} key={book.isbn} className="flex-shrink-0 mx-2">
-                      <img
-                          src={book.cover_image_url}
-                          alt={book.title}
-                          className="w-32 h-48 object-cover rounded-lg shadow-lg hover:opacity-75 transition-opacity"
-                      />
-                    </Link>
+                  <Link to={`/books/${book.isbn}`} key={book.isbn} className="flex-shrink-0 mx-2">
+                    <img
+                      src={book.cover_image_url}
+                      alt={book.title}
+                      className="w-32 h-48 object-cover rounded-lg shadow-lg hover:opacity-75 transition-opacity"
+                    />
+                  </Link>
                 ))}
               </div>
               <Button onClick={nextBooks} disabled={startIndex + booksPerPage >= books.length} className="ml-2">
                 <ChevronRight />
               </Button>
-            </div>
-          </div>
+            </div>) : (<p className="text-sm text-blue-200">No tienes libros en {title}</p>)}
         </div>
+      </div>
     );
   };
 
@@ -264,14 +285,14 @@ export const ProfilePage = () => {
               {role}
             </CardDescription>
             <Button
-                onClick={handleUpdateProfile}
-                className="text-white rounded-full p-2 absolute btn"
-                size="icon"
-                variant="ghost"
-              >
-                <Edit className="h-4 w-4" />
-                <span className="sr-only">Editar perfil</span>
-              </Button>
+              onClick={handleUpdateProfile}
+              className="text-white rounded-full p-2 absolute btn"
+              size="icon"
+              variant="ghost"
+            >
+              <Edit className="h-4 w-4" />
+              <span className="sr-only">Editar perfil</span>
+            </Button>
           </CardHeader>
           <CardContent className='p-6'>
             <UserInformation
@@ -284,27 +305,43 @@ export const ProfilePage = () => {
               followersUsers={followersUsers}
               followingUsers={followingUsers}
             />
-             <CardContent className="p-6">
-               <BookCarousel books={readBooks} title="Leídos" />
-               <BookCarousel books={readingBooks} title="Leyendo" />
-               <BookCarousel books={wantToReadBooks} title="Quiero Leer" />
-               <BookCarousel books={purchasedBooks} title="Libros Comprados" />
-             </CardContent>
             <div className='mt-8'>
-              <h3 className='text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600'>
-                Reseñas de Libros
-              </h3>
-              <UserReviews reviews={reviews} />
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsList className={`grid w-full ${isAuthor ? 'grid-cols-3' : 'grid-cols-2'} bg-gradient-to-r from-blue-700 to-purple-700 rounded-lg p-1`}            >
+                  <TabsTrigger value="reviews" className="text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-500 data-[state=active]:text-white rounded-md transition-all duration-300">Reseñas de libros</TabsTrigger>
+                  <TabsTrigger value="lists" className="text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-500 data-[state=active]:text-white rounded-md transition-all duration-300">Listas de Lectura</TabsTrigger>
+                  {isAuthor && (
+                    <TabsTrigger
+                      value="writtenBooks"
+                      className="text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-500 data-[state=active]:text-white rounded-md transition-all duration-300"
+                    >
+                      Libros Escritos
+                    </TabsTrigger>
+                  )}
+                </TabsList>
+                <TabsContent value="reviews">
+                  <Reviews reviews={reviews} />
+                </TabsContent>
+                <TabsContent value="lists">
+                  <ReadingLists />
+                </TabsContent>
+                {isAuthor && (
+                  <TabsContent value="writtenBooks">
+                    <UserBooks
+                      booksData={booksData}
+                      handleAddBook={handleAddBook}
+                      isCurrentUser={true}
+                    />
+                  </TabsContent>
+                )}
+              </Tabs>
             </div>
-            {isAuthor && (
-              <UserBooks booksData={booksData} handleAddBook={handleAddBook} isCurrentUser={true}/>
-            )}
           </CardContent>
         </Card>
       </div>
-        {toast.visible && (
-            <Toast message={toast.message} onClose={() => setToast({ visible: false, message: '' })} />
-        )}
-      </div>
+      {toast.visible && (
+        <Toast message={toast.message} onClose={() => setToast({ visible: false, message: '' })} />
+      )}
+    </div>
   );
 }
