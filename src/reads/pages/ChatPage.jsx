@@ -22,6 +22,7 @@ export const ChatPage = () => {
     const navigate = useNavigate();
     const navbarRef = useRef(null);
     const [navbarHeight, setNavbarHeight] = useState(0);
+    const [scrollHeight, setScrollHeight] = useState('40vh');
 
     useEffect(() => {
         const fetchMessages = async () => {
@@ -174,6 +175,24 @@ export const ChatPage = () => {
         }
     }, []);
 
+
+    useEffect(() => {
+        const updateScrollHeight = () => {
+            if (window.innerWidth >= 1024) {
+                setScrollHeight('50vh'); // Pantallas grandes
+            } else {
+                setScrollHeight('40vh'); // Pantallas pequeñas
+            }
+        };
+
+        updateScrollHeight();
+        window.addEventListener('resize', updateScrollHeight);
+
+        return () => {
+            window.removeEventListener('resize', updateScrollHeight);
+        };
+    }, []);
+
     return (
         <div>
             <Navbar ref={navbarRef} />
@@ -185,7 +204,7 @@ export const ChatPage = () => {
                 >
                     <ArrowLeft />
                 </Button>
-                    <Card className="bg-gray-800 border-2 border-blue-500 rounded-lg w-full max-w-2xl mx-auto text-white overflow-hidden mt-[-50px]">
+                    <Card className="bg-gray-800 border-2 border-blue-500 rounded-lg w-full max-w-2xl mx-auto text-white overflow-hidden mt-[-35px]">
                         <CardHeader className="text-center bg-gradient-to-r from-blue-600 to-purple-600 py-6">
                             <CardTitle className="text-3xl font-bold text-white flex items-center justify-center"
                                 style={{ cursor: 'pointer' }} onClick={() =>
@@ -194,7 +213,7 @@ export const ChatPage = () => {
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <ScrollArea className='chat-messages space-y-4 overflow-y-auto p-4' style={{ height: '40vh' }}>
+                            <ScrollArea className='chat-messages space-y-4 overflow-y-auto p-4' style={{ height: scrollHeight }}>
                                 {messages.map((message, index) => (
                                     <div key={index} className={`flex ${message.sender === user.username ? 'justify-end' : 'justify-start'}`}>
                                         <div className='flex items-center space-x-3 space-y-6'>

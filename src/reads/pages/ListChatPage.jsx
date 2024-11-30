@@ -142,7 +142,7 @@ export const ListChatPage = () => {
         }
     };
 
-    async function deleteChat(chatroomID){
+    async function handleDeleteChat(chatroomID){
         console.log('entro')
         try {
             const { error: deleteMessagesError } = await supabase
