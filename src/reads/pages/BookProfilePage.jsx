@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useContext, memo } from 'react';
+import { ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 import {
   Star,
@@ -53,7 +55,6 @@ export const BookProfile = () => {
   const [hasReviewed, setHasReviewed] = useState(false);
   const [rate, setRating] = useState(null);
   const [readingStatus, setReadingStatus] = useState(null);
-  const [toast, setToast] = useState({ visible: false, message: '' });
 
   const {
     authState: { user },
@@ -77,7 +78,15 @@ export const BookProfile = () => {
 
     } catch (error) {
       console.error("Error en la compra:", error);
-      Swal.fire("Ocurrió un error al procesar la compra.");
+      toast.error("Ocurrio un error al procesar la compra", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        theme: "dark",
+        progressStyle: { background: 'linear-gradient(to right, #9b4dca, #d72f8f)' },
+      });
     }
   }
 
@@ -110,7 +119,15 @@ export const BookProfile = () => {
 
   const updateReadingStatus = async (status) => {
     if (!user || !isbn) {
-      Swal.fire("Debes iniciar sesión para actualizar el estado de lectura.");
+      toast.error("Debes iniciar sesión para agregar una reseña", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        theme: "dark",
+        progressStyle: { background: 'linear-gradient(to right, #9b4dca, #d72f8f)' },
+      });
       return;
     }
 
@@ -135,10 +152,26 @@ export const BookProfile = () => {
       if (error) throw error;
 
       setReadingStatus(status); // Actualizar el estado de lectura localmente
-      Swal.fire("Estado de lectura actualizado correctamente.");
+      toast.info("Estado de la lectura actualizado correctamanete", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        theme: "dark",
+        progressStyle: { background: 'linear-gradient(to right, #9b4dca, #d72f8f)' },
+      });
     } catch (error) {
       console.error("Error al actualizar el estado de lectura:", error);
-      Swal.fire("Error al actualizar el estado de lectura.");
+      toast.error("Error al actualizar el estado de lectura", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        theme: "dark",
+        progressStyle: { background: 'linear-gradient(to right, #9b4dca, #d72f8f)' },
+      });
     }
   };
 
@@ -249,13 +282,29 @@ export const BookProfile = () => {
 
   const handleAddReview = async () => {
     if (!user) {
-      Swal.fire("Debes iniciar sesión para agregar una reseña.");
+      toast.error("Debes iniciar sesión para agregar una reseña", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        theme: "dark",
+        progressStyle: { background: 'linear-gradient(to right, #9b4dca, #d72f8f)' },
+      });
       return;
     }
 
     // Verifica si ya ha reseñado
     if (hasReviewed) {
-      Swal.fire("Ya has dejado una reseña para este libro.");
+      toast.error("Ya has dejado una reseña para este libro", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        theme: "dark",
+        progressStyle: { background: 'linear-gradient(to right, #9b4dca, #d72f8f)' },
+      });
       return;
     }
 
@@ -275,7 +324,15 @@ export const BookProfile = () => {
 
       if (error) {
         console.error("Error al agregar la reseña:", error);
-        Swal.fire("Error al agregar la reseña");
+        toast.error("Error al agregar una reseña", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          theme: "dark",
+          progressStyle: { background: 'linear-gradient(to right, #9b4dca, #d72f8f)' },
+        });
         return;
       } else if (data && data.length > 0) {
         setReviews((prevReviews) => [...prevReviews, data[0]]);
@@ -297,7 +354,15 @@ export const BookProfile = () => {
           console.error("Error creating notification:", notificationError.message);
         }
 
-        Swal.fire("Reseña agregada correctamente");
+        toast.success("Reseña agregada correctamente", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          theme: "dark",
+          progressStyle: { background: 'linear-gradient(to right, #9b4dca, #d72f8f)' },
+        });
 
 
       } else {
@@ -305,7 +370,15 @@ export const BookProfile = () => {
       }
     } catch (error) {
       console.error("Error en handleAddReview:", error);
-      Swal.fire("Ocurrió un error al agregar la reseña. Inténtalo de nuevo.");
+      toast.error("Ocurrio un error al agregar una reseña", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        theme: "dark",
+        progressStyle: { background: 'linear-gradient(to right, #9b4dca, #d72f8f)' },
+      });
     }
   };
 
@@ -358,8 +431,16 @@ export const BookProfile = () => {
       .select(); // Asegúrate de seleccionar los datos actualizados
 
     if (error) {
-      Swal.fire("Error al actualizar la reseña");
       console.error("Error:", error);
+      toast.error("Error al actualizar reseña", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        theme: "dark",
+        progressStyle: { background: 'linear-gradient(to right, #9b4dca, #d72f8f)' },
+      });
     } else if (data && data.length > 0) {
       // Si la reseña se actualizó correctamente, actualizamos la lista de reseñas
       setReviews(
@@ -372,7 +453,15 @@ export const BookProfile = () => {
       // Recalcular el promedio de las reseñas después de la actualización
       await updateBookRating();
       setNewReview({ content: "", rating: 0 });
-      Swal.fire("Reseña actualizada correctamente");
+      toast.success("Reseña actualizada correctamente", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        theme: "dark",
+        progressStyle: { background: 'linear-gradient(to right, #9b4dca, #d72f8f)' },
+      });
 
     } else {
       console.error("No se recibió ningún dato de la base de datos");
@@ -384,13 +473,29 @@ export const BookProfile = () => {
     const { error } = await supabase.from("reviews").delete().eq("id", id);
 
     if (error) {
-      Swal.fire("Error al eliminar la reseña");
+      toast.error("Error al eliminar la reseña", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        theme: "dark",
+        progressStyle: { background: 'linear-gradient(to right, #9b4dca, #d72f8f)' },
+      });
       console.error("Error:", error);
     } else {
       setHasReviewed(false);
       await updateBookRating();
       setReviews(reviews.filter((review) => review.id !== id));
-      Swal.fire("Reseña eliminada correctamente");
+      toast.success("Reseña eliminada correctamante", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        theme: "dark",
+        progressStyle: { background: 'linear-gradient(to right, #9b4dca, #d72f8f)' },
+      });
     }
   };
 
@@ -498,13 +603,13 @@ export const BookProfile = () => {
               </h2>
               <p className='text-blue-200'>{description}</p>
             </div>
-            <div className='mt-6'>
-              <DropdownMenu>
+            <div>
+            <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md flex items-center">
+                    className="px-4 py-2 btn hover:bg-blue-700 text-white rounded-lg shadow-md flex items-center">
                     <BookMarked className="mr-2 h-4 w-4" />
-                    {readingStatus || "Marcar como"}
+                    {readingStatus || "Agregar a lista"}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
@@ -520,6 +625,8 @@ export const BookProfile = () => {
                   )}
                 </DropdownMenuContent>
               </DropdownMenu>
+            </div>
+            <div className='mt-6'>
               <h2 className='text-2xl font-semibold mb-2 text-blue-400 text-left'>
                 Comprar Libro
               </h2>
@@ -606,6 +713,19 @@ export const BookProfile = () => {
           {user && (
             <div className="mt-8">
               <h3 className="text-xl mb-4">{editingReviewId ? "Editar Reseña" : "Agregar Reseña"}</h3>
+              <div className="flex mt-4 space-x-1 pb-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Button
+                    key={star}
+                    onClick={() => setNewReview({ ...newReview, rating: star })}
+                    disabled={hasReviewed}
+                    className={`w-8 h-8 ${newReview.rating >= star ? "text-yellow-400" : "text-gray-500"
+                      }`}
+                  >
+                    ★
+                  </Button>
+                ))}
+              </div>
               <Textarea
                 placeholder="Escribe tu reseña aquí..."
                 value={newReview.content}
@@ -613,31 +733,18 @@ export const BookProfile = () => {
                 disabled={hasReviewed}
                 className="bg-gray-700 border-blue-500 text-white placeholder-blue-300"
               />
-              <div className="flex mt-4 space-x-1">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    type="button"
-                    onClick={() => setNewReview({ ...newReview, rating: star })}
-                    disabled={hasReviewed}
-                    className={`w-8 h-8 ${newReview.rating >= star ? "text-yellow-400" : "text-gray-500"
-                      }`}
-                  >
-                    ★
-                  </button>
-                ))}
-              </div>
               <Button
                 onClick={editingReviewId ? handleUpdateReview : handleAddReview}
                 disabled={hasReviewed}
-                className="mt-4"
+                className="mt-4 btn"
               >
-                {editingReviewId ? "Actualizar Reseña" : "Agregar Reseña"}
+                {editingReviewId ? "Actualizar" : "Publicar"}
               </Button>
             </div>
           )}
 
         </div>
+        <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={true} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
       </div>
     </div>
   );

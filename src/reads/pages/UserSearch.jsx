@@ -247,7 +247,7 @@ export const UserSearch = () => {
               </CardFooter>)}
           </div>
         ) : (
-          <div className="w-full max-w-2xl mx-auto mt-8 text-center text-gray-400">No se encontraron reseñas para mostrar</div>
+          <div className="w-full max-w-2xl mx-auto mt-8 text-center text-gray-400">No se encontraron reseñas de amigos para mostrar</div>
         )}
       </main>
     </div>

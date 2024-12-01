@@ -6,7 +6,7 @@ import { LogOutIcon, UsersRound, MessageCircleMore, Bell, House } from 'lucide-r
 import { supabase } from '../../utils/supabase-client'
 import { useNotifications } from '@/src/reads/hooks/useNotifications';
 
-export const Navbar = () => {
+export const Navbar = React.forwardRef((props, ref) => {
   const { logout, authState } = useContext(AuthContext);
   const navigate = useNavigate();
   const [unRead, setUnRead] = useState([]);
@@ -89,11 +89,11 @@ export const Navbar = () => {
   };
 
   return (
-    <nav className="bg-gray-800 p-4 flex items-center justify-between">
+    <nav className="bg-gray-800 p-4 flex items-center justify-between" ref={ref}>
       <div className="flex items-center">
         <Link 
           to="/" 
-          className="text-white text-xl font-semibold mr-4 text-decoration-none"
+          className="text-white text-xl font-semibold mr-4 text-decoration-none bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600"
         >
           FIUBA READS
         </Link>
@@ -159,4 +159,4 @@ export const Navbar = () => {
       </div>
     </nav>
   );
-};
+});

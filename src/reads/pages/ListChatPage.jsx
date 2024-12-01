@@ -130,15 +130,28 @@ export const ListChatPage = () => {
     };
 
     const handleDeleteChatroom = async (chatroomID) => {
-        const { error } = await supabase
-            .from('chatroom')
-            .delete()
-            .eq('id', chatroomID);
+        try {
+            const { error: deleteMessagesError } = await supabase
+                .from('messages')
+                .delete()
+                .eq('chatroomUUID', chatroomID);
 
-        if (error) {
-            console.error("Error al eliminar el chat:", error.message);
-        } else {
-            setChatrooms((prevChatrooms) => prevChatrooms.filter(chatroom => chatroom.id !== chatroomID));
+            if (deleteMessagesError) {
+                throw new Error(`Error deleting messages: ${deleteMessagesError.message}`);
+            }
+
+            const { error: deleteChatroomError } = await supabase
+                .from('chatroom')
+                .delete()
+                .eq('id', chatroomID);
+
+            if (deleteChatroomError) {
+                throw new Error(`Error deleting chatroom: ${deleteChatroomError.message}`);
+            }
+
+            console.log(`Chatroom ${chatroomID} and its messages deleted successfully.`);
+        } catch (error) {
+            console.error('Error deleting chatroom and messages:', error.message);
         }
     };
 

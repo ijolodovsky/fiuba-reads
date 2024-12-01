@@ -204,10 +204,14 @@ export const ProfilePage = () => {
 
   const Reviews = ({ reviews }) => (
     <>
+    {reviews.length > 0 ? (
+      <>
       <h3 className='text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600'>
         Reseñas de Libros
       </h3>
       <UserReviews reviews={reviews} />
+      </>) : (<p className="text-sm text-blue-200">No tienes reseñas de libros</p>)
+    }
     </>
   );
 
