@@ -185,8 +185,8 @@ export const RegisterPage = () => {
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Roles</SelectLabel>
-                    <SelectItem value="Lector">Lector</SelectItem>
-                    <SelectItem value="Escritor">Escritor</SelectItem>
+                    <SelectItem value="lector">Lector</SelectItem>
+                    <SelectItem value="escritor">Escritor</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
