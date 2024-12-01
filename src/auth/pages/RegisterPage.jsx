@@ -67,7 +67,7 @@ export const RegisterPage = () => {
           last_name: formattedLastName,
           age: formData.age,
           role: formData.role,
-          profile_picture: '',
+          profile_picture: 'https://cdn.icon-icons.com/icons2/1378/PNG/96/avatardefault_92824.png',
           entry_date: new Date().toISOString(),
         },
       ]);
