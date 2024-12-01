@@ -93,7 +93,7 @@ export const Navbar = React.forwardRef((props, ref) => {
       <div className="flex items-center">
         <Link 
           to="/" 
-          className="text-white text-xl font-semibold mr-4 text-decoration-none"
+          className="text-white text-xl font-semibold mr-4 text-decoration-none bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600"
         >
           FIUBA READS
         </Link>

@@ -130,20 +130,6 @@ export const ListChatPage = () => {
     };
 
     const handleDeleteChatroom = async (chatroomID) => {
-        const { error } = await supabase
-            .from('chatroom')
-            .delete()
-            .eq('id', chatroomID);
-
-        if (error) {
-            console.error("Error al eliminar el chat:", error.message);
-        } else {
-            setChatrooms((prevChatrooms) => prevChatrooms.filter(chatroom => chatroom.id !== chatroomID));
-        }
-    };
-
-    async function handleDeleteChat(chatroomID){
-        console.log('entro')
         try {
             const { error: deleteMessagesError } = await supabase
                 .from('messages')
@@ -167,7 +153,7 @@ export const ListChatPage = () => {
         } catch (error) {
             console.error('Error deleting chatroom and messages:', error.message);
         }
-    }
+    };
 
     return (
 
