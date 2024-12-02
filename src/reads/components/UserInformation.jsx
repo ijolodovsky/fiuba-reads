@@ -14,8 +14,8 @@ export const UserInformation = ({
 }) => {
   return (
     <>
-      <div className='flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-10'>
-        <div className='w-full md:w-1/3 flex flex-col items-center'>
+      <div className='flex flex-col items-center items-start space-y-6'>
+        <div className='w-full flex flex-col items-center'>
           <div className='w-40 h-40 rounded-full border-4 border-blue-500 overflow-hidden mb-4'>
             <img
               src={profile_picture}
@@ -36,7 +36,7 @@ export const UserInformation = ({
             title={"Seguidos"}
           />
         </div>
-        <div className='w-full md:w-2/3'>
+        <div className='w-full'>
           <h3 className='text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600'>
             Información Personal
           </h3>
