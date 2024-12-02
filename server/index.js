@@ -18,7 +18,6 @@ app.get("/", (req, res) => {
 });
 
 app.post("/create_preference", async (req, res) => {
-    console.log(req.body);
     try{
         const { title, quantity, unit_price, user_id, isbn } = req.body;
 
@@ -33,8 +32,8 @@ app.post("/create_preference", async (req, res) => {
             ],
             back_urls: {
                 success: `https://fiuba-reads.vercel.app/success?userId=${user_id}&bookId=${isbn}&price=${unit_price}`,
-                failure: "https://fiuba-reads.vercel.app/failure",
-                pending: "https://fiuba-reads.vercel.app/pending",
+                failure: `https://fiuba-reads.vercel.app/failure?userId=${user_id}&bookId=${isbn}`,
+                pending: `https://fiuba-reads.vercel.app/pending?userId=${user_id}&bookId=${isbn}`,
             },
             auto_return: "approved",
         };
@@ -42,12 +41,12 @@ app.post("/create_preference", async (req, res) => {
         const result = await preference.create({ body });
         res.json({ id: result.id });
     }catch(error){
-        console.log(error);
+        console.error(error);
         const status = error.status || 500;
         res.status(status).json({ error: error.message, status: status });
     }
 });
 
 app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+    console.info(`Server running on port ${port}`);
 });

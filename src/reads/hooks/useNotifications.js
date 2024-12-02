@@ -19,8 +19,6 @@ export const useNotifications = (username) => {
 
         if (error) {
             console.error("Error fetching notifications:", error);
-        } else {
-            console.log("Unread Notifications:", data);
         }
 
     };

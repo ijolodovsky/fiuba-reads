@@ -23,9 +23,7 @@ export const NotificationPage = () => {
 
   if (error) {
     console.error("Error fetching notifications:", error);
-  } else {
-    console.log("Notifications:", data);
-  }
+  } 
   };
 
   useEffect(() => {
@@ -36,7 +34,6 @@ export const NotificationPage = () => {
       'postgres_changes',
       { event: 'INSERT', schema: 'public', table: 'notifications' },
       (payload) => {
-        console.log('Nueva notificación recibida:', payload.new);
         setNotifications((prevNotifications) => [payload.new, ...prevNotifications]);
       }
     )

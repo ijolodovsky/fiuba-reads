@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext, memo } from 'react';
-import { ToastContainer } from 'react-toastify';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import Swal from 'sweetalert2';
 import {
   Star,
@@ -22,7 +21,6 @@ import { Button } from '@/components/ui/button';
 import axios from 'axios';
 import { initMercadoPago, Wallet } from '@mercadopago/sdk-react'
 import { NotificationType } from '../utils/NotificationType';
-import { Toast } from '@/components/ui/toast';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -217,11 +215,8 @@ export const BookProfile = () => {
 
       // Si hay datos, significa que el usuario ya reseñó este libro
       if (data && data.length > 0) {
-        console.log("Ya has reseñado este libro:", data[0]);
         setHasReviewed(true);
-      } else {
-        console.log("No has reseñado este libro aún.");
-      }
+      } 
     } catch (error) {
       console.error("Error en checkIfReviewed:", error);
     }
@@ -412,7 +407,6 @@ export const BookProfile = () => {
     if (updateError) {
       console.error("Error al actualizar el promedio de calificación del libro:", updateError);
     } else {
-      console.log("Promedio de calificación actualizado correctamente.");
       setRating(averageRating); // Actualiza el estado local con el nuevo rating
     }
   };

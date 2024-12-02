@@ -30,8 +30,6 @@ export const SuccessPage = () => {
 
             if (error) {
                 console.error('Error inserting data:', error);
-            } else {
-                console.log('Data inserted successfully:', data);
             }
         };
 

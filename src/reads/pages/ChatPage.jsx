@@ -75,7 +75,6 @@ export const ChatPage = () => {
     }, [chatroomID]);
 
 
-    console.log(usernames)
     const messageRead = async (chatroomId) => {
         const { error } = await supabase
             .from('messages')

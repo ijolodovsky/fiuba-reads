@@ -1,7 +1,7 @@
 import React from "react";
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { Navbar, NotificationListener } from '../../ui/components';
-import { HomePage, ProfilePage, AddBookPage, BookProfile, ModifyBookPage, FriendProfilePage, UserSearch, ModifyProfilePage, ChatPage, ListChatPage, NotificationPage, SuccessPage } from '../pages';
+import { HomePage, ProfilePage, AddBookPage, BookProfile, ModifyBookPage, FriendProfilePage, UserSearch, ModifyProfilePage, ChatPage, ListChatPage, NotificationPage, SuccessPage, PendingPage, FailurePage } from '../pages';
 import { ToastContainer } from 'react-toastify';
 
 export const ReadsRoutes = () => {
@@ -28,6 +28,8 @@ export const ReadsRoutes = () => {
           <Route path="update-profile" element={<ModifyProfilePage />} />
           <Route path="notifications" element={<NotificationPage />} />
           <Route path="success" element={<SuccessPage />} />
+          <Route path="pending" element={<PendingPage />} />
+          <Route path="failure" element={<FailurePage />} />
         </Routes>
       </div>
     </>

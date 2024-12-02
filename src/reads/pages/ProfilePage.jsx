@@ -1,7 +1,8 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { AuthContext } from '../../auth/context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import React, { useContext, useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { AuthContext } from "../../auth/context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from 'react-toastify';
 import {
   Card,
   CardHeader,
@@ -15,13 +16,10 @@ import {
 import { UserBooks, UserReviews } from '../components';
 import { supabase } from '../../utils/supabase-client';
 import { LoadingSpinner, NotFound } from '@/src/ui/components';
-import './profilePage.css';
 import { UserInformation } from '../components/UserInformation';
 import { useFollowCounts } from '../hooks/useFollowCounts';
-import { Carousel } from '@/components/ui/carousel';
 import { Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Toast } from '@/components/ui/toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export const ProfilePage = () => {
@@ -36,11 +34,8 @@ export const ProfilePage = () => {
   const [readingBooks, setReadingBooks] = useState([]);
   const [wantToReadBooks, setWantToReadBooks] = useState([]);
   const [purchasedBooks, setPurchasedBooks] = useState([]);
-  const [activeTab, setActiveTab] = useState('reviews')
-
-
+  const [activeTab, setActiveTab] = useState("reviews");
   const [reviews, setReviews] = useState([]);
-  const [toast, setToast] = useState({ visible: false, message: '' });
 
   const { followingCount, followersCount, followersUsers, followingUsers } =
     useFollowCounts(user.username);
@@ -111,7 +106,8 @@ export const ProfilePage = () => {
 
     const { data, error } = await supabase
       .from("user_books")
-      .select(`
+      .select(
+        `
       status,
       books:book_isbn (
         isbn,
@@ -119,7 +115,8 @@ export const ProfilePage = () => {
         author,
         cover_image_url
       )
-    `)
+    `
+      )
       .eq("username", user.username);
 
     if (error) {
@@ -143,6 +140,8 @@ export const ProfilePage = () => {
           case "Quiero leer":
             wantToRead.push(item.books);
             break;
+          default:
+            console.warn(`Unknown status: ${item.status}`);
         }
       }
     });
@@ -158,7 +157,8 @@ export const ProfilePage = () => {
     try {
       const { data, error } = await supabase
         .from("bookPurchases")
-        .select(`
+        .select(
+          `
           book_id,
           price,
           purchase_date,
@@ -168,21 +168,32 @@ export const ProfilePage = () => {
             author,
             cover_image_url
           )
-        `)
+        `
+        )
         .eq("username", user.username);
 
       if (error) throw error;
 
-      const purchased = data.map(item => ({
-        ...item.books,
-        price: item.price,
-        purchaseDate: item.purchase_date
-      })).filter(book => book !== null);
+      const purchased = data
+        .map((item) => ({
+          ...item.books,
+          price: item.price,
+          purchaseDate: item.purchase_date,
+        }))
+        .filter((book) => book !== null);
 
       setPurchasedBooks(purchased);
     } catch (error) {
       console.error("Error buscando libros comprados:", error);
-      setToast({ visible: true, message: 'Error al cargar libros comprados' });
+      toast.error("Error al cargar libros comprados", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        theme: "dark",
+        progressStyle: { background: 'linear-gradient(to right, #9b4dca, #d72f8f)' },
+      });
     }
   };
 
@@ -204,23 +215,25 @@ export const ProfilePage = () => {
 
   const Reviews = ({ reviews }) => (
     <>
-    {reviews.length > 0 ? (
-      <>
-      <h3 className='text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600'>
-        Reseñas de Libros
-      </h3>
-      <UserReviews reviews={reviews} />
-      </>) : (<p className="text-sm text-blue-200">No tienes reseñas de libros</p>)
-    }
+      {reviews.length > 0 ? (
+        <>
+          <h3 className='text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600'>
+            Reseñas de Libros
+          </h3>
+          <UserReviews reviews={reviews} />
+        </>
+      ) : (
+        <p className='text-sm text-blue-200'>No tienes reseñas de libros</p>
+      )}
     </>
   );
 
   const ReadingLists = () => (
     <>
-      <BookCarousel books={readBooks} title="Leídos" />
-      <BookCarousel books={readingBooks} title="Leyendo" />
-      <BookCarousel books={wantToReadBooks} title="Quiero Leer" />
-      <BookCarousel books={purchasedBooks} title="Libros Comprados" />
+      <BookCarousel books={readBooks} title='Leídos' />
+      <BookCarousel books={readingBooks} title='Leyendo' />
+      <BookCarousel books={wantToReadBooks} title='Quiero Leer' />
+      <BookCarousel books={purchasedBooks} title='Libros Comprados' />
     </>
   );
 
@@ -241,31 +254,48 @@ export const ProfilePage = () => {
     };
 
     return (
-      <div className="mt-8">
-        <h3 className="text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
+      <div className='mt-8'>
+        <h3 className='text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600'>
           {title}
         </h3>
-        <div className="relative">
+        <div className='relative'>
           {books.length > 0 ? (
-            <div className="flex items-center">
-              <Button onClick={prevBooks} disabled={startIndex === 0} className="mr-2">
+            <div className='flex items-center'>
+              <Button
+                onClick={prevBooks}
+                disabled={startIndex === 0}
+                className='mr-2'
+              >
                 <ChevronLeft />
               </Button>
-              <div className="flex overflow-hidden">
-                {books.slice(startIndex, startIndex + booksPerPage).map((book) => (
-                  <Link to={`/books/${book.isbn}`} key={book.isbn} className="flex-shrink-0 mx-2">
-                    <img
-                      src={book.cover_image_url}
-                      alt={book.title}
-                      className="w-32 h-48 object-cover rounded-lg shadow-lg hover:opacity-75 transition-opacity"
-                    />
-                  </Link>
-                ))}
+              <div className='flex overflow-hidden'>
+                {books
+                  .slice(startIndex, startIndex + booksPerPage)
+                  .map((book) => (
+                    <Link
+                      to={`/books/${book.isbn}`}
+                      key={book.isbn}
+                      className='flex-shrink-0 mx-2'
+                    >
+                      <img
+                        src={book.cover_image_url}
+                        alt={book.title}
+                        className='w-32 h-48 object-cover rounded-lg shadow-lg hover:opacity-75 transition-opacity'
+                      />
+                    </Link>
+                  ))}
               </div>
-              <Button onClick={nextBooks} disabled={startIndex + booksPerPage >= books.length} className="ml-2">
+              <Button
+                onClick={nextBooks}
+                disabled={startIndex + booksPerPage >= books.length}
+                className='ml-2'
+              >
                 <ChevronRight />
               </Button>
-            </div>) : (<p className="text-sm text-blue-200">No tienes libros en {title}</p>)}
+            </div>
+          ) : (
+            <p className='text-sm text-blue-200'>No tienes libros en {title}</p>
+          )}
         </div>
       </div>
     );
@@ -274,7 +304,8 @@ export const ProfilePage = () => {
   if (loading) return <LoadingSpinner />;
   if (error) return <NotFound />;
 
-  const { username, role, age, firstName, lastName, email, profilePicture } = user;
+  const { username, role, age, firstName, lastName, email, profilePicture } =
+    user;
   const fullName = `${firstName} ${lastName}`;
 
   return (
@@ -290,12 +321,12 @@ export const ProfilePage = () => {
             </CardDescription>
             <Button
               onClick={handleUpdateProfile}
-              className="text-white rounded-full p-2 absolute btn"
-              size="icon"
-              variant="ghost"
+              className='text-white rounded-full p-2 absolute btn'
+              size='icon'
+              variant='ghost'
             >
-              <Edit className="h-4 w-4" />
-              <span className="sr-only">Editar perfil</span>
+              <Edit className='h-4 w-4' />
+              <span className='sr-only'>Editar perfil</span>
             </Button>
           </CardHeader>
           <CardContent className='p-6'>
@@ -310,27 +341,45 @@ export const ProfilePage = () => {
               followingUsers={followingUsers}
             />
             <div className='mt-8'>
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className={`grid w-full ${isAuthor ? 'grid-cols-3' : 'grid-cols-2'} bg-gradient-to-r from-blue-700 to-purple-700 rounded-lg p-1`}            >
-                  <TabsTrigger value="reviews" className="text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-500 data-[state=active]:text-white rounded-md transition-all duration-300">Reseñas de libros</TabsTrigger>
-                  <TabsTrigger value="lists" className="text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-500 data-[state=active]:text-white rounded-md transition-all duration-300">Listas de Lectura</TabsTrigger>
+              <Tabs
+                value={activeTab}
+                onValueChange={setActiveTab}
+                className='w-full'
+              >
+                <TabsList
+                  className={`grid w-full ${
+                    isAuthor ? "grid-cols-3" : "grid-cols-2"
+                  } bg-gradient-to-r from-blue-700 to-purple-700 rounded-lg p-1`}
+                >
+                  <TabsTrigger
+                    value='reviews'
+                    className='text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-500 data-[state=active]:text-white rounded-md transition-all duration-300'
+                  >
+                    Reseñas de libros
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value='lists'
+                    className='text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-500 data-[state=active]:text-white rounded-md transition-all duration-300'
+                  >
+                    Listas de Lectura
+                  </TabsTrigger>
                   {isAuthor && (
                     <TabsTrigger
-                      value="writtenBooks"
-                      className="text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-500 data-[state=active]:text-white rounded-md transition-all duration-300"
+                      value='writtenBooks'
+                      className='text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-500 data-[state=active]:text-white rounded-md transition-all duration-300'
                     >
                       Libros Escritos
                     </TabsTrigger>
                   )}
                 </TabsList>
-                <TabsContent value="reviews">
+                <TabsContent value='reviews'>
                   <Reviews reviews={reviews} />
                 </TabsContent>
-                <TabsContent value="lists">
+                <TabsContent value='lists'>
                   <ReadingLists />
                 </TabsContent>
                 {isAuthor && (
-                  <TabsContent value="writtenBooks">
+                  <TabsContent value='writtenBooks'>
                     <UserBooks
                       booksData={booksData}
                       handleAddBook={handleAddBook}
@@ -343,9 +392,7 @@ export const ProfilePage = () => {
           </CardContent>
         </Card>
       </div>
-      {toast.visible && (
-        <Toast message={toast.message} onClose={() => setToast({ visible: false, message: '' })} />
-      )}
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={true} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
     </div>
   );
-}
+};

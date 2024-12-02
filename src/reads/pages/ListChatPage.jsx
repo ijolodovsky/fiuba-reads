@@ -149,7 +149,6 @@ export const ListChatPage = () => {
                 throw new Error(`Error deleting chatroom: ${deleteChatroomError.message}`);
             }
 
-            console.log(`Chatroom ${chatroomID} and its messages deleted successfully.`);
         } catch (error) {
             console.error('Error deleting chatroom and messages:', error.message);
         }

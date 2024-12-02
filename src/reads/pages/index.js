@@ -10,3 +10,5 @@ export * from './ChatPage';
 export * from './ListChatPage';
 export * from './NotificationPage';
 export * from './SuccessPage';
+export * from './FailurePage';
+export * from './PendingPage';

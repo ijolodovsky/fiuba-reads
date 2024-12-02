@@ -55,7 +55,6 @@ export const UserSearch = () => {
     if (error) {
       console.error("Error fetching reviews:", error);
     } else {
-      // Obtenemos los nombres de los libros en función de los book_ids
       const bookIds = data.map((review) => review.book_id);
 
       const { data: booksData, error: booksError } = await supabase
@@ -66,17 +65,15 @@ export const UserSearch = () => {
       if (booksError) {
         console.error("Error fetching books:", booksError);
       } else {
-        // Asociamos el nombre del libro con la reseña
         const reviewsWithBooks = data.map((review) => {
           const book = booksData.find((book) => book.isbn === review.book_id);
           return {
             ...review,
-            bookTitle: book ? book.title : 'Desconocido', // Título del libro o 'Desconocido' si no se encuentra
+            bookTitle: book ? book.title : 'Desconocido',
           };
         });
-        setReviews(reviewsWithBooks); // Guardar las reseñas con el título del libro
-        setTotalPages(Math.ceil(count / 5)); // Calcular el número total de páginas
-        console.log(totalPages)
+        setReviews(reviewsWithBooks);
+        setTotalPages(Math.ceil(count / 5));
       }
     }
   };
@@ -107,7 +104,6 @@ export const UserSearch = () => {
   }, [searchTerm, debouncedSearch]);
 
 
-  // Efecto para obtener las reseñas cuando el usuario inicia sesión
   useEffect(() => {
     if (user) {
       fetchFollowed();
@@ -118,7 +114,6 @@ export const UserSearch = () => {
     setSearchTerm(event.target.value);
   };
 
-  // Funciones para manejar la paginación
   const handlePrevPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);

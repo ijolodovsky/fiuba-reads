@@ -41,7 +41,6 @@ export const LoginPage = () => {
     } else {
       setSuccessMessage('Inicio de sesión exitoso');
       setErrorMessage('');
-      console.log('User logged in successfully', data);
       login(data);
       navigate('/', { replace: true });
     }

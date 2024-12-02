@@ -32,8 +32,6 @@ export const FriendProfilePage = () => {
   const [error, setError] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const [reviews, setReviews] = useState([]);
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [message, setMessage] = useState("");
   const { followingCount, followersCount, followersUsers, followingUsers } =
     useFollowCounts(userID);
 

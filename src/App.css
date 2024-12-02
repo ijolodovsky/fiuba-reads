@@ -79,3 +79,9 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
+
+
+.btn {
+  background-color: #4D426A !important;
+  color: whitesmoke !important;
+}

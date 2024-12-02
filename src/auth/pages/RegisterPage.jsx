@@ -81,7 +81,6 @@ export const RegisterPage = () => {
       return;
     }
 
-    console.log('User registered successfully', data);
     navigate('/login', { replace: true });
   };
 

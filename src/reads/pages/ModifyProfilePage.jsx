@@ -10,7 +10,6 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import './profilePage.css';
 
 export const ModifyProfilePage = () => {
   const {
@@ -169,7 +168,7 @@ export const ModifyProfilePage = () => {
                   className='w-full px-4 py-2 bg-gray-700 border-blue-500 text-white placeholder-blue-300 rounded-md'
                 />
               </div>
-              <Button type='submit' className='w-full bg-blue-600 hover:bg-blue-700 text-white'>
+              <Button type='submit' className='w-full bg-blue-600 hover:bg-blue-700 text-white btn'>
                 Guardar cambios
               </Button>
             </form>
